@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>assets/icons/config.png</file>
+        <file>assets/icons/export.png</file>
+        <file>assets/icons/import.png</file>
+        <file>assets/icons/pause.png</file>
+        <file>assets/icons/restart.png</file>
+        <file>assets/icons/start.png</file>
+        <file>assets/icons/terminate.png</file>
+        <file>assets/icons/logo.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>assets/icons/terminate.png</file>
+    </qresource>
+</RCC>
