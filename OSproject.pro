@@ -2,7 +2,7 @@ QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -35,7 +35,7 @@ SOURCES += \
     progressball.cpp \
     entity/result.cpp \
     entity/message.cpp \
-    utils/semaphore.cpp
+    utils/semaphore.cpp \
 
 HEADERS += \
     entity/buffer.h \
@@ -49,7 +49,7 @@ HEADERS += \
     progressball.h \
     entity/result.h \
     entity/message.h \
-    utils/semaphore.h
+    utils/semaphore.h \
 
 FORMS += \
     bufferwidget.ui \

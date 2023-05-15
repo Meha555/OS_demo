@@ -34,6 +34,21 @@ void Dao::setTableName(const QString &value)
     tableName = value;
 }
 
+//// 查询
+//int Dao::sqlQuery(const QString &sql){
+//    if(!db.isOpen()) getConnection();
+//    if(sqlHandler.exec(sql)){
+//        resultSet = sqlHandler.record();
+//        return sqlHandler.record().count();
+//    }
+//    else{
+//       QMessageBox::critical(0, "数据库元组查询失败",
+//                             sqlHandler.lastError().text());
+//       qDebug()<<sqlHandler.lastError();
+//       return 0;
+//    }
+//}
+
 // 查询
 QVariantList Dao::sqlQuery(const QString &sql)
 {
@@ -41,7 +56,7 @@ QVariantList Dao::sqlQuery(const QString &sql)
     QVariantList ret;
     if(sqlHandler.exec(sql)){
         //以下是查询后的逻辑
-        while(sqlHandler.next()){\
+        while(sqlHandler.next()){
             QVariant t;
             if(tableName == "Config"){
                 Config cfg(
@@ -69,10 +84,9 @@ QVariantList Dao::sqlQuery(const QString &sql)
             else{//message
                 Message msg(
 //                            sqlHandler.value("m_id").toInt(),
-                            sqlHandler.value("t_id").toInt(),
+                            sqlHandler.value("t_id").toString(),
                             sqlHandler.value("b_id").toInt(),
-                            sqlHandler.value("data_id").toInt(),
-                            sqlHandler.value("op_type").toString(),
+                            static_cast<Op_Type>(sqlHandler.value("op_type").toInt()),
                             sqlHandler.value("data").toString());//创建一个Message对象返回
                  t.setValue(msg);
             }

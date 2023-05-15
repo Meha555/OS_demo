@@ -4,18 +4,20 @@
 #include <QString>
 #include <QVariant>
 
+#define DATA_LEN 10
+typedef enum {PUT,MOVE1,MOVE2,GET} Op_Type;
+
 class Message
 {
 public:
     Message();
-    Message(int tid,int bid,int dataid,QString type,QString data);
+    Message(QString tid,int bid,Op_Type type,const QString& data);
 
 public:
     static int m_id;
-    int t_id;
-    int b_id;
-    int data_id;
-    QString op_type;
+    QString t_id;//是哪个线程放进来的
+    int b_id;//是在哪个buffer里的
+    Op_Type op_type;//放入的线程是什么类型
     QString data;
 };
 

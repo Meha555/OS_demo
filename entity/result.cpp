@@ -1,15 +1,15 @@
 #include "result.h"
 
-int Result::r_id = 1;
+int Result::r_id = 0;
 
 Result::Result()
 {
-    r_id++;
+//    r_id++;
 }
 
 Result::Result(int cur):curr_data_num(cur)
 {
-    r_id++;
+//    r_id++;
 }
 
 Result::Result(QString run, int cur, int put, int get, int avg)

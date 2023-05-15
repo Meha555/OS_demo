@@ -1,10 +1,26 @@
 #include "buffer.h"
 
-int Buffer::data_id = 1;
+//int Buffer::data_id = 1;
 
 Buffer::Buffer(QObject *parent) : QObject(parent)
 {
-    data_id++;
+    //    data_id++;
+}
+
+void Buffer::putinBuffer(Message &msg)
+{
+    buffer.enqueue(msg);
+    free_space_num--;
+    cur_num++;
+    putin_num++;
+}
+
+Message Buffer::getoutBuffer()
+{
+    free_space_num++;
+    cur_num--;
+    getout_num++;
+    return buffer.dequeue();
 }
 
 void Buffer::setCapacity(const int c)

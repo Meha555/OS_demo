@@ -8,12 +8,11 @@
 #include <QWaitCondition>
 #include "mainwindow.h"
 #include "semaphore.h"
+#include "message.h"
+
+typedef enum {RUNNING,BLOCK,TERMINATED} ThreadState;
 
 class MainWindow;
-
-#define DATA_LEN 10
-typedef enum {RUNNING,BLOCK,TERMINATED} ThreadState;
-typedef enum {PUT,MOVE1,MOVE2,GET} Op_Type;
 
 class Operation : public QThread
 {
@@ -25,6 +24,10 @@ public:
 
 protected:
     void run() override;
+
+signals:
+    void putIn(qreal val);
+    void getOut(qreal val);
 
 private:
     QString genRandData();// 生成随机数
@@ -40,10 +43,16 @@ public:
     static void resumeThread();
     static void terminateThread();
 
+    void getStatus();
+    QString getTID();
+
+    void putinData(const int bid);
+    void getoutData(const int bid);
 
 private:
     Op_Type op_type;//操作类型
     int op_speed;//操作速度
+    QString data;//线程当前持有的data，可能由于没有空位放不到buffer里
     static MainWindow* ptr;
     static ThreadState state; // 线程当前状态
     static QMutex mutex;//互斥锁，用于实现线程暂停

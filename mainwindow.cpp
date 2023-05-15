@@ -5,6 +5,27 @@ extern int speed_coefficient;
 
 bool first_start = true;
 
+void MainWindow::initalizeData()
+{
+    dao.setTableName("Config");
+    auto cfg_list = dao.sqlQuery("select * from config order by c_id desc limit 1");
+    qDebug()<<cfg_list.size();
+    if(cfg_list.size() > 0){
+        Config::c_id = cfg_list.begin()->value<Config>().c_id;
+    }
+    dao.setTableName("Result");
+    auto res_list = dao.sqlQuery("select * from result order by r_id desc limit 1");
+    if(res_list.size() > 0){
+        Result::r_id = res_list.begin()->value<Result>().r_id;
+    }
+    dao.setTableName("Message");
+    auto msg_list = dao.sqlQuery("select * from message order by m_id desc limit 1");
+    if(msg_list.size() > 0){
+        Message::m_id = msg_list.begin()->value<Message>().m_id;
+    }
+    qDebug()<<Config::c_id<<' '<<Result::r_id<<" "<<Message::m_id;
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -35,11 +56,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actTerminate->setEnabled(false);
 
     // 绘制进度球
-    QTimer* _pTimerUpdate = new QTimer(this);_pTimerUpdate->start(2000);
-    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer1, &ProgressBall::updateProgressBall);
-    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer2, &ProgressBall::updateProgressBall);
-    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer3, &ProgressBall::updateProgressBall);
-    _pTimerUpdate->start(20);
+//    _pTimerUpdate = new QTimer(this);
+//    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer1, &ProgressBall::updateProgress);
+//    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer2, &ProgressBall::updateProgress);
+//    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer3, &ProgressBall::updateProgress);
+
 
     // 信号相关
     connect(slider,&QSlider::valueChanged,this,&MainWindow::changeSpeed);
@@ -48,6 +69,9 @@ MainWindow::MainWindow(QWidget *parent)
 //        result.collectResult(t,)
 //    });
 
+    // 最后的准备工作
+    initalizeData();
+//    _pTimerUpdate->start(20);
 }
 
 MainWindow::~MainWindow()
@@ -83,24 +107,31 @@ void MainWindow::setConfig()
     // 初始化缓冲区数据
     buffer1->setCapacity(config.getBuffer1_size());
     buffer1->setFree_space_num(buffer1->capacity);
+    buffer1->setCur_num(0);
     buffer2->setCapacity(config.getBuffer2_size());
     buffer2->setFree_space_num(buffer2->capacity);
-    buffer3->setCapacity(config.getBuffer2_size());
-    buffer3->setFree_space_num(buffer2->capacity);
+    buffer2->setCur_num(0);
+    buffer3->setCapacity(config.getBuffer3_size());
+    buffer3->setFree_space_num(buffer3->capacity);
+    buffer3->setCur_num(0);
+
+    ui->buffer1->setCapacity(config.buffer1_size);
+    ui->buffer2->setCapacity(config.buffer2_size);
+    ui->buffer2->setCapacity(config.buffer2_size);
 
     // 初始化各信号量
-    empty1 = new Semaphore(buffer1->capacity);
-    full1 = new Semaphore(0);
-    empty2 = new Semaphore(buffer2->capacity);
-    full2 = new Semaphore(0);
-    empty3 = new Semaphore(buffer3->capacity);
-    full3 = new Semaphore(0);
-//    empty1 = new QSemaphore(buffer1->capacity);
-//    full1 = new QSemaphore(0);
-//    empty2 = new QSemaphore(buffer2->capacity);
-//    full2 = new QSemaphore(0);
-//    empty3 = new QSemaphore(buffer3->capacity);
-//    full3 = new QSemaphore(0);
+//    empty1 = new Semaphore(buffer1->capacity);
+//    full1 = new Semaphore(0);
+//    empty2 = new Semaphore(buffer2->capacity);
+//    full2 = new Semaphore(0);
+//    empty3 = new Semaphore(buffer3->capacity);
+//    full3 = new Semaphore(0);
+    empty1 = new QSemaphore(buffer1->capacity);
+    full1 = new QSemaphore(0);
+    empty2 = new QSemaphore(buffer2->capacity);
+    full2 = new QSemaphore(0);
+    empty3 = new QSemaphore(buffer3->capacity);
+    full3 = new QSemaphore(0);
     mutex1 = new QMutex;
     mutex2 = new QMutex;
     mutex3 = new QMutex;
@@ -138,7 +169,7 @@ void MainWindow::on_actSetConfig_triggered()
         // 设置参数
         setConfig();
     }
-//    config.configInfo();
+    config.configInfo();
 }
 
 void MainWindow::on_actStart_triggered()
@@ -151,27 +182,39 @@ void MainWindow::on_actStart_triggered()
 #endif
             displayLogTextSys("启动1个PUT");
             Operation* put = new Operation(PUT,config.put_speed,this);
-            connect(this,&MainWindow::destroy,put,[put](){put->quit();put->wait();put->deleteLater();});
+            connect(ui->actTerminate,&QAction::triggered,put,[put](){put->quit();put->wait();put->deleteLater();});
+            connect(put, &Operation::putIn, ui->buffer1, &ProgressBall::updateProgress);
+//            connect(_pTimerUpdate, &QTimer::timeout, put, [put](){put->getStatus();});
             put->start();
         }
-        for(int i=1;i<=(config.move_num>>1);i++) {
+        int t = ceil(config.move_num/2.0);
+        for(int i=1;i<=t;i++) {
 #ifdef _DEBUG
             qDebug()<<"启动2个MOVE";
 #endif
             displayLogTextSys("启动2个MOVE");
             Operation* move1 = new Operation(MOVE1,config.move_speed,this);
-            connect(this,&MainWindow::destroy,move1,[move1](){move1->quit();move1->wait();move1->deleteLater();});
+            connect(ui->actTerminate,&QAction::triggered,move1,[move1](){move1->quit();move1->wait();move1->deleteLater();});
+            connect(move1, &Operation::getOut, ui->buffer1, &ProgressBall::updateProgress);
+            connect(move1, &Operation::putIn, ui->buffer2, &ProgressBall::updateProgress);
+//            connect(_pTimerUpdate, &QTimer::timeout, move1, [move1](){move1->getStatus();});
             Operation* move2 = new Operation(MOVE2,config.move_speed,this);
-            connect(this,&MainWindow::destroy,move2,[move2](){move2->quit();move2->wait();move2->deleteLater();});
+            connect(ui->actTerminate,&QAction::triggered,move2,[move2](){move2->quit();move2->wait();move2->deleteLater();});
+            connect(move2, &Operation::getOut, ui->buffer1, &ProgressBall::updateProgress);
+            connect(move2, &Operation::putIn, ui->buffer3, &ProgressBall::updateProgress);
+//            connect(_pTimerUpdate, &QTimer::timeout, move2, [move2](){move2->getStatus();});
             move1->start();move2->start();
         }
-        for(int i=1;i<=config.put_num;i++){
+        for(int i=1;i<=config.get_num;i++){
 #ifdef _DEBUG
             qDebug()<<"启动1个GET";
 #endif
             displayLogTextSys("启动1个GET");
             Operation* get = new Operation(GET,config.get_speed,this);
-            connect(this,&MainWindow::destroy,get,[get](){get->quit();get->wait();get->deleteLater();});
+            connect(ui->actTerminate,&QAction::triggered,get,[get](){get->quit();get->wait();get->deleteLater();});
+            connect(get, &Operation::getOut, ui->buffer2, &ProgressBall::updateProgress);
+            connect(get, &Operation::getOut, ui->buffer3, &ProgressBall::updateProgress);
+//            connect(_pTimerUpdate, &QTimer::timeout, get, [get](){get->getStatus();});
             get->start();
         }
         first_start = false;

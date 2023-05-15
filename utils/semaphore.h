@@ -9,7 +9,7 @@ class Semaphore
 {
 public:
     Semaphore()=default;
-    Semaphore(const Semaphore&)=delete;
+    Q_DISABLE_COPY(Semaphore)
     Semaphore(int val);
 
     //提供类外访问的全局函数PV操作

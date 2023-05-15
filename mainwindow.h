@@ -19,6 +19,7 @@
 #include "op_thread.h"
 #include "configform.h"
 #include "daoconfigform.h"
+#include "dao.h"
 
 #define _DEBUG
 
@@ -46,6 +47,7 @@ public:
                     bool bold,QColor frontColor);// 单独插入自定义插入字体格式
     void displayLogTextSys(QString text,bool bold = false,QColor frontColor = QColor("blue"));
     void displayLogText(QPlainTextEdit* edit,const QString& text);
+    void initalizeData();
 
 public slots:
 //    Config getConfig();//获取config
@@ -80,27 +82,30 @@ public:
     Buffer* buffer3;
 
     // 同步信号量
-    Semaphore* empty1;
-    Semaphore* full1;
+//    Semaphore* empty1;
+//    Semaphore* full1;
 
-    Semaphore* empty2;
-    Semaphore* full2;
+//    Semaphore* empty2;
+//    Semaphore* full2;
 
-    Semaphore* empty3;
-    Semaphore* full3;
-//    QSemaphore* empty1;
-//    QSemaphore* full1;
+//    Semaphore* empty3;
+//    Semaphore* full3;
+    QSemaphore* empty1;
+    QSemaphore* full1;
 
-//    QSemaphore* empty2;
-//    QSemaphore* full2;
+    QSemaphore* empty2;
+    QSemaphore* full2;
 
-//    QSemaphore* empty3;
-//    QSemaphore* full3;
+    QSemaphore* empty3;
+    QSemaphore* full3;
 
     // 互斥信号量
     QMutex* mutex1;
     QMutex* mutex2;
     QMutex* mutex3;
+
+    // 数据库句柄
+    Dao dao;
 
     // 设置信息
     Config config;
@@ -110,6 +115,7 @@ public:
 
 public:
     Ui::MainWindow *ui;
+    QTimer* _pTimerUpdate;
     QLabel*  label1;
     QLabel*  label2;
     QLabel*  label3;

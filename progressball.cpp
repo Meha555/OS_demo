@@ -1,24 +1,18 @@
 #include "progressball.h"
 
 ProgressBall::ProgressBall(QWidget *parent)
-    : QWidget(parent), _radius(100)
-    , _boderWidth(10)
-    , _boarderColor(Qt::white)
-    , _backgroundColor(QColor(200,200,200,100))//透明灰
-    , _colorLow(Qt::green)
-    , _colorMedium(QColor("darkorange"))
-    , _colorHigh(Qt::red)
+    : QWidget(parent)
 {
-    this->setFixedSize(_radius*2+_boderWidth, _radius*2+_boderWidth);
+    this->setFixedSize(_radius*2+_borderWidth, _radius*2+_borderWidth);
 //    this->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);//以无边框的窗体显示
-//    this->setAttribute(Qt::WA_TranslucentBackground, true);//设置透明背景
+    //    this->setAttribute(Qt::WA_TranslucentBackground, true);//设置透明背景
 }
 
 void ProgressBall::paintEvent(QPaintEvent *) {
     //设置画笔
     QPen pen;
     pen.setColor(_boarderColor);
-    pen.setWidth(_boderWidth);
+    pen.setWidth(_borderWidth);
     pen.setJoinStyle(Qt::RoundJoin);
 
     //设置画家
@@ -26,13 +20,13 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     painter.setRenderHint(QPainter::Antialiasing);// 设置抗锯齿
 
     //使用矩形绘制圆形边框（左上角x,y坐标，大小）
-    QRect border(_boderWidth*0.5, _boderWidth*0.5, _radius*2, _radius*2);
-    painter.setPen(_boderWidth > 0 ? pen : Qt::NoPen);
+    QRect border(_borderWidth*0.5, _borderWidth*0.5, _radius*2, _radius*2);
+    painter.setPen(_borderWidth > 0 ? pen : Qt::NoPen);
     painter.setBrush(_backgroundColor);
     painter.drawEllipse(border);
 
     //设置矩形边界（左上角x,y坐标，大小）
-    QRect ball = QRect(_boderWidth, _boderWidth,border.width() - _boderWidth,border.height() - _boderWidth);
+    QRect ball = QRect(_borderWidth, _borderWidth,border.width() - _borderWidth,border.height() - _borderWidth);
     //在矩形边界内绘制圆形区域
     QPainterPath circlePath;
     circlePath.addEllipse(ball);
@@ -96,23 +90,32 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 
     painter.setFont(font);
     painter.setPen(Qt::white);
-    painter.drawText(ball, Qt::AlignCenter,QString("%1%").arg(QString::number(_progress/_capacity,'f',2)));
+    painter.drawText(ball, Qt::AlignCenter,QString("%1%").arg(QString::number(_progress*100/_capacity,'f',2)));
 }
 
-void ProgressBall::updateProgressBall() {
-    _offset += _perDelta;
-    if (_offset>=M_PI*2) _offset = 0;
-
-    _progress += _perDelta;
-//    if (_progress>=100) _progress = 0;
-
-
+void ProgressBall::updateProgress(qreal val) {
+    _progress += val;
     update();
 }
 
-qreal ProgressBall::getProgress() const
+qreal ProgressBall::progress() const
 {
     return _progress;
+}
+
+void ProgressBall::setProgress(const qreal &progress)
+{
+    _progress = progress;
+}
+
+qreal ProgressBall::capacity() const
+{
+    return _capacity;
+}
+
+void ProgressBall::setCapacity(const qreal &capacity)
+{
+    _capacity = capacity;
 }
 
 QColor ProgressBall::color() const
@@ -147,12 +150,12 @@ void ProgressBall::setBoarderColor(const QColor &boarderColor)
 
 int ProgressBall::boderWidth() const
 {
-    return _boderWidth;
+    return _borderWidth;
 }
 
 void ProgressBall::setBoderWidth(int boderWidth)
 {
-    _boderWidth = boderWidth;
+    _borderWidth = boderWidth;
 }
 
 int ProgressBall::radius() const
@@ -163,10 +166,4 @@ int ProgressBall::radius() const
 void ProgressBall::setRadius(int radius)
 {
     _radius = radius;
-}
-
-void ProgressBall::setProgress(qreal progress)
-{
-    _progress = progress;
-    update();
 }

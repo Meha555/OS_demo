@@ -38,8 +38,8 @@ public slots:
 
 public:
     QElapsedTimer timeCounter;
-private:
     static int r_id;
+private:
     QString run_time = 0; //总运行时间
     int curr_data_num = 0;//当前buffer中数据总数
     int putin_data_num = 0; //已放入的数据总数
