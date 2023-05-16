@@ -1,10 +1,10 @@
-#include "mainwindow.h"
-
 #include <QApplication>
 #include <QTime>
 #include <QtGlobal>
 #include <QFont>
 #include <QTextCodec>
+
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {

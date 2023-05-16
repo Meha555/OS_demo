@@ -117,7 +117,7 @@ void MainWindow::setConfig()
 
     ui->buffer1->setCapacity(config.buffer1_size);
     ui->buffer2->setCapacity(config.buffer2_size);
-    ui->buffer2->setCapacity(config.buffer2_size);
+    ui->buffer3->setCapacity(config.buffer3_size);
 
     // 初始化各信号量
 //    empty1 = new Semaphore(buffer1->capacity);

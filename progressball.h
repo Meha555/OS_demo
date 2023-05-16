@@ -45,6 +45,7 @@ protected:
 
 public slots:
     void updateProgress(qreal val);
+    void updateCurLevel();
 
 private:
     qreal _capacity = 100;

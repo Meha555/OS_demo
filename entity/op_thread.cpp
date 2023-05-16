@@ -259,7 +259,7 @@ void Operation::getoutData(const int bid)
     default:break;
     }
     qDebug()<<log<<QTime::currentTime();
-    emit getOut(1);
+    emit getOut(-1);
 }
 
 Op_Type Operation::getOp_type() const

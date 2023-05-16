@@ -6,6 +6,9 @@ ProgressBall::ProgressBall(QWidget *parent)
     this->setFixedSize(_radius*2+_borderWidth, _radius*2+_borderWidth);
 //    this->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);//以无边框的窗体显示
     //    this->setAttribute(Qt::WA_TranslucentBackground, true);//设置透明背景
+    _pTimerUpdate = new QTimer(this);
+    connect(_pTimerUpdate, &QTimer::timeout, this, &ProgressBall::updateCurLevel);
+    _pTimerUpdate->start(20);
 }
 
 void ProgressBall::paintEvent(QPaintEvent *) {
@@ -46,9 +49,9 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     ω：角速度，用于控制周期大小，单位x中的起伏个数
     k：偏距，曲线整体上下偏移量，即水位线位置
     */
-    qreal A = ball.width()*0.1;
-    qreal k = (1 - _progress*0.01) * ball.height();
-    qreal w = 2 * M_PI / static_cast<qreal>(ball.width());
+    qreal A = ball.width()*0.1;                           // 振幅
+    qreal k = (1 - _progress*0.01) * ball.height();       // 高度
+    qreal w = 2 * M_PI / static_cast<qreal>(ball.width());// 角速度
 
     //在直径上绘制水位线的切线
     for (int i = ball.left(); i <= ball.right(); ++i) {
@@ -67,9 +70,9 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 
     //设置水的颜色和透明度
 
-    QColor waterColor1 = _progress < 70 ? (_progress < 40 ? _colorLow : _colorMedium) : _colorHigh;
+    QColor waterColor1 = _progress < 7 ? (_progress < 4 ? _colorLow : _colorMedium) : _colorHigh;
     waterColor1.setAlpha(100);
-    QColor waterColor2 = _progress < 70 ? (_progress < 40 ? _colorLow : _colorMedium) : _colorHigh;
+    QColor waterColor2 = _progress < 7 ? (_progress < 4 ? _colorLow : _colorMedium) : _colorHigh;
     waterColor2.setAlpha(200);
 
     QPainterPath path;
@@ -96,6 +99,19 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 void ProgressBall::updateProgress(qreal val) {
     _progress += val;
     update();
+}
+
+void ProgressBall::updateCurLevel()
+{
+    _offset += 0.1;
+    if (_offset>=M_PI*2)
+            _offset -= M_PI*2;
+
+//   _progress += 0.1;
+//   if (_progress>=100)
+//       _progress -= 100;
+
+   update();
 }
 
 qreal ProgressBall::progress() const
