@@ -10,6 +10,14 @@
 #include "semaphore.h"
 #include "message.h"
 
+#ifdef Q_OS_LINUX
+#include <pthread.h>
+#endif
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 typedef enum {RUNNING,BLOCK,TERMINATED} ThreadState;
 
 class MainWindow;
@@ -44,7 +52,7 @@ public:
     static void terminateThread();
 
     void getStatus();
-    QString getTID();
+    int getTID() const;
 
     void putinData(const int bid);
     void getoutData(const int bid);

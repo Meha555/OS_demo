@@ -23,20 +23,20 @@ QMutex Operation::mutex;//互斥锁，用于实现线程暂停
 QWaitCondition Operation::condition;//等待条件，用于实现线程暂停
 MainWindow* Operation::ptr = nullptr;
 
-Operation::Operation(QObject *parent):QThread(parent)
+Operation::Operation(QObject *p):QThread(p)
 {
-//    Operation::ptr = static_cast<MainWindow*>(parent());
+    Operation::ptr = static_cast<MainWindow*>(parent());
 }
 
-Operation::Operation(Op_Type type, int speed, QObject *parent):QThread(parent),op_type(type),op_speed(speed)
+Operation::Operation(Op_Type type, int speed, QObject *p):QThread(p),op_type(type),op_speed(speed)
 {
-//    Operation::ptr = static_cast<MainWindow*>(parent());
+    Operation::ptr = static_cast<MainWindow*>(parent());
 }
 
 void Operation::run()
 {
 //    getStatus();
-    Operation::ptr = static_cast<MainWindow*>(parent());
+//    Operation::ptr = static_cast<MainWindow*>(parent());
     while(state != TERMINATED){
         if(state == BLOCK){//暂停
             mutex.lock();
@@ -192,9 +192,19 @@ void Operation::getStatus()
     Operation::ptr->displayLogTextSys(s,true,QColor("orange"));
 }
 
-QString Operation::getTID()
+int Operation::getTID() const
 {
-    return QStringLiteral("@0x%1").arg(quintptr(QThread::currentThreadId()), 16, 16, QLatin1Char('0'));
+    int tid;
+#ifdef Q_OS_LINUX
+    tid = pthread_self();
+#endif
+
+#ifdef Q_OS_WIN
+    tid = GetCurrentThreadId();
+#endif
+    qDebug() << "TID: " << tid;
+    //qDebug()<<QStringLiteral("@0x%1").arg(quintptr(QThread::currentThreadId()), 16, 16, QLatin1Char('0'));
+    return tid;
 }
 
 void Operation::putinData(const int bid)

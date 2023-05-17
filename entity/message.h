@@ -11,11 +11,11 @@ class Message
 {
 public:
     Message();
-    Message(QString tid,int bid,Op_Type type,const QString& data);
+    Message(int tid,int bid,Op_Type type,const QString& data);
 
 public:
     static int m_id;
-    QString t_id;//是哪个线程放进来的
+    int t_id;//是哪个线程放进来的
     int b_id;//是在哪个buffer里的
     Op_Type op_type;//放入的线程是什么类型
     QString data;

@@ -186,6 +186,7 @@ void MainWindow::on_actStart_triggered()
             connect(put, &Operation::putIn, ui->buffer1, &ProgressBall::updateProgress);
 //            connect(_pTimerUpdate, &QTimer::timeout, put, [put](){put->getStatus();});
             put->start();
+//            put->getTID();
         }
         int t = ceil(config.move_num/2.0);
         for(int i=1;i<=t;i++) {
@@ -204,6 +205,7 @@ void MainWindow::on_actStart_triggered()
             connect(move2, &Operation::putIn, ui->buffer3, &ProgressBall::updateProgress);
 //            connect(_pTimerUpdate, &QTimer::timeout, move2, [move2](){move2->getStatus();});
             move1->start();move2->start();
+//            move1->getTID();move2->getTID();
         }
         for(int i=1;i<=config.get_num;i++){
 #ifdef _DEBUG
@@ -216,6 +218,7 @@ void MainWindow::on_actStart_triggered()
             connect(get, &Operation::getOut, ui->buffer3, &ProgressBall::updateProgress);
 //            connect(_pTimerUpdate, &QTimer::timeout, get, [get](){get->getStatus();});
             get->start();
+//            get->getTID();
         }
         first_start = false;
     }
