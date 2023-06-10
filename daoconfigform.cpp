@@ -35,8 +35,6 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
     sqlTabModel->setHeaderData(9,Qt::Horizontal,"get操作速度");
     sqlTabModel->select();
     Config::c_id = sqlTabModel->columnCount();
-
-
 }
 
 DaoConfigForm::~DaoConfigForm()

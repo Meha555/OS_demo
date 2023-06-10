@@ -1,10 +1,15 @@
 #ifndef RESULT_H
 #define RESULT_H
 
+#include <QObject>
 #include <QElapsedTimer>
 #include <QVariant>
 #include <QString>
-#include <QObject>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QByteArray>
+
+#define _DEBUG
 
 class Result
 {
@@ -13,11 +18,14 @@ public:
     Result(int cur);
     Result(QString run,int cur,int put,int get,int avg);
     ~Result() = default;
+    QString toJsonString();
+
+    void resultInfo();
 
     int getR_id() const;
     void setR_id(int value);
 
-    QString getRun_time() const;
+    QString getRun_time();
     void setRun_time(const QString& value);
 
     int getCurr_data_num() const;
@@ -33,19 +41,18 @@ public:
     void setAvg_num(int value);
 
 public slots:
-    //运行结束时保存结果：主线程中进度球的update执行时调用
-    void collectResult(int cur,int putin,int getout,int avg);
+    // 运行时的即时结果：主线程中进度球的update执行时调用
+    void collectResult(int cur,int putin,int getout);
+    // 结束时的汇总结果：主线程中点击结束按钮触发
+    void summaryResult(int avg,qint64 time);
 
 public:
-    QElapsedTimer timeCounter;
     static int r_id;
-private:
-    QString run_time = 0; //总运行时间
-    int curr_data_num = 0;//当前buffer中数据总数
-    int putin_data_num = 0; //已放入的数据总数
-    int getout_data_num = 0;//已取出的数据总数
-    int avg_num = 0;//平均每个buffer中的数据个数
-
+    QString run_time; //总运行时间【最终统计】
+    int curr_data_num = 0;//当前buffer中数据总数【即时统计】
+    int putin_data_num = 0; //已放入的数据总数【即时统计】
+    int getout_data_num = 0;//已取出的数据总数【即时统计】
+    int avg_num = 0;//平均每个buffer中的数据个数【最终统计】
 };
 
 // 注册入元对象系统，以便QVariant使用

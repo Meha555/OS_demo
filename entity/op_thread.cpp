@@ -13,12 +13,15 @@ int put_blocked_num; //当前阻塞的put线程数
 int move_blocked_num; //当前阻塞的move线程数
 int get_blocked_num; //当前阻塞的get线程数
 
+int putin_num; //已放入的数据个数
+int getout_num; //已取出的数据个数
+
 //for GET
 QWaitCondition cond_get;
 QMutex mutex_get;
 
 //静态变量在类中仅仅是声明，还需要类外定义，类外定义要放在cpp文件中
-ThreadState Operation::state = RUNNING;
+ThreadState Operation::state = RUNNING; // 初始所有线程状态为运行
 QMutex Operation::mutex;//互斥锁，用于实现线程暂停
 QWaitCondition Operation::condition;//等待条件，用于实现线程暂停
 MainWindow* Operation::ptr = nullptr;
@@ -150,7 +153,7 @@ void Operation::pauseThread()
 //        condition.wait(&mutex);
 //        mutex.unlock();
 //    }
-    state = BLOCK;
+    if(state == RUNNING) state = BLOCK;
     qDebug()<<"===所有线程暂停===";
     Operation::ptr->displayLogTextSys("===所有线程暂停===",true,QColor("red"));
 }
@@ -158,20 +161,24 @@ void Operation::pauseThread()
 void Operation::resumeThread()
 {
 //    if(QThread::isRunning()){
+    if(state == BLOCK){
         state = RUNNING;
         condition.wakeAll();
-        qDebug()<<"===所有线程继续===";
-        Operation::ptr->displayLogTextSys("===所有线程继续===",true,QColor("red"));
+    }
+    qDebug()<<"===所有线程继续===";
+    Operation::ptr->displayLogTextSys("===所有线程继续===",true,QColor("red"));
 //    }
 }
 
 void Operation::terminateThread()
 {
 //    if(QThread::isRunning()){
+    if(state != TERMINATED){
         state = TERMINATED;
         condition.wakeAll();
         qDebug()<<"===所有线程终止===";
         Operation::ptr->displayLogTextSys("===所有线程终止===",true,QColor("red"));
+    }
 //        quit();
 //        wait();
         //    }
@@ -192,13 +199,12 @@ void Operation::getStatus()
     Operation::ptr->displayLogTextSys(s,true,QColor("orange"));
 }
 
-int Operation::getTID() const
+inline int Operation::getTID() const
 {
     int tid;
 #ifdef Q_OS_LINUX
     tid = pthread_self();
 #endif
-
 #ifdef Q_OS_WIN
     tid = GetCurrentThreadId();
 #endif
@@ -209,9 +215,8 @@ int Operation::getTID() const
 
 void Operation::putinData(const int bid)
 {
+    putin_num++;
     Message msg(getTID(),bid,op_type,data);
-//    ptr->dao.sqlExecute(QString("insert into message values(%1,%2,%3,%4,%5)")
-//             .arg(msg.m_id).arg(msg.t_id).arg(msg.b_id).arg(msg.op_type).arg(msg.data));
     QString log;
     switch (op_type) {
     case PUT:{
@@ -240,6 +245,7 @@ void Operation::putinData(const int bid)
 
 void Operation::getoutData(const int bid)
 {
+    getout_num++;
     QString log;
     switch (op_type) {
     case MOVE1:{

@@ -13,12 +13,12 @@
 #ifdef Q_OS_LINUX
 #include <pthread.h>
 #endif
-
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
 
-typedef enum {RUNNING,BLOCK,TERMINATED} ThreadState;
+//typedef enum {RUNNING,BLOCK,TERMINATED} ThreadState;
+using ThreadState = enum{RUNNING,BLOCK,TERMINATED};
 
 class MainWindow;
 
@@ -62,9 +62,9 @@ private:
     int op_speed;//操作速度
     QString data;//线程当前持有的data，可能由于没有空位放不到buffer里
     static MainWindow* ptr;
-    static ThreadState state; // 线程当前状态
     static QMutex mutex;//互斥锁，用于实现线程暂停
     static QWaitCondition condition;//等待条件，用于实现线程暂停
+    static ThreadState state; // 线程当前状态，所有线程的状态都是一致的
 };
 
 #endif // GET_H

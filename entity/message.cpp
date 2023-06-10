@@ -12,3 +12,14 @@ Message::Message(int tid, int bid, Op_Type type,const QString &data)
 {
     m_id++;
 }
+
+#ifdef _DEBUG
+#include <QDebug>
+void Message::messageInfo(){
+    qDebug()<<"message: "<<m_id<<' '
+           <<t_id<<' '
+          <<b_id<<' '
+         <<op_type<<' '
+        <<data;
+}
+#endif

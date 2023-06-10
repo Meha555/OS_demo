@@ -30,6 +30,7 @@ public:
     int putin_num;//已放入当前Buffer中的数据个数
     int getout_num;//已从当前Buffer中取出的数据个数
     QQueue<Message> buffer;//内存中的缓冲区，数据先放在这里，等到积攒到一定量后统一写入数据库
+    int opt_count = 0;//对当前Buffer进行了多少次操作的计数器，用于与缓冲区配合完成write back on operate
 
 signals:
 

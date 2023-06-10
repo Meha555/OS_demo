@@ -4,6 +4,8 @@
 #include <QString>
 #include <QVariant>
 
+#define _DEBUG
+
 #define DATA_LEN 10
 typedef enum {PUT,MOVE1,MOVE2,GET} Op_Type;
 
@@ -12,6 +14,7 @@ class Message
 public:
     Message();
     Message(int tid,int bid,Op_Type type,const QString& data);
+    void messageInfo();
 
 public:
     static int m_id;

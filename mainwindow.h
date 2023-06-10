@@ -3,10 +3,12 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QScrollBar>
 #include <QDateTime>
 #include <QMessageBox>
 #include <QSemaphore>
+#include <QFileDialog>
 #include <QMutex>
 #include <QSlider>
 #include <QLabel>
@@ -48,12 +50,12 @@ public:
     void displayLogTextSys(QString text,bool bold = false,QColor frontColor = QColor("blue"));
     void displayLogText(QPlainTextEdit* edit,const QString& text);
     void initalizeData();
+    void resetStatistics();
 
 public slots:
-//    Config getConfig();//获取config
     void setConfig();//设置config
     void changeSpeed(int val);
-
+    void updateRes2DB();
 
 private slots:
 //    void receiveConfig(Config& cfg);
@@ -74,6 +76,8 @@ private slots:
     void on_btnClear2_clicked();
 
     void on_btnClear3_clicked();
+
+    void on_actExportResult_triggered();
 
 public:
     // 缓冲区
@@ -115,7 +119,8 @@ public:
 
 public:
     Ui::MainWindow *ui;
-    QTimer* _pTimerUpdate;
+    QTimer*  timerWalker;      //时间段计时器
+    QElapsedTimer *timeCounter; //时间差计时器
     QLabel*  label1;
     QLabel*  label2;
     QLabel*  label3;

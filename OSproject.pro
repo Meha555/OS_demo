@@ -37,6 +37,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     entity/op_thread.cpp \
+    mapper/daoimpl/messagedaoimpl.cpp \
     progressball.cpp \
     entity/result.cpp \
     entity/message.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     daoconfigform.h \
     mainwindow.h \
     entity/op_thread.h \
+    mapper/daoimpl/messagedaoimpl.h \
     progressball.h \
     entity/result.h \
     entity/message.h \

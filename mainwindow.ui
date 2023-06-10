@@ -303,7 +303,7 @@
    <addaction name="actSetConfig"/>
    <addaction name="separator"/>
    <addaction name="actImportConfig"/>
-   <addaction name="actExportConfig"/>
+   <addaction name="actExportResult"/>
    <addaction name="separator"/>
    <addaction name="actStart"/>
    <addaction name="actPasue"/>
@@ -549,22 +549,22 @@
      <normaloff>:/icons/assets/icons/import.png</normaloff>:/icons/assets/icons/import.png</iconset>
    </property>
    <property name="text">
-    <string>导入参数</string>
+    <string>导入设置</string>
    </property>
    <property name="toolTip">
-    <string>导入参数</string>
+    <string>导入设置</string>
    </property>
   </action>
-  <action name="actExportConfig">
+  <action name="actExportResult">
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/assets/icons/export.png</normaloff>:/icons/assets/icons/export.png</iconset>
    </property>
    <property name="text">
-    <string>导出参数</string>
+    <string>导出结果</string>
    </property>
    <property name="toolTip">
-    <string>导出参数</string>
+    <string>导出结果</string>
    </property>
   </action>
   <action name="actStart">

@@ -3,6 +3,17 @@
 
 extern int speed_coefficient;
 
+extern int thread_put_num; //put操作个数
+extern int thread_move_num; //move操作个数
+extern int thread_get_num; //get操作个数
+
+extern int put_blocked_num; //当前阻塞的put线程数
+extern int move_blocked_num; //当前阻塞的move线程数
+extern int get_blocked_num; //当前阻塞的get线程数
+
+extern int putin_num; //已放入的数据个数
+extern int getout_num; //已取出的数据个数
+
 bool first_start = true;
 
 void MainWindow::initalizeData()
@@ -26,11 +37,30 @@ void MainWindow::initalizeData()
     qDebug()<<Config::c_id<<' '<<Result::r_id<<" "<<Message::m_id;
 }
 
+void MainWindow::resetStatistics()
+{
+    speed_coefficient = 1000;//速度系数(ms)
+
+    thread_put_num = config.put_num; //put操作个数
+    thread_move_num = config.move_num; //move操作个数
+    thread_get_num = config.get_num; //get操作个数
+
+    put_blocked_num = 0; //当前阻塞的put线程数
+    move_blocked_num = 0; //当前阻塞的move线程数
+    get_blocked_num = 0; //当前阻塞的get线程数
+
+    putin_num = 0; //已放入的数据个数
+    getout_num = 0; //已取出的数据个数
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+//    qRegisterMetaType<Config>("Config");
+//    qRegisterMetaType<Config>("Message");
+//    qRegisterMetaType<Config>("Result");
 
     // 界面相关设置
     label1 = new QLabel("操作速度控制：", this);
@@ -55,23 +85,23 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actRestart->setEnabled(false);
     ui->actTerminate->setEnabled(false);
 
-    // 绘制进度球
-//    _pTimerUpdate = new QTimer(this);
-//    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer1, &ProgressBall::updateProgress);
-//    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer2, &ProgressBall::updateProgress);
-//    connect(_pTimerUpdate, &QTimer::timeout, ui->buffer3, &ProgressBall::updateProgress);
+    timeCounter = new QElapsedTimer();
 
+    // 绘制进度球
+    timerWalker = new QTimer(this);
+// 这几个槽函数现在参数和timeout不匹配
+//    connect(timerWalker, &QTimer::timeout, ui->buffer1, &ProgressBall::updateProgress);
+//    connect(timerWalker, &QTimer::timeout, ui->buffer2, &ProgressBall::updateProgress);
+//    connect(timerWalker, &QTimer::timeout, ui->buffer3, &ProgressBall::updateProgress);
 
     // 信号相关
-    connect(slider,&QSlider::valueChanged,this,&MainWindow::changeSpeed);
-//    connect(_pTimerUpdate, &QTimer::timeout, this, [this](){
-//        qlonglong t = buffer1->cur_num+buffer2->cur_num+buffer3->cur_num;
-//        result.collectResult(t,)
-//    });
+    connect(slider, &QSlider::valueChanged, this, &MainWindow::changeSpeed);
+    connect(timerWalker, &QTimer::timeout, this, [this](){
+        result.collectResult(buffer1->cur_num+buffer2->cur_num+buffer3->cur_num,putin_num,getout_num);
+    });
 
     // 最后的准备工作
     initalizeData();
-//    _pTimerUpdate->start(20);
 }
 
 MainWindow::~MainWindow()
@@ -86,14 +116,22 @@ MainWindow::~MainWindow()
     delete mutex1;
     delete mutex2;
     delete mutex3;
+    delete timeCounter;
 }
 
 void MainWindow::changeSpeed(int val){
     speed_coefficient = val;
     labelSpeed->setText(QString(" 当前速度：%1x").arg(static_cast<qreal>(speed_coefficient)/1000,0,'g',2));
-#ifdef _DEBUG
-    qDebug()<<speed_coefficient;
-#endif
+    qDebug()<<"Current Speed: "<<speed_coefficient;
+}
+
+// 每隔一段时间就将buffer的情况写入到数据库中
+void MainWindow::updateRes2DB()
+{
+
+//    buffer1->buffer
+//    dao.sqlExecute(QString("insert into message values(%1,%2,%3,%4,%5)")
+//                   .arg(msg.m_id).arg(msg.t_id).arg(msg.b_id).arg(msg.op_type).arg(msg.data));
 }
 
 // 设置参数
@@ -153,8 +191,6 @@ void MainWindow::setConfig()
     ui->label_get_speed->setText(QString::number(config.get_speed));
 }
 
-
-
 void MainWindow::on_actSetConfig_triggered()
 {
     // 弹出对话框来设置信号量
@@ -174,12 +210,13 @@ void MainWindow::on_actSetConfig_triggered()
 
 void MainWindow::on_actStart_triggered()
 {
+    timeCounter->start();
+    timerWalker->start(20);
     if(first_start){
+        resetStatistics();
         // 初始化各线程，并启动
         for(int i=1;i<=config.put_num;i++){
-#ifdef _DEBUG
             qDebug()<<"启动1个PUT";
-#endif
             displayLogTextSys("启动1个PUT");
             Operation* put = new Operation(PUT,config.put_speed,this);
             connect(ui->actTerminate,&QAction::triggered,put,[put](){put->quit();put->wait();put->deleteLater();});
@@ -190,9 +227,7 @@ void MainWindow::on_actStart_triggered()
         }
         int t = ceil(config.move_num/2.0);
         for(int i=1;i<=t;i++) {
-#ifdef _DEBUG
             qDebug()<<"启动2个MOVE";
-#endif
             displayLogTextSys("启动2个MOVE");
             Operation* move1 = new Operation(MOVE1,config.move_speed,this);
             connect(ui->actTerminate,&QAction::triggered,move1,[move1](){move1->quit();move1->wait();move1->deleteLater();});
@@ -208,9 +243,7 @@ void MainWindow::on_actStart_triggered()
 //            move1->getTID();move2->getTID();
         }
         for(int i=1;i<=config.get_num;i++){
-#ifdef _DEBUG
             qDebug()<<"启动1个GET";
-#endif
             displayLogTextSys("启动1个GET");
             Operation* get = new Operation(GET,config.get_speed,this);
             connect(ui->actTerminate,&QAction::triggered,get,[get](){get->quit();get->wait();get->deleteLater();});
@@ -236,6 +269,8 @@ void MainWindow::on_actTerminate_triggered()
 {
     first_start = true;
     Operation::terminateThread();
+    int avg = (buffer1->cur_num+buffer2->cur_num+buffer3->cur_num) / 3;
+    result.summaryResult(avg,timeCounter->elapsed());
 }
 
 void MainWindow::on_actRestart_triggered()
@@ -260,6 +295,22 @@ void MainWindow::on_actImportConfig_triggered()
         QMessageBox::information(this, "导入参数", "导入参数完成");
     }
     config.configInfo();
+}
+
+
+void MainWindow::on_actExportResult_triggered()
+{
+    result.resultInfo();
+    QString fileName = QFileDialog::getSaveFileName(this,"选择保存路径",
+                                                    "result.html",
+                                                    "Echart files");
+    if(!fileName.isEmpty()){
+        //TODO: 生成echart图表
+        dao.sqlExecute(QString("insert into result values(%1,%2,%3,%4,%5,%6)")
+                       .arg(result.r_id).arg(result.run_time).arg(result.curr_data_num)
+                       .arg(result.putin_data_num).arg(result.getout_data_num).arg(result.avg_num));
+        QMessageBox::information(this,"提示信息","数据导出完成，图表保存在"+fileName);
+    }
 }
 
 void MainWindow::displayLogTextSys(QString text,bool bold,QColor frontColor)

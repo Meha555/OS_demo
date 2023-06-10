@@ -7,6 +7,7 @@
     #include <QDebug>
 #endif
 
+#include <QMetaType>
 #include <QVariant>
 
 class Config
