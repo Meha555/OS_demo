@@ -6,8 +6,6 @@
 
 OS三级项目
 
-[项目进度表 (yuque.com)](https://www.yuque.com/3de4cifang/ky5wmq/vsl5y5ro0oyrl63f#UxCb)
-
 ## 设计亮点
 
 TODO:
