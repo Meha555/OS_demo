@@ -5,13 +5,20 @@ ProgressBall::ProgressBall(QWidget *parent)
 {
     this->setFixedSize(_radius*2+_borderWidth, _radius*2+_borderWidth);
 //    this->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);//以无边框的窗体显示
-    //    this->setAttribute(Qt::WA_TranslucentBackground, true);//设置透明背景
+//    this->setAttribute(Qt::WA_TranslucentBackground, true);//设置透明背景
     _pTimerUpdate = new QTimer(this);
-    connect(_pTimerUpdate, &QTimer::timeout, this, &ProgressBall::updateCurLevel);
+    connect(_pTimerUpdate, &QTimer::timeout, this, &ProgressBall::updateRipple,Qt::DirectConnection);
     _pTimerUpdate->start(20);
 }
 
 void ProgressBall::paintEvent(QPaintEvent *) {
+    // 获取父控件大小
+    QWidget* parentPtr = parentWidget();
+    if(parentPtr != nullptr){
+        parentWidth = parentPtr->size().width() / 3 - 52;
+        parentHeight = parentPtr->size().height() - 60;
+    }
+
     //设置画笔
     QPen pen;
     pen.setColor(_boarderColor);
@@ -21,15 +28,16 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     //设置画家
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);// 设置抗锯齿
-
     //使用矩形绘制圆形边框（左上角x,y坐标，大小）
-    QRect border(_borderWidth*0.5, _borderWidth*0.5, _radius*2, _radius*2);
+    QRect border(_borderWidth*0.5 + parentWidth/2 - _radius, _borderWidth*0.5 + parentHeight/2 - _radius, _radius*2, _radius*2);
+//    QRect border(_borderWidth*0.5, _borderWidth*0.5, _radius*2, _radius*2);
     painter.setPen(_borderWidth > 0 ? pen : Qt::NoPen);
     painter.setBrush(_backgroundColor);
     painter.drawEllipse(border);
 
     //设置矩形边界（左上角x,y坐标，大小）
-    QRect ball = QRect(_borderWidth, _borderWidth,border.width() - _borderWidth,border.height() - _borderWidth);
+    QRect ball = QRect(_borderWidth + parentWidth/2 - _radius, _borderWidth + parentHeight/2 - _radius, border.width() - _borderWidth, border.height() - _borderWidth);
+//    QRect ball = QRect(_borderWidth, _borderWidth,border.width() - _borderWidth,border.height() - _borderWidth);
     //在矩形边界内绘制圆形区域
     QPainterPath circlePath;
     circlePath.addEllipse(ball);
@@ -49,8 +57,9 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     ω：角速度，用于控制周期大小，单位x中的起伏个数
     k：偏距，曲线整体上下偏移量，即水位线位置
     */
+    qreal rippleLevel = _progress/_capacity;
     qreal A = ball.width()*0.1;                           // 振幅
-    qreal k = (1 - _progress*0.01) * ball.height();       // 高度
+    qreal k = (1 - rippleLevel) * ball.height();       // 高度
     qreal w = 2 * M_PI / static_cast<qreal>(ball.width());// 角速度
 
     //在直径上绘制水位线的切线
@@ -93,15 +102,18 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 
     painter.setFont(font);
     painter.setPen(Qt::white);
-    painter.drawText(ball, Qt::AlignCenter,QString("%1%").arg(QString::number(_progress*100/_capacity,'f',2)));
+    painter.drawText(ball, Qt::AlignCenter,QString("%1%").arg(QString::number(rippleLevel*100)));
 }
 
 void ProgressBall::updateProgress(qreal val) {
+//    mutex.lock();
     _progress += val;
+    qDebug()<<this<<" 进度"<<_progress<<" "<<_progress/_capacity;
     update();
+//    mutex.unlock();
 }
 
-void ProgressBall::updateCurLevel()
+void ProgressBall::updateRipple()
 {
     _offset += 0.1;
     if (_offset>=M_PI*2)

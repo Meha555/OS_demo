@@ -16,7 +16,7 @@ class Result
 public:
     Result();
     Result(int cur);
-    Result(QString run,int cur,int put,int get,int avg);
+    Result(QString run,int cur,int put,int get,qreal avg);
     ~Result() = default;
     QString toJsonString();
 
@@ -37,14 +37,14 @@ public:
     int getGetout_data_num() const;
     void setGetout_data_num(int value);
 
-    int getAvg_num() const;
-    void setAvg_num(int value);
+    qreal getAvg_num() const;
+    void setAvg_num(qreal value);
 
 public slots:
     // 运行时的即时结果：主线程中进度球的update执行时调用
     void collectResult(int cur,int putin,int getout);
     // 结束时的汇总结果：主线程中点击结束按钮触发
-    void summaryResult(int avg,qint64 time);
+    void summaryResult(qreal avg,qint64 time);
 
 public:
     static int r_id;
@@ -52,7 +52,7 @@ public:
     int curr_data_num = 0;//当前buffer中数据总数【即时统计】
     int putin_data_num = 0; //已放入的数据总数【即时统计】
     int getout_data_num = 0;//已取出的数据总数【即时统计】
-    int avg_num = 0;//平均每个buffer中的数据个数【最终统计】
+    qreal avg_num = 0;//平均每个buffer中的数据个数【最终统计】
 };
 
 // 注册入元对象系统，以便QVariant使用

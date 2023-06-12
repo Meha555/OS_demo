@@ -28,15 +28,16 @@ INCLUDEPATH += \
     libs/
 
 SOURCES += \
+    daoconfigform.cpp \
     entity/buffer.cpp \
     bufferwidget.cpp \
     entity/config.cpp \
     configform.cpp \
     mapper/dao.cpp \
-    daoconfigform.cpp \
     main.cpp \
     mainwindow.cpp \
     entity/op_thread.cpp \
+    mapper/daoimpl/configdaoimpl.cpp \
     mapper/daoimpl/messagedaoimpl.cpp \
     progressball.cpp \
     entity/result.cpp \
@@ -44,14 +45,15 @@ SOURCES += \
     utils/semaphore.cpp \
 
 HEADERS += \
+    daoconfigform.h \
     entity/buffer.h \
     bufferwidget.h \
     entity/config.h \
     configform.h \
     mapper/dao.h \
-    daoconfigform.h \
     mainwindow.h \
     entity/op_thread.h \
+    mapper/daoimpl/configdaoimpl.h \
     mapper/daoimpl/messagedaoimpl.h \
     progressball.h \
     entity/result.h \

@@ -18,23 +18,23 @@ bool first_start = true;
 
 void MainWindow::initalizeData()
 {
-    dao.setTableName("Config");
-    auto cfg_list = dao.sqlQuery("select * from config order by c_id desc limit 1");
-    qDebug()<<cfg_list.size();
-    if(cfg_list.size() > 0){
-        Config::c_id = cfg_list.begin()->value<Config>().c_id;
-    }
-    dao.setTableName("Result");
-    auto res_list = dao.sqlQuery("select * from result order by r_id desc limit 1");
-    if(res_list.size() > 0){
-        Result::r_id = res_list.begin()->value<Result>().r_id;
-    }
-    dao.setTableName("Message");
-    auto msg_list = dao.sqlQuery("select * from message order by m_id desc limit 1");
-    if(msg_list.size() > 0){
-        Message::m_id = msg_list.begin()->value<Message>().m_id;
-    }
-    qDebug()<<Config::c_id<<' '<<Result::r_id<<" "<<Message::m_id;
+//    dao.setTableName("Config");
+//    auto cfg_list = dao.sqlQuery("select * from config order by c_id desc limit 1");
+//    qDebug()<<cfg_list.size();
+//    if(cfg_list.size() > 0){
+//        Config::c_id = cfg_list.begin()->value<Config>().c_id;
+//    }
+//    dao.setTableName("Result");
+//    auto res_list = dao.sqlQuery("select * from result order by r_id desc limit 1");
+//    if(res_list.size() > 0){
+//        Result::r_id = res_list.begin()->value<Result>().r_id;
+//    }
+//    dao.setTableName("Message");
+//    auto msg_list = dao.sqlQuery("select * from message order by m_id desc limit 1");
+//    if(msg_list.size() > 0){
+//        Message::m_id = msg_list.begin()->value<Message>().m_id;
+//    }
+//    qDebug()<<Config::c_id<<' '<<Result::r_id<<" "<<Message::m_id;
 }
 
 void MainWindow::resetStatistics()
@@ -128,7 +128,10 @@ void MainWindow::changeSpeed(int val){
 // 每隔一段时间就将buffer的情况写入到数据库中
 void MainWindow::updateRes2DB()
 {
-
+    int bf1 = msgDao.batchInsert(buffer1->buffer);
+    int bf2 = msgDao.batchInsert(buffer2->buffer);
+    int bf3 = msgDao.batchInsert(buffer3->buffer);
+    qDebug()<<"插入"<<bf1+bf2+bf3<<"条记录";
 //    buffer1->buffer
 //    dao.sqlExecute(QString("insert into message values(%1,%2,%3,%4,%5)")
 //                   .arg(msg.m_id).arg(msg.t_id).arg(msg.b_id).arg(msg.op_type).arg(msg.data));
@@ -216,39 +219,39 @@ void MainWindow::on_actStart_triggered()
         resetStatistics();
         // 初始化各线程，并启动
         for(int i=1;i<=config.put_num;i++){
-            qDebug()<<"启动1个PUT";
+//            qDebug()<<"启动1个PUT";
             displayLogTextSys("启动1个PUT");
             Operation* put = new Operation(PUT,config.put_speed,this);
             connect(ui->actTerminate,&QAction::triggered,put,[put](){put->quit();put->wait();put->deleteLater();});
-            connect(put, &Operation::putIn, ui->buffer1, &ProgressBall::updateProgress);
+            connect(put, &Operation::putIn, ui->buffer1, &ProgressBall::updateProgress,Qt::DirectConnection);
 //            connect(_pTimerUpdate, &QTimer::timeout, put, [put](){put->getStatus();});
             put->start();
 //            put->getTID();
         }
         int t = ceil(config.move_num/2.0);
         for(int i=1;i<=t;i++) {
-            qDebug()<<"启动2个MOVE";
+//            qDebug()<<"启动2个MOVE";
             displayLogTextSys("启动2个MOVE");
             Operation* move1 = new Operation(MOVE1,config.move_speed,this);
             connect(ui->actTerminate,&QAction::triggered,move1,[move1](){move1->quit();move1->wait();move1->deleteLater();});
-            connect(move1, &Operation::getOut, ui->buffer1, &ProgressBall::updateProgress);
-            connect(move1, &Operation::putIn, ui->buffer2, &ProgressBall::updateProgress);
+            connect(move1, &Operation::getOut, ui->buffer1, &ProgressBall::updateProgress,Qt::DirectConnection);
+            connect(move1, &Operation::putIn, ui->buffer2, &ProgressBall::updateProgress,Qt::DirectConnection);
 //            connect(_pTimerUpdate, &QTimer::timeout, move1, [move1](){move1->getStatus();});
             Operation* move2 = new Operation(MOVE2,config.move_speed,this);
             connect(ui->actTerminate,&QAction::triggered,move2,[move2](){move2->quit();move2->wait();move2->deleteLater();});
-            connect(move2, &Operation::getOut, ui->buffer1, &ProgressBall::updateProgress);
-            connect(move2, &Operation::putIn, ui->buffer3, &ProgressBall::updateProgress);
+            connect(move2, &Operation::getOut, ui->buffer1, &ProgressBall::updateProgress,Qt::DirectConnection);
+            connect(move2, &Operation::putIn, ui->buffer3, &ProgressBall::updateProgress,Qt::DirectConnection);
 //            connect(_pTimerUpdate, &QTimer::timeout, move2, [move2](){move2->getStatus();});
             move1->start();move2->start();
 //            move1->getTID();move2->getTID();
         }
         for(int i=1;i<=config.get_num;i++){
-            qDebug()<<"启动1个GET";
+//            qDebug()<<"启动1个GET";
             displayLogTextSys("启动1个GET");
             Operation* get = new Operation(GET,config.get_speed,this);
             connect(ui->actTerminate,&QAction::triggered,get,[get](){get->quit();get->wait();get->deleteLater();});
-            connect(get, &Operation::getOut, ui->buffer2, &ProgressBall::updateProgress);
-            connect(get, &Operation::getOut, ui->buffer3, &ProgressBall::updateProgress);
+            connect(get, &Operation::getOut, ui->buffer2, &ProgressBall::updateProgress,Qt::DirectConnection);
+            connect(get, &Operation::getOut, ui->buffer3, &ProgressBall::updateProgress,Qt::DirectConnection);
 //            connect(_pTimerUpdate, &QTimer::timeout, get, [get](){get->getStatus();});
             get->start();
 //            get->getTID();
@@ -269,8 +272,14 @@ void MainWindow::on_actTerminate_triggered()
 {
     first_start = true;
     Operation::terminateThread();
-    int avg = (buffer1->cur_num+buffer2->cur_num+buffer3->cur_num) / 3;
+    qreal avg = qreal(buffer1->cur_num+buffer2->cur_num+buffer3->cur_num) / 3;
     result.summaryResult(avg,timeCounter->elapsed());
+//    result.resultInfo();
+//    buffer1->showBuffer();
+//    buffer2->showBuffer();
+//    buffer3->showBuffer();
+    //将数据写回数据库
+    updateRes2DB();
 }
 
 void MainWindow::on_actRestart_triggered()
@@ -306,9 +315,10 @@ void MainWindow::on_actExportResult_triggered()
                                                     "Echart files");
     if(!fileName.isEmpty()){
         //TODO: 生成echart图表
-        dao.sqlExecute(QString("insert into result values(%1,%2,%3,%4,%5,%6)")
-                       .arg(result.r_id).arg(result.run_time).arg(result.curr_data_num)
-                       .arg(result.putin_data_num).arg(result.getout_data_num).arg(result.avg_num));
+//        dao.sqlExecute(QString("insert into result values(%1,%2,%3,%4,%5,%6)")
+//                       .arg(result.r_id).arg(result.run_time).arg(result.curr_data_num)
+//                       .arg(result.putin_data_num).arg(result.getout_data_num).arg(result.avg_num));
+
         QMessageBox::information(this,"提示信息","数据导出完成，图表保存在"+fileName);
     }
 }

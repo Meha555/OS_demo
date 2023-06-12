@@ -11,6 +11,7 @@
 #include <QPainterPath>
 #include <QtMath>
 #include <QDebug>
+#include <QMutex>
 
 // 通用的自定义进度球控件
 class ProgressBall : public QWidget
@@ -45,10 +46,10 @@ protected:
 
 public slots:
     void updateProgress(qreal val);
-    void updateCurLevel();
+    void updateRipple();
 
 private:
-    qreal _capacity = 100;
+    qreal _capacity = 100;//提供一个默认的非零值
     qreal _progress{};// 当前进度
     int _radius = 100;// 球半径
     int _borderWidth = 10;// 边框宽度
@@ -59,6 +60,9 @@ private:
           ,_colorHigh = Qt::red;// 进度填充色
     QTimer* _pTimerUpdate{};// 定时器
     qreal _offset{};// 波纹偏移
+    int parentWidth=0;
+    int parentHeight=0;
+//    QMutex mutex;
 };
 
 #endif // PROGRESSBALL_H

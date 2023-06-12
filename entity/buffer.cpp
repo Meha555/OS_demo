@@ -23,6 +23,13 @@ Message Buffer::getoutBuffer()
     return buffer.dequeue();
 }
 
+void Buffer::showBuffer()
+{
+    for(auto ele:buffer){
+        ele.messageInfo();
+    }
+}
+
 void Buffer::setCapacity(const int c)
 {
     capacity = c;

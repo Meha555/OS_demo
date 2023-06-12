@@ -24,13 +24,12 @@ void Result::resultInfo(){
 }
 #endif
 
-Result::Result(QString run, int cur, int put, int get, int avg)
+Result::Result(QString run, int cur, int put, int get, qreal avg)
     :run_time(run),curr_data_num(cur),putin_data_num(put),
       getout_data_num(get),avg_num(avg)
 {
     r_id++;
 }
-
 // 将整个统计结果生成为JSON字符串，以便提供给Python解析后绘制Echart图表
 QString Result::toJsonString()
 {
@@ -44,7 +43,7 @@ void Result::collectResult(int cur, int putin, int getout)
     getout_data_num = getout;
 }
 // 结束时的汇总结果：主线程中点击结束按钮触发
-void Result::summaryResult(int avg,qint64 time)
+void Result::summaryResult(qreal avg,qint64 time)
 {
     avg_num = avg;
     run_time = QString::number(time);
@@ -95,12 +94,12 @@ void Result::setGetout_data_num(int value)
     getout_data_num = value;
 }
 
-int Result::getAvg_num() const
+qreal Result::getAvg_num() const
 {
     return avg_num;
 }
 
-void Result::setAvg_num(int value)
+void Result::setAvg_num(qreal value)
 {
     avg_num = value;
 }

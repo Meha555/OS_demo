@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QQueue>
+#include <QDebug>
 #include "message.h"
 
 class Buffer : public QObject
@@ -12,6 +13,7 @@ public:
     explicit Buffer(QObject *parent = nullptr);
     void putinBuffer(Message& msg);
     Message getoutBuffer();
+    void showBuffer();
 
     void setCapacity(const int c);
     int getCapacity() const;

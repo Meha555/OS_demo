@@ -2,16 +2,24 @@
 #define CONFIGDAOIMPL_H
 
 #include <QVector>
-#include <QPair>
+#include <QQueue>
 #include "dao.h"
 #include "config.h"
+
+namespace dao{
+    class ConfigDaoImpl;
+}
 
 class ConfigDaoImpl : public Dao
 {
 public:
     ConfigDaoImpl()=default;
-    QPair<Config,bool> findByID(int id);//需要一个bool值来判断是真数据还是假数据
+    ConfigDaoImpl(QObject *parent = nullptr);
+    ConfigDaoImpl(const QString& tabName,QObject *parent = nullptr);
     QVector<Config> findAll();
+    Config findByID(int m_id);
+    int deleteByID(int m_id);
+    int insert(Config& cfg);
 };
 
 #endif // CONFIGDAOIMPL_H

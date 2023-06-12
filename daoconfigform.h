@@ -4,8 +4,9 @@
 #include <QDialog>
 #include <QTableView>
 #include <QSqlTableModel>
-#include "dao.h"
+//#include "dao.h"
 #include "config.h"
+#include "configdaoimpl.h"
 
 namespace Ui {
 class DaoConfigForm;
@@ -18,12 +19,14 @@ class DaoConfigForm : public QDialog
 public:
     explicit DaoConfigForm(QWidget *parent = nullptr);
     ~DaoConfigForm();
+    void showEvent(QShowEvent *event) override;
 
 signals:
     void sendConfig(Config& cfg);
 
 private slots:
     void on_btnChose_clicked();
+    void selectData();
 
 //    void on_tableView_clicked(const QModelIndex &index);
 
@@ -32,8 +35,10 @@ private:
     QSqlTableModel* sqlTabModel;
     QItemSelectionModel* theSelection;
 
-    Dao dao;
-    QVariantList res_set;
+    bool launchFlag = false;
+//    Dao dao;
+    ConfigDaoImpl cfgDao;
+//    QVariantList res_set;
 };
 
 #endif // DAOCONFIGFORM_H

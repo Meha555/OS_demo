@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1053</width>
+    <width>1109</width>
     <height>756</height>
    </rect>
   </property>
@@ -40,9 +40,15 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
            <item>
             <widget class="ProgressBall" name="buffer1" native="true">
              <property name="sizePolicy">
@@ -50,6 +56,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>WaitCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>Buffer1</string>
              </property>
              <property name="whatsThis">
               <string>Buffer1</string>
@@ -76,6 +88,9 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
            <item>
             <widget class="ProgressBall" name="buffer2" native="true">
              <property name="sizePolicy">
@@ -83,6 +98,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>WaitCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>Buffer2</string>
              </property>
              <property name="whatsThis">
               <string>Buffer2</string>
@@ -109,6 +130,9 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetNoConstraint</enum>
+           </property>
            <item>
             <widget class="ProgressBall" name="buffer3" native="true">
              <property name="sizePolicy">
@@ -116,6 +140,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>WaitCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>Buffer3</string>
              </property>
              <property name="whatsThis">
               <string>Buffer3</string>
@@ -165,7 +195,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>227</width>
+              <width>245</width>
               <height>539</height>
              </rect>
             </property>
@@ -204,7 +234,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>226</width>
+              <width>246</width>
               <height>539</height>
              </rect>
             </property>
@@ -243,7 +273,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>227</width>
+              <width>245</width>
               <height>539</height>
              </rect>
             </property>
@@ -284,7 +314,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1053</width>
+     <width>1109</width>
      <height>26</height>
     </rect>
    </property>

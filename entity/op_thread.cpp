@@ -223,24 +223,28 @@ void Operation::putinData(const int bid)
         log = "PUT向buffer1放入1个数据"+data;
         Operation::ptr->buffer1->putinBuffer(msg);
         Operation::ptr->displayLogText(ptr->ui->plainText_log1,log);
+        Operation::ptr->ui->buffer1->updateProgress(1);
         break;
     }
     case MOVE1:{
         log = "MOVE1向Buffer2中放入1个数据"+data;
         Operation::ptr->buffer2->putinBuffer(msg);
         Operation::ptr->displayLogText(ptr->ui->plainText_log2,log);
+        Operation::ptr->ui->buffer2->updateProgress(1);
         break;
     }
     case MOVE2:{
         log = "MOVE2向Buffer3中放入1个数据"+data;
         Operation::ptr->buffer3->putinBuffer(msg);
         Operation::ptr->displayLogText(ptr->ui->plainText_log3,log);
+        Operation::ptr->ui->buffer3->updateProgress(1);
         break;
     }
     default:break;
     }
-    qDebug()<<log<<QTime::currentTime();
-    emit putIn(1);
+    qDebug()<<log;
+//    qDebug()<<log<<QTime::currentTime();
+//    emit putIn(1);
 }
 
 void Operation::getoutData(const int bid)
@@ -252,12 +256,14 @@ void Operation::getoutData(const int bid)
         log = "MOVE1从Buffer1中取出1个数据"+data;
         Operation::ptr->displayLogText(ptr->ui->plainText_log1,log);
         data = Operation::ptr->buffer1->getoutBuffer().data;
+        Operation::ptr->ui->buffer1->updateProgress(-1);
         break;
     }
     case MOVE2:{
         log = "MOVE2从Buffer1中取出1个数据"+data;
         Operation::ptr->displayLogText(ptr->ui->plainText_log1,log);
         data = Operation::ptr->buffer1->getoutBuffer().data;
+        Operation::ptr->ui->buffer1->updateProgress(-1);
         break;
     }
     case GET:
@@ -265,17 +271,20 @@ void Operation::getoutData(const int bid)
             log = "GET从buffer2中取出1个数据"+data;
             Operation::ptr->displayLogText(ptr->ui->plainText_log2,log);
             data = Operation::ptr->buffer2->getoutBuffer().data;
+            Operation::ptr->ui->buffer2->updateProgress(-1);
         }
         else{
             log = "GET从buffer3中取出1个数据"+data;
             Operation::ptr->displayLogText(ptr->ui->plainText_log3,log);
             data = Operation::ptr->buffer3->getoutBuffer().data;
+            Operation::ptr->ui->buffer3->updateProgress(-1);
         }
         break;
     default:break;
     }
-    qDebug()<<log<<QTime::currentTime();
-    emit getOut(-1);
+    qDebug()<<log;
+//    qDebug()<<log<<QTime::currentTime();
+//    emit getOut(-1);
 }
 
 Op_Type Operation::getOp_type() const

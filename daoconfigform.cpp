@@ -1,12 +1,20 @@
 #include "daoconfigform.h"
 #include "ui_daoconfigform.h"
 
+void DaoConfigForm::selectData()
+{
+    sqlTabModel->select();
+    Config::c_id = sqlTabModel->columnCount();
+    qDebug()<<"查找了数据库";
+}
+
 DaoConfigForm::DaoConfigForm(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DaoConfigForm)
 {
     ui->setupUi(this);
-    dao.setTableName("Config");//设置表名
+    launchFlag = true;
+//    dao.setTableName("Config");//设置表名
     connect(ui->tableView,&QTableView::clicked,this,[this](){qDebug()<<ui->tableView->currentIndex().row();});
 //    res_set = dao.sqlQuery("select * from config");
 //    for(auto ele:res_set){
@@ -14,8 +22,10 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
 //        t.configInfo();
 //    }
 
-    sqlTabModel = new QSqlTableModel(this,dao.db);
-    dao.getConnection();
+//    sqlTabModel = new QSqlTableModel(this,dao.db);
+    sqlTabModel = new QSqlTableModel(this,cfgDao.db);
+//    dao.getConnection();
+    cfgDao.getConnection();
     ui->tableView->setModel(sqlTabModel);
     sqlTabModel->setTable("config");//设置表名
     ui->tableView->resizeColumnsToContents();//自动调整列宽
@@ -33,8 +43,7 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
     sqlTabModel->setHeaderData(7,Qt::Horizontal,"put操作速度");
     sqlTabModel->setHeaderData(8,Qt::Horizontal,"move操作速度");
     sqlTabModel->setHeaderData(9,Qt::Horizontal,"get操作速度");
-    sqlTabModel->select();
-    Config::c_id = sqlTabModel->columnCount();
+    if(launchFlag) selectData();
 }
 
 DaoConfigForm::~DaoConfigForm()
@@ -42,14 +51,21 @@ DaoConfigForm::~DaoConfigForm()
     delete ui;
 }
 
+void DaoConfigForm::showEvent(QShowEvent *event)
+{
+    if(launchFlag) selectData();
+    QDialog::showEvent(event);
+}
+
 void DaoConfigForm::on_btnChose_clicked()
 {
     Config cfg;
     //查数据库，得到一个Config对象cfg
-    cfg = dao.sqlQuery("select * from config").at(ui->tableView->currentIndex().row()).value<Config>();
+//    cfg = dao.sqlQuery("select * from config").at(ui->tableView->currentIndex().row()).value<Config>();
 //    for(int i = 0;i < sqlTabModel->columnCount();i++) {
 //        sqlTabModel->data(sqlTabModel->index(ui->tableView->currentIndex().row(),i)).toString();
 //    }
+    cfg = cfgDao.findAll().at(ui->tableView->currentIndex().row());
     emit sendConfig(cfg);
     this->accept();
 }

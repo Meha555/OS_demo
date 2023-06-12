@@ -3,7 +3,8 @@
 
 #include <QDialog>
 #include "config.h"
-#include "dao.h"
+//#include "dao.h"
+#include "configdaoimpl.h"
 
 namespace Ui {
 class ConfigForm;
@@ -25,7 +26,8 @@ private slots:
 
 private:
     Ui::ConfigForm *ui;
-    Dao dao;
+//    Dao dao;
+    ConfigDaoImpl cfgDao;
 };
 
 #endif // CONFIGFORM_H
