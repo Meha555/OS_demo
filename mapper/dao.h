@@ -14,9 +14,9 @@
 #include "message.h"
 #include "buffer.h"
 
-namespace dao{
-    class Dao;
-}
+//namespace dao{
+//    class Dao;
+//}
 
 class Dao : public QObject
 {

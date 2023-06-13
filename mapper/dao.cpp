@@ -4,12 +4,14 @@ Dao::Dao(QObject* parent)
     : QObject(parent) {
     db = QSqlDatabase::addDatabase("QSQLITE");
     sqlHandler = QSqlQuery(db);
+    qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
 }
 
 Dao::Dao(const QString &tabName, QObject* parent)
     : QObject(parent),tableName(tabName) {
     db = QSqlDatabase::addDatabase("QSQLITE");
     sqlHandler = QSqlQuery(db);
+    qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
 }
 
 Dao::~Dao()
@@ -21,10 +23,11 @@ Dao::~Dao()
 // 连接到数据库
 bool Dao::getConnection() {
     if(db.isOpen()) return true;
-        db.setDatabaseName("G://Code//QT//OSproject//db//CP_db.db");  // 数据库位置
-    if (!db.open()) {                 // 如果数据库连接失败，则弹出
+    else db.setDatabaseName("G://Code//QT//OSproject//db//CP_db.db");  // 数据库位置
+    if (!db.open()) {
         QMessageBox::critical(0, "无法打开数据库",
                               "无法建立数据库连接");
+        qCritical()<<db.lastError().text();
         return false;
     }
     return true;

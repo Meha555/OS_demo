@@ -128,13 +128,13 @@ void MainWindow::changeSpeed(int val){
 // 每隔一段时间就将buffer的情况写入到数据库中
 void MainWindow::updateRes2DB()
 {
+    // 写入Buffer内容
     int bf1 = msgDao.batchInsert(buffer1->buffer);
     int bf2 = msgDao.batchInsert(buffer2->buffer);
     int bf3 = msgDao.batchInsert(buffer3->buffer);
     qDebug()<<"插入"<<bf1+bf2+bf3<<"条记录";
-//    buffer1->buffer
-//    dao.sqlExecute(QString("insert into message values(%1,%2,%3,%4,%5)")
-//                   .arg(msg.m_id).arg(msg.t_id).arg(msg.b_id).arg(msg.op_type).arg(msg.data));
+    // 写入运行结果
+    resDao.insert(result);
 }
 
 // 设置参数
@@ -161,12 +161,6 @@ void MainWindow::setConfig()
     ui->buffer3->setCapacity(config.buffer3_size);
 
     // 初始化各信号量
-//    empty1 = new Semaphore(buffer1->capacity);
-//    full1 = new Semaphore(0);
-//    empty2 = new Semaphore(buffer2->capacity);
-//    full2 = new Semaphore(0);
-//    empty3 = new Semaphore(buffer3->capacity);
-//    full3 = new Semaphore(0);
     empty1 = new QSemaphore(buffer1->capacity);
     full1 = new QSemaphore(0);
     empty2 = new QSemaphore(buffer2->capacity);
@@ -305,7 +299,6 @@ void MainWindow::on_actImportConfig_triggered()
     }
     config.configInfo();
 }
-
 
 void MainWindow::on_actExportResult_triggered()
 {

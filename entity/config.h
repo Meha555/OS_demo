@@ -65,7 +65,7 @@ public:
 private:
     bool flag = false;
 public:
-    static int c_id;
+    int c_id=0;
     int buffer1_size=0;// buffer1大小
     int buffer2_size=0;// buffer2大小
     int buffer3_size=0;// buffer3大小

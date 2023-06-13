@@ -6,9 +6,9 @@
 #include "dao.h"
 #include "message.h"
 
-namespace dao {
-    class MessageDaoImpl;
-}
+//namespace dao {
+//    class MessageDaoImpl;
+//}
 
 class MessageDaoImpl : public Dao
 {

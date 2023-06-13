@@ -17,6 +17,7 @@ public:
     Result();
     Result(int cur);
     Result(QString run,int cur,int put,int get,qreal avg);
+    Result(int id, QString run,int cur,int put,int get,qreal avg);
     ~Result() = default;
     QString toJsonString();
 
@@ -47,7 +48,7 @@ public slots:
     void summaryResult(qreal avg,qint64 time);
 
 public:
-    static int r_id;
+    int r_id=0;
     QString run_time; //总运行时间【最终统计】
     int curr_data_num = 0;//当前buffer中数据总数【即时统计】
     int putin_data_num = 0; //已放入的数据总数【即时统计】

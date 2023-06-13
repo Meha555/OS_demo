@@ -1,15 +1,13 @@
 #include "result.h"
 
-int Result::r_id = 0;
-
 Result::Result()
 {
-    r_id++;
+//    r_id++;
 }
 
 Result::Result(int cur):curr_data_num(cur)
 {
-    r_id++;
+//    r_id++;
 }
 
 #ifdef _DEBUG
@@ -28,7 +26,14 @@ Result::Result(QString run, int cur, int put, int get, qreal avg)
     :run_time(run),curr_data_num(cur),putin_data_num(put),
       getout_data_num(get),avg_num(avg)
 {
-    r_id++;
+    //    r_id++;
+}
+
+Result::Result(int id, QString run, int cur, int put, int get, qreal avg)
+    :r_id(id),run_time(run),curr_data_num(cur),putin_data_num(put),
+      getout_data_num(get),avg_num(avg)
+{
+
 }
 // 将整个统计结果生成为JSON字符串，以便提供给Python解析后绘制Echart图表
 QString Result::toJsonString()

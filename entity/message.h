@@ -17,7 +17,7 @@ public:
     void messageInfo();
 
 public:
-    static int m_id;
+    int m_id=0;
     int t_id;//是哪个线程放进来的
     int b_id;//是在哪个buffer里的
     Op_Type op_type;//放入的线程是什么类型

@@ -1,2 +1,3 @@
 *.pro.user
 libs/
+.vscode/

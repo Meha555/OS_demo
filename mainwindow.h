@@ -24,8 +24,7 @@
 //#include "dao.h"
 #include "messagedaoimpl.h"
 #include "configdaoimpl.h"
-
-//using namespace dao;
+#include "resultdaoimpl.h"
 
 #define _DEBUG
 
@@ -114,9 +113,9 @@ public:
 
     // 数据库句柄
 //    Dao dao;
-    dao::ConfigDaoImpl cfgDao;
-    dao::MessageDaoImpl msgDao;
-//    ResultDaoImpl resDao;
+    ConfigDaoImpl cfgDao;
+    MessageDaoImpl msgDao;
+    ResultDaoImpl resDao;
 
     // 设置信息
     Config config;

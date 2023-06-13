@@ -3,8 +3,9 @@
 
 void DaoConfigForm::selectData()
 {
+    cfgDao.getConnection();
     sqlTabModel->select();
-    Config::c_id = sqlTabModel->columnCount();
+//    Config::c_id = sqlTabModel->columnCount();
     qDebug()<<"查找了数据库";
 }
 

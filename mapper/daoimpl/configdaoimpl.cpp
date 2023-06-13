@@ -39,11 +39,11 @@ QVector<Config> ConfigDaoImpl::findAll()
     return ret;
 }
 
-Config ConfigDaoImpl::findByID(int m_id)
+Config ConfigDaoImpl::findByID(int c_id)
 {
     qDebug()<<"Curr DB is: "<<tableName;
     if(!db.isOpen()) getConnection();
-    if(sqlHandler.exec("select * from config where m_id"+QString::number(m_id))){
+    if(sqlHandler.exec("select * from config where c_id="+QString::number(c_id))){
         Config cfg(
                    sqlHandler.value("buffer1_size").toInt(),
                    sqlHandler.value("buffer2_size").toInt(),
@@ -59,30 +59,33 @@ Config ConfigDaoImpl::findByID(int m_id)
     else{
         QMessageBox::critical(0, "数据库元组查询失败",
                               sqlHandler.lastError().text());
-        qCritical()<<sqlHandler.lastError();
+        qCritical()<<sqlHandler.lastError().text();
         return Config();
     }
 }
 
-int ConfigDaoImpl::deleteByID(int m_id)
+int ConfigDaoImpl::deleteByID(int c_id)
 {
     qDebug()<<"Curr DB is: "<<tableName;
     if(!db.isOpen()) getConnection();
-    if(sqlHandler.exec("delete from config where m_id"+QString::number(m_id))){
+    if(sqlHandler.exec("delete from config where c_id"+QString::number(c_id))){
         return 1;
     }
     else{
         QMessageBox::critical(0, "数据库元组删除失败",
                               sqlHandler.lastError().text());
-        qCritical()<<sqlHandler.lastError();
+        qCritical()<<sqlHandler.lastError().text();
         return 0;
     }
 }
 
 int ConfigDaoImpl::insert(Config &cfg)
 {
-    if(sqlHandler.exec(QString("insert into config values(%1,%2,%3,%4,%5,%6,%7,%8,%9,%10)")
-                       .arg(cfg.c_id).arg(cfg.buffer1_size).arg(cfg.buffer2_size).arg(cfg.buffer3_size)
+    qDebug()<<"Curr DB is: "<<tableName;
+    if(!db.isOpen()) getConnection();
+    if(sqlHandler.exec(QString("INSERT INTO config (buffer1_size, buffer2_size, buffer3_size, put_num, put_speed, move_num, get_num, get_speed) \
+                               VALUES (%1, %2, %3, %4, %5, %6, %7, %8)")
+                       .arg(cfg.buffer1_size).arg(cfg.buffer2_size).arg(cfg.buffer3_size)
                        .arg(cfg.put_num).arg(cfg.put_speed)
                        .arg(cfg.move_num).arg(cfg.move_speed)
                        .arg(cfg.get_num).arg(cfg.get_speed))){
@@ -91,7 +94,7 @@ int ConfigDaoImpl::insert(Config &cfg)
     else{
         QMessageBox::critical(0, "数据库元组插入失败",
                               sqlHandler.lastError().text());
-        qCritical()<<sqlHandler.lastError();
+        qCritical()<<sqlHandler.lastError().text();
         return 0;
     }
 }
