@@ -21,6 +21,8 @@
 #include "op_thread.h"
 #include "configform.h"
 #include "daoconfigform.h"
+#include "analysewindow.h"
+
 //#include "dao.h"
 #include "messagedaoimpl.h"
 #include "configdaoimpl.h"
@@ -82,6 +84,8 @@ private slots:
 
     void on_actExportResult_triggered();
 
+    void on_actAnalyse_triggered();
+
 public:
     // 缓冲区
     Buffer* buffer1;
@@ -134,5 +138,7 @@ public:
     QSlider* slider;
     ConfigForm* configFrom = nullptr;//设置信息对话框
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
+    AnalyseWindow* analyseWindow = nullptr;//数据分析窗口
+
 };
 #endif // MAINWINDOW_H

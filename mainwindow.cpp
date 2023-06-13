@@ -84,6 +84,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actStart->setEnabled(false);
     ui->actRestart->setEnabled(false);
     ui->actTerminate->setEnabled(false);
+    ui->actExportResult->setEnabled(false);
+    ui->actAnalyse->setEnabled(false);
 
     timeCounter = new QElapsedTimer();
 
@@ -171,10 +173,7 @@ void MainWindow::setConfig()
     mutex2 = new QMutex;
     mutex3 = new QMutex;
 
-    ui->actPasue->setEnabled(true);
     ui->actStart->setEnabled(true);
-    ui->actRestart->setEnabled(true);
-    ui->actTerminate->setEnabled(true);
 
     ui->label_c_id->setText(QString::number(config.c_id));
     ui->label_buffer1_size->setText(QString::number(config.buffer1_size));
@@ -251,15 +250,20 @@ void MainWindow::on_actStart_triggered()
 //            get->getTID();
         }
         first_start = false;
+        ui->actPasue->setEnabled(true);
+        ui->actRestart->setEnabled(true);
+        ui->actTerminate->setEnabled(true);
     }
     else{
         Operation::resumeThread();
     }
+    ui->actAnalyse->setEnabled(false);
 }
 
 void MainWindow::on_actPasue_triggered()
 {
     Operation::pauseThread();
+    ui->actAnalyse->setEnabled(true);
 }
 
 void MainWindow::on_actTerminate_triggered()
@@ -274,6 +278,8 @@ void MainWindow::on_actTerminate_triggered()
 //    buffer3->showBuffer();
     //将数据写回数据库
     updateRes2DB();
+
+    ui->actExportResult->setEnabled(true);
 }
 
 void MainWindow::on_actRestart_triggered()
@@ -303,6 +309,7 @@ void MainWindow::on_actImportConfig_triggered()
 void MainWindow::on_actExportResult_triggered()
 {
     result.resultInfo();
+    //TODO：没想好做啥
     QString fileName = QFileDialog::getSaveFileName(this,"选择保存路径",
                                                     "result.html",
                                                     "Echart files");
@@ -315,6 +322,16 @@ void MainWindow::on_actExportResult_triggered()
         QMessageBox::information(this,"提示信息","数据导出完成，图表保存在"+fileName);
     }
 }
+
+void MainWindow::on_actAnalyse_triggered()
+{
+    if(analyseWindow == nullptr)
+        analyseWindow = new AnalyseWindow(this);
+    analyseWindow->setWindowFlags(analyseWindow->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
+
+    analyseWindow->show();
+}
+
 
 void MainWindow::displayLogTextSys(QString text,bool bold,QColor frontColor)
 {

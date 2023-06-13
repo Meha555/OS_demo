@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,6 +28,8 @@ INCLUDEPATH += \
     libs/
 
 SOURCES += \
+    analysewindow.cpp \
+    chartform.cpp \
     daoconfigform.cpp \
     entity/buffer.cpp \
     bufferwidget.cpp \
@@ -46,6 +48,8 @@ SOURCES += \
     utils/semaphore.cpp \
 
 HEADERS += \
+    analysewindow.h \
+    chartform.h \
     daoconfigform.h \
     entity/buffer.h \
     bufferwidget.h \
@@ -63,7 +67,9 @@ HEADERS += \
     utils/semaphore.h \
 
 FORMS += \
+    analysewindow.ui \
     bufferwidget.ui \
+    chartform.ui \
     configform.ui \
     daoconfigform.ui \
     mainwindow.ui

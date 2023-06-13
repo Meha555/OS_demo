@@ -8,6 +8,9 @@
         <file>assets/icons/start.png</file>
         <file>assets/icons/terminate.png</file>
         <file>assets/icons/logo.png</file>
+        <file>assets/icons/analyse.png</file>
+        <file>assets/icons/selection.png</file>
+        <file>assets/icons/shapshot.png</file>
     </qresource>
     <qresource prefix="/">
         <file>assets/icons/terminate.png</file>

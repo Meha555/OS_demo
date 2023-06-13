@@ -334,6 +334,7 @@
    <addaction name="separator"/>
    <addaction name="actImportConfig"/>
    <addaction name="actExportResult"/>
+   <addaction name="actAnalyse"/>
    <addaction name="separator"/>
    <addaction name="actStart"/>
    <addaction name="actPasue"/>
@@ -643,6 +644,18 @@
    </property>
    <property name="toolTip">
     <string>重新开始</string>
+   </property>
+  </action>
+  <action name="actAnalyse">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/icons/assets/icons/analyse.png</normaloff>:/icons/assets/icons/analyse.png</iconset>
+   </property>
+   <property name="text">
+    <string>数据分析</string>
+   </property>
+   <property name="toolTip">
+    <string>数据分析</string>
    </property>
   </action>
  </widget>
