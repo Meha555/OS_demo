@@ -28,6 +28,9 @@
 #include "configdaoimpl.h"
 #include "resultdaoimpl.h"
 
+// 美化SDK
+#include "qtmaterialslider.h"
+
 #define _DEBUG
 
 #ifdef _DEBUG
@@ -135,7 +138,8 @@ public:
     QLabel*  label2;
     QLabel*  label3;
     QLabel*  labelSpeed;
-    QSlider* slider;
+//    QSlider* slider;
+    QtMaterialSlider* slider;
     ConfigForm* configFrom = nullptr;//设置信息对话框
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
     AnalyseWindow* analyseWindow = nullptr;//数据分析窗口

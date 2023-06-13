@@ -10,6 +10,9 @@
 #include <QMessageBox>
 #include "chartform.h"
 
+// 美化SDK
+#include "qtmaterialraisedbutton.h"
+
 namespace Ui {
 class AnalyseWindow;
 }
@@ -32,9 +35,12 @@ public:
     QComboBox* comboxBuffer;
     QComboBox* comboxProfile;
     QComboBox* comboxStyle;
-    QPushButton* btnOK;
-    QPushButton* btnCancel;
-    QPushButton* btnHelp;
+//    QPushButton* btnOK;
+//    QPushButton* btnCancel;
+//    QPushButton* btnHelp;
+    QtMaterialRaisedButton* btnOK;
+    QtMaterialRaisedButton* btnCancel;
+    QtMaterialRaisedButton* btnHelp;
 };
 
 #endif // ANALYSEWINDOW_H

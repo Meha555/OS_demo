@@ -12,7 +12,44 @@
         <file>assets/icons/selection.png</file>
         <file>assets/icons/shapshot.png</file>
     </qresource>
-    <qresource prefix="/">
-        <file>assets/icons/terminate.png</file>
+    <qresource prefix="/stylesheet">
+        <file>assets/stylesheet/black.css</file>
+        <file>assets/stylesheet/black/add_bottom.png</file>
+        <file>assets/stylesheet/black/add_left.png</file>
+        <file>assets/stylesheet/black/add_right.png</file>
+        <file>assets/stylesheet/black/add_top.png</file>
+        <file>assets/stylesheet/black/branch_close.png</file>
+        <file>assets/stylesheet/black/branch_open.png</file>
+        <file>assets/stylesheet/black/calendar_nextmonth.png</file>
+        <file>assets/stylesheet/black/calendar_prevmonth.png</file>
+        <file>assets/stylesheet/black/checkbox_checked.png</file>
+        <file>assets/stylesheet/black/checkbox_checked_disable.png</file>
+        <file>assets/stylesheet/black/checkbox_parcial.png</file>
+        <file>assets/stylesheet/black/checkbox_parcial_disable.png</file>
+        <file>assets/stylesheet/black/checkbox_unchecked.png</file>
+        <file>assets/stylesheet/black/checkbox_unchecked_disable.png</file>
+        <file>assets/stylesheet/black/radiobutton_checked.png</file>
+        <file>assets/stylesheet/black/radiobutton_checked_disable.png</file>
+        <file>assets/stylesheet/black/radiobutton_unchecked.png</file>
+        <file>assets/stylesheet/black/radiobutton_unchecked_disable.png</file>
+        <file>assets/stylesheet/lightblue.css</file>
+        <file>assets/stylesheet/lightblue/add_bottom.png</file>
+        <file>assets/stylesheet/lightblue/add_left.png</file>
+        <file>assets/stylesheet/lightblue/add_right.png</file>
+        <file>assets/stylesheet/lightblue/add_top.png</file>
+        <file>assets/stylesheet/lightblue/branch_close.png</file>
+        <file>assets/stylesheet/lightblue/branch_open.png</file>
+        <file>assets/stylesheet/lightblue/calendar_nextmonth.png</file>
+        <file>assets/stylesheet/lightblue/calendar_prevmonth.png</file>
+        <file>assets/stylesheet/lightblue/checkbox_checked.png</file>
+        <file>assets/stylesheet/lightblue/checkbox_checked_disable.png</file>
+        <file>assets/stylesheet/lightblue/checkbox_parcial.png</file>
+        <file>assets/stylesheet/lightblue/checkbox_parcial_disable.png</file>
+        <file>assets/stylesheet/lightblue/checkbox_unchecked.png</file>
+        <file>assets/stylesheet/lightblue/checkbox_unchecked_disable.png</file>
+        <file>assets/stylesheet/lightblue/radiobutton_checked.png</file>
+        <file>assets/stylesheet/lightblue/radiobutton_checked_disable.png</file>
+        <file>assets/stylesheet/lightblue/radiobutton_unchecked.png</file>
+        <file>assets/stylesheet/lightblue/radiobutton_unchecked_disable.png</file>
     </qresource>
 </RCC>

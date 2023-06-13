@@ -14,6 +14,8 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
     ui(new Ui::DaoConfigForm)
 {
     ui->setupUi(this);
+    ui->btnChose->setRole(Material::Secondary);
+    ui->btnCancel->setRole(Material::Primary);
     launchFlag = true;
 //    dao.setTableName("Config");//设置表名
     connect(ui->tableView,&QTableView::clicked,this,[this](){qDebug()<<ui->tableView->currentIndex().row();});

@@ -19,9 +19,14 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     lab3->setText("图表风格: ");
     comboxStyle = new QComboBox(this);
     // OK & Cancel
-    btnOK = new QPushButton(this);
-    btnCancel = new QPushButton(this);
-    btnHelp = new QPushButton(this);
+//    btnOK = new QPushButton(this);
+//    btnCancel = new QPushButton(this);
+//    btnHelp = new QPushButton(this);
+    btnOK = new QtMaterialRaisedButton(this);
+    btnCancel = new QtMaterialRaisedButton(this);
+    btnHelp = new QtMaterialRaisedButton(this);
+    btnOK->setRole(Material::Secondary);
+    btnCancel->setRole(Material::Primary);
     btnOK->setText("确定");
     btnCancel->setText("取消");
     btnHelp->setText("图表说明");
@@ -46,7 +51,7 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
         comboxBuffer->clear();comboxProfile->clear();comboxStyle->clear();
     });
     connect(btnHelp,&QPushButton::clicked,this,[this](){
-        QMessageBox::
+        QMessageBox::information(this, "帮助信息", "这是一条帮助信息。");
     });
 
     // 创建栅格布局，以坐标形式限定各组件的位置

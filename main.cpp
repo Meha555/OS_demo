@@ -20,6 +20,10 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(code);
     QFont font(QString::fromLocal8Bit("华文中宋"),10);
     a.setFont(font);
+    // QFile file(QString("%1").arg(":/stylesheet/assets/stylesheet/lightblue.css"));
+    // file.open(QFile::ReadOnly);
+    // QString css = QLatin1String(file.readAll());
+    // qApp->setStyleSheet(css);
     MainWindow w;
     w.show();
 //    Dao* dao = new MessageDaoImpl("Message");
@@ -36,5 +40,6 @@ int main(int argc, char *argv[])
 //        lm.enqueue(Message());
 //    }
 //    msgDao.batchInsert(lm);
+
     return a.exec();
 }

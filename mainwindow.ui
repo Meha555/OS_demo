@@ -214,7 +214,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnClear1">
+              <widget class="QtMaterialRaisedButton" name="btnClear1">
                <property name="text">
                 <string>清屏</string>
                </property>
@@ -253,7 +253,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnClear2">
+              <widget class="QtMaterialRaisedButton" name="btnClear2">
                <property name="text">
                 <string>清屏</string>
                </property>
@@ -292,7 +292,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnClear3">
+              <widget class="QtMaterialRaisedButton" name="btnClear3">
                <property name="text">
                 <string>清屏</string>
                </property>
@@ -665,6 +665,11 @@
    <extends>QWidget</extends>
    <header>progressball.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtMaterialRaisedButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qtmaterialraisedbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

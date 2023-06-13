@@ -58,13 +58,15 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    qRegisterMetaType<Config>("Config");
-//    qRegisterMetaType<Config>("Message");
-//    qRegisterMetaType<Config>("Result");
+    // 注册元类型，可以不需要
+    qRegisterMetaType<Config>("Config");
+    qRegisterMetaType<Config>("Message");
+    qRegisterMetaType<Config>("Result");
 
     // 界面相关设置
     label1 = new QLabel("操作速度控制：", this);
-    slider = new QSlider(Qt::Horizontal, this);
+//    slider = new QSlider(Qt::Horizontal, this);
+    slider = new QtMaterialSlider(this);
     label2 = new QLabel("慢 ", this);
     labelSpeed = new QLabel(QString(" 当前速度：%1x").arg(static_cast<qreal>(speed_coefficient/1000),0,'g',2));
     labelSpeed->setFixedSize(140,20);
@@ -86,6 +88,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actTerminate->setEnabled(false);
     ui->actExportResult->setEnabled(false);
     ui->actAnalyse->setEnabled(false);
+
+//    ui->btnClear1->setRole(Material::Primary);
+//    ui->btnClear2->setRole(Material::Primary);
+//    ui->btnClear3->setRole(Material::Primary);
 
     timeCounter = new QElapsedTimer();
 
