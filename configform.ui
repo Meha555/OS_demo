@@ -14,7 +14,7 @@
    <string>设置属性</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="res.qrc">
     <normaloff>:/icons/assets/icons/config.png</normaloff>:/icons/assets/icons/config.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -38,7 +38,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit_buf1size">
+       <widget class="QtMaterialTextField" name="lineEdit_buf1size">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -67,7 +67,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_buf2size">
+       <widget class="QtMaterialTextField" name="lineEdit_buf2size">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -96,7 +96,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="lineEdit_buf3size">
+       <widget class="QtMaterialTextField" name="lineEdit_buf3size">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -134,7 +134,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit_putNum">
+       <widget class="QtMaterialTextField" name="lineEdit_putNum">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -163,7 +163,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_putSpeed">
+       <widget class="QtMaterialTextField" name="lineEdit_putSpeed">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -201,7 +201,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit_moveNum">
+       <widget class="QtMaterialTextField" name="lineEdit_moveNum">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -230,7 +230,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_moveSpeed">
+       <widget class="QtMaterialTextField" name="lineEdit_moveSpeed">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -268,7 +268,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit_getNum">
+       <widget class="QtMaterialTextField" name="lineEdit_getNum">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -297,7 +297,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_getSpeed">
+       <widget class="QtMaterialTextField" name="lineEdit_getSpeed">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -332,7 +332,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="btnOK">
+       <widget class="QtMaterialRaisedButton" name="btnOK">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -358,7 +358,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="btnCancel">
+       <widget class="QtMaterialRaisedButton" name="btnCancel">
         <property name="font">
          <font>
           <family>华文中宋</family>
@@ -388,7 +388,21 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>QtMaterialRaisedButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qtmaterialraisedbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QtMaterialTextField</class>
+   <extends>QLineEdit</extends>
+   <header location="global">qtmaterialtextfield.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnCancel</sender>

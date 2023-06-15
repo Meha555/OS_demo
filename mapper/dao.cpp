@@ -1,23 +1,26 @@
 #include "dao.h"
 
+// 使用默认连接
 Dao::Dao(QObject* parent)
     : QObject(parent) {
     db = QSqlDatabase::addDatabase("QSQLITE");
     sqlHandler = QSqlQuery(db);
     qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
+    qDebug()<<"当前数据库连接"<<db.connectionName();
 }
 
+// 使用特定连接
 Dao::Dao(const QString &tabName, QObject* parent)
     : QObject(parent),tableName(tabName) {
-    db = QSqlDatabase::addDatabase("QSQLITE");
+    db = QSqlDatabase::addDatabase("QSQLITE",tabName);
     sqlHandler = QSqlQuery(db);
     qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
+    qDebug()<<"当前数据库连接"<<db.connectionName();
 }
 
 Dao::~Dao()
 {
-    closeDB();
-    qDebug()<<"数据库关闭";
+//    closeDB();
 }
 
 // 连接到数据库
@@ -33,10 +36,13 @@ bool Dao::getConnection() {
     return true;
 }
 
-// 关闭数据库
-void Dao::closeDB() {
-    if(db.isOpen())
+// 关闭数据库连接
+void Dao::closeConnection() {
+    if(db.isOpen()){
         db.close();
+        qDebug()<<"数据库连接关闭";
+    }
+    else qDebug()<<"数据库连接已经关闭";
 }
 
 void Dao::setTableName(const QString &value)
@@ -119,19 +125,20 @@ void Dao::resetTableName()
 //    return ret;
 //}
 
-//// 增删改
-//int Dao::sqlExecute(const QString &sql) {
-//    qDebug()<<"Curr DB is: "<<tableName;
-//    if(!db.isOpen()) getConnection();
-//    if(sqlHandler.exec(sql)){
-//        return sqlHandler.record().count();
-//    }else{
-//        QMessageBox::critical(0, "数据库增删改失败",
-//                              sqlHandler.lastError().text());
-//        qCritical()<<sqlHandler.lastError();
-//        return -1;
-//    }
-//}
+// 通用增删改
+int Dao::sqlExecute(const QString &sql) {
+    qDebug()<<"Curr DB is: "<<tableName;
+    if(getConnection()){
+        if(sqlHandler.exec(sql)){
+            return sqlHandler.record().count();
+        }else{
+            QMessageBox::critical(0, "数据库增删改失败",
+                                  sqlHandler.lastError().text());
+            qCritical()<<sqlHandler.lastError();
+            return -1;
+        }
+    }else return -1;
+}
 
 //// 批量增删
 //int Dao::sqlBatchExecute(bool type, QQueue<Message>& tuples)

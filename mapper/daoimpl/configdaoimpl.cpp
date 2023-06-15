@@ -1,17 +1,14 @@
 #include "configdaoimpl.h"
 
-ConfigDaoImpl::ConfigDaoImpl(QObject* parent): Dao(parent)
+ConfigDaoImpl::ConfigDaoImpl(QObject* parent): Dao("Config",parent)
 {
-    tableName = "Config";
+//    tableName = "Config";
 }
-
-ConfigDaoImpl::ConfigDaoImpl(const QString &tabName, QObject *parent):Dao(tabName,parent)
-{}
 
 QVector<Config> ConfigDaoImpl::findAll()
 {
     qDebug()<<"Curr DB is: "<<tableName;
-    if(!db.isOpen()) getConnection();
+    getConnection();
     QVector<Config> ret;
     if(sqlHandler.exec("select * from config")){
         while(sqlHandler.next()){
@@ -42,7 +39,7 @@ QVector<Config> ConfigDaoImpl::findAll()
 Config ConfigDaoImpl::findByID(int c_id)
 {
     qDebug()<<"Curr DB is: "<<tableName;
-    if(!db.isOpen()) getConnection();
+    getConnection();
     if(sqlHandler.exec("select * from config where c_id="+QString::number(c_id))){
         Config cfg(
                    sqlHandler.value("buffer1_size").toInt(),
@@ -67,7 +64,7 @@ Config ConfigDaoImpl::findByID(int c_id)
 int ConfigDaoImpl::deleteByID(int c_id)
 {
     qDebug()<<"Curr DB is: "<<tableName;
-    if(!db.isOpen()) getConnection();
+    getConnection();
     if(sqlHandler.exec("delete from config where c_id"+QString::number(c_id))){
         return 1;
     }
@@ -82,9 +79,9 @@ int ConfigDaoImpl::deleteByID(int c_id)
 int ConfigDaoImpl::insert(Config &cfg)
 {
     qDebug()<<"Curr DB is: "<<tableName;
-    if(!db.isOpen()) getConnection();
-    if(sqlHandler.exec(QString("INSERT INTO config (buffer1_size, buffer2_size, buffer3_size, put_num, put_speed, move_num, get_num, get_speed) \
-                               VALUES (%1, %2, %3, %4, %5, %6, %7, %8)")
+    getConnection();
+    if(sqlHandler.exec(QString("INSERT INTO config (buffer1_size, buffer2_size, buffer3_size, put_num, put_speed, move_num, move_speed, get_num, get_speed) \
+                               VALUES (%1, %2, %3, %4, %5, %6, %7, %8, %9)")
                        .arg(cfg.buffer1_size).arg(cfg.buffer2_size).arg(cfg.buffer3_size)
                        .arg(cfg.put_num).arg(cfg.put_speed)
                        .arg(cfg.move_num).arg(cfg.move_speed)

@@ -1,29 +1,54 @@
 #include "chartform.h"
 #include "ui_chartform.h"
 
+extern QStringList profiles;
+
 //ChartForm::ChartForm(QWidget* parent)
 //    : QWidget(parent),
 //      ui(new Ui::ChartForm) {
 //    ui->setupUi(this);
 //}
 
-ChartForm::ChartForm(const QString& type, QWidget* parent)
-    : QWidget(parent), ui(new Ui::ChartForm), type(type) {
+ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
+    : QWidget(parent), ui(new Ui::ChartForm) {
     ui->setupUi(this);
+    ui->chartView->setRubberBand(QChartView::RectangleRubberBand);
+    timeRefresh = new QTimer(this);
+    timeRefresh->start(100);
+    chartName = param.buf + "-" + profiles[param.type];
+    qDebug()<<chartName;
+    this->setWindowTitle(chartName);
     connect(dynamic_cast<AnalyseWindow*>(parent)->comboxStyle,
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,[this](int i){
         ui->chartView->chart()->setTheme(QChart::ChartTheme(i));
     });
-    if (type == "Pie") {
-        iniPieChart();
-        drawPieChart();
-    } else if (type == "Bar") {
-        iniBarChart();
-        drawBarChart();
-    } else {
-        iniPercentBar();
-        drawPercentBar();
+    switch (param.type) {
+    case DATA_CHANGE_TREND:{//Buffer数据量变化趋势【曲线图+柱状/饼图】
+        initLineChart();
+        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawLineChart);
+
+//        initPieChart();
+//        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawPieChart);
+
+//        initBarChart();
+//        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawBarChart);
+    }
+    case DATA_DISTRIBUTION:{//Buffer数据量分布【柱状/饼图】
+        initPieChart();
+        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawPieChart);
+
+//        initBarChart();
+//        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawBarChart);
+    }
+    case PUT_OUT_TREND:{//取出/放入数据变化趋势【曲线图】
+        initLineChart();
+        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawLineChart);
+    }
+    case THREAD_STATE_TREND:{//线程状态变化趋势【曲线图】
+        initLineChart();
+        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawLineChart);
+    }
     }
 }
 
@@ -32,7 +57,7 @@ ChartForm::~ChartForm() {
 }
 
 // 初始化柱状图
-void ChartForm::iniBarChart() {
+void ChartForm::initBarChart() {
     QChart* chart = new QChart();  // 创建chart
     chart->setTitle("Barchart演示");
     chart->setAnimationOptions(QChart::SeriesAnimations);
@@ -117,7 +142,7 @@ void ChartForm::drawBarChart() {
 }
 
 // 初始化饼图
-void ChartForm::iniPieChart() {
+void ChartForm::initPieChart() {
     chart = new QChart();
     chart->setTitle("饼图");
     chart->setAnimationOptions(QChart::SeriesAnimations);
@@ -157,7 +182,7 @@ void ChartForm::drawPieChart() {
 }
 
 // 百分比柱状图初始化
-void ChartForm::iniPercentBar() {
+void ChartForm::initPercentBar() {
     QChart* chart = new QChart();
     chart->setTitle("PercentBar 演示");
     chart->setAnimationOptions(QChart::SeriesAnimations);
@@ -213,10 +238,56 @@ void ChartForm::drawPercentBar() {
     //    chart->legend()->setAlignment(Qt::AlignRight); //AlignBottom
 }
 
-QString ChartForm::getType() const {
-    return type;
+void ChartForm::initLineChart()
+{
+    //初始化QChart的实例
+    chart = ui->chartView->chart();  // 获取chart对象
+    //初始化QSplineSeries的实例
+    lineSeries = new QSplineSeries();
+    //设置曲线的名称
+    lineSeries->setName(chartName);
+    //把曲线添加到QChart的实例chart中
+    chart->addSeries(lineSeries);
+    //声明并初始化X轴、两个Y轴
+    QValueAxis *axisX = new QValueAxis();
+    QValueAxis *axisY = new QValueAxis();
+    //设置坐标轴显示的范围
+    axisX->setMin(0);
+    axisX->setMax(MAX_X);
+    axisY->setMin(0);
+    axisY->setMax(MAX_Y);
+    //设置坐标轴上的格点
+    axisX->setTickCount(10);
+    axisY->setTickCount(10);
+    //设置坐标轴显示的名称
+    axisX->setTitleText("X-Test");
+    axisY->setTitleText("Y-Test");
+    //设置网格不显示
+    axisY->setGridLineVisible(false);
+    //下方：Qt::AlignBottom，左边：Qt::AlignLeft
+    //右边：Qt::AlignRight，上方：Qt::AlignTop
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    //把曲线关联到坐标轴
+    lineSeries->attachAxis(axisX);
+    lineSeries->attachAxis(axisY);
+    //把chart显示到窗口上
+//    ui->chartView->setChart(chart);
+    ui->chartView->setRenderHint(QPainter::Antialiasing);
 }
 
-void ChartForm::setType(const QString& type) {
-    this->type = type;
+void ChartForm::drawLineChart()
+{
+    static int count = 0;
+        if(count > MAX_X)
+        {
+            //当曲线上最早的点超出X轴的范围时，剔除最早的点，
+            lineSeries->removePoints(0,lineSeries->count() - MAX_X);
+            // 更新X轴的范围
+            chart->axisX()->setMin(count - MAX_X);
+            chart->axisX()->setMax(count);
+        }
+        //增加新的点到曲线末端
+        lineSeries->append(count, rand()%65);//随机生成0到65的随机数
+        count ++;
 }

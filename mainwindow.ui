@@ -50,7 +50,7 @@
             <enum>QLayout::SetDefaultConstraint</enum>
            </property>
            <item>
-            <widget class="ProgressBall" name="buffer1" native="true">
+            <widget class="ProgressBall" name="bufBall1" native="true">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -92,7 +92,7 @@
             <enum>QLayout::SetDefaultConstraint</enum>
            </property>
            <item>
-            <widget class="ProgressBall" name="buffer2" native="true">
+            <widget class="ProgressBall" name="bufBall2" native="true">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -134,7 +134,7 @@
             <enum>QLayout::SetNoConstraint</enum>
            </property>
            <item>
-            <widget class="ProgressBall" name="buffer3" native="true">
+            <widget class="ProgressBall" name="bufBall3" native="true">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>

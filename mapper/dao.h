@@ -26,10 +26,10 @@ public:
     explicit Dao(const QString& tabName, QObject *parent = nullptr);
     ~Dao();
 //    QVariantList sqlQuery(const QString& sql);
-//    int sqlExecute(const QString& sql);
+    int sqlExecute(const QString& sql);
 //    int sqlBatchExecute(bool type, QQueue<Message>& bf);
     bool getConnection();
-    void closeDB();
+    void closeConnection();
     void setTableName(const QString &value);
     void resetTableName();
 signals:

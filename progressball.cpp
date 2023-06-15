@@ -123,7 +123,12 @@ void ProgressBall::updateRipple()
 //   if (_progress>=100)
 //       _progress -= 100;
 
-   update();
+    update();
+}
+
+void ProgressBall::resetProgress()
+{
+    _progress = 0;
 }
 
 qreal ProgressBall::progress() const

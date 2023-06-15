@@ -37,7 +37,7 @@ private:
 
     bool launchFlag = false;
 //    Dao dao;
-    ConfigDaoImpl cfgDao;
+    ConfigDaoImpl *cfgDao;
 //    QVariantList res_set;
 };
 

@@ -14,7 +14,6 @@ class ConfigDaoImpl : public Dao
 {
 public:
     ConfigDaoImpl(QObject *parent = nullptr);
-    ConfigDaoImpl(const QString& tabName,QObject *parent = nullptr);
     QVector<Config> findAll();
     Config findByID(int c_id);
     int deleteByID(int c_id);

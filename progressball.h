@@ -47,6 +47,7 @@ protected:
 public slots:
     void updateProgress(qreal val);
     void updateRipple();
+    void resetProgress();
 
 private:
     qreal _capacity = 100;//提供一个默认的非零值

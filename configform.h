@@ -27,7 +27,7 @@ private slots:
 private:
     Ui::ConfigForm *ui;
 //    Dao dao;
-    ConfigDaoImpl cfgDao;
+    ConfigDaoImpl *cfgDao;
 };
 
 #endif // CONFIGFORM_H

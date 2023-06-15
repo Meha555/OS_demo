@@ -36,6 +36,7 @@ protected:
 signals:
     void putIn(qreal val);
     void getOut(qreal val);
+    void logging();
 
 private:
     QString genRandData();// 生成随机数

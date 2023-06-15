@@ -3,7 +3,7 @@
 
 void DaoConfigForm::selectData()
 {
-    cfgDao.getConnection();
+    cfgDao->getConnection();
     sqlTabModel->select();
 //    Config::c_id = sqlTabModel->columnCount();
     qDebug()<<"查找了数据库";
@@ -17,6 +17,7 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
     ui->btnChose->setRole(Material::Secondary);
     ui->btnCancel->setRole(Material::Primary);
     launchFlag = true;
+    cfgDao = new ConfigDaoImpl(this);
 //    dao.setTableName("Config");//设置表名
     connect(ui->tableView,&QTableView::clicked,this,[this](){qDebug()<<ui->tableView->currentIndex().row();});
 //    res_set = dao.sqlQuery("select * from config");
@@ -26,9 +27,9 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
 //    }
 
 //    sqlTabModel = new QSqlTableModel(this,dao.db);
-    sqlTabModel = new QSqlTableModel(this,cfgDao.db);
+    sqlTabModel = new QSqlTableModel(this,cfgDao->db);
 //    dao.getConnection();
-    cfgDao.getConnection();
+    cfgDao->getConnection();
     ui->tableView->setModel(sqlTabModel);
     sqlTabModel->setTable("config");//设置表名
     ui->tableView->resizeColumnsToContents();//自动调整列宽
@@ -68,7 +69,7 @@ void DaoConfigForm::on_btnChose_clicked()
 //    for(int i = 0;i < sqlTabModel->columnCount();i++) {
 //        sqlTabModel->data(sqlTabModel->index(ui->tableView->currentIndex().row(),i)).toString();
 //    }
-    cfg = cfgDao.findAll().at(ui->tableView->currentIndex().row());
+    cfg = cfgDao->findAll().at(ui->tableView->currentIndex().row());
     emit sendConfig(cfg);
     this->accept();
 }

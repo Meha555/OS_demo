@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 //        lm.enqueue(Message());
 //    }
 //    msgDao.batchInsert(lm);
-
+//    auto lm = msgDao.findAll();
+//    for(auto& ele: lm) ele.messageInfo();
+//    msgDao.deleteAll();
     return a.exec();
 }

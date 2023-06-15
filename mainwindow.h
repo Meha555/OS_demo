@@ -120,9 +120,9 @@ public:
 
     // 数据库句柄
 //    Dao dao;
-    ConfigDaoImpl cfgDao;
-    MessageDaoImpl msgDao;
-    ResultDaoImpl resDao;
+    ConfigDaoImpl *cfgDao;
+    MessageDaoImpl *msgDao;
+    ResultDaoImpl *resDao;
 
     // 设置信息
     Config config;

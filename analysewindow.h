@@ -6,12 +6,22 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QStringList>
 #include <QMessageBox>
+#include <QHash>
 #include "chartform.h"
+#include "ledlabel.h"
 
 // 美化SDK
 #include "qtmaterialraisedbutton.h"
+
+using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,PUT_OUT_TREND,THREAD_STATE_TREND};
+
+struct ChartParam{
+    QString buf;
+    ProfileType type;
+};
 
 namespace Ui {
 class AnalyseWindow;

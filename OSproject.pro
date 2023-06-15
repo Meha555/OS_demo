@@ -32,9 +32,9 @@ SOURCES += \
     chartform.cpp \
     daoconfigform.cpp \
     entity/buffer.cpp \
-    bufferwidget.cpp \
     entity/config.cpp \
     configform.cpp \
+    ledlabel.cpp \
     mapper/dao.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -52,9 +52,9 @@ HEADERS += \
     chartform.h \
     daoconfigform.h \
     entity/buffer.h \
-    bufferwidget.h \
     entity/config.h \
     configform.h \
+    ledlabel.h \
     mapper/dao.h \
     mainwindow.h \
     entity/op_thread.h \
@@ -68,10 +68,10 @@ HEADERS += \
 
 FORMS += \
     analysewindow.ui \
-    bufferwidget.ui \
     chartform.ui \
     configform.ui \
     daoconfigform.ui \
+    ledlabel.ui \
     mainwindow.ui
 
 # Default rules for deployment.

@@ -8,7 +8,7 @@ class ResultDaoImpl : public Dao
 {
 public:
     ResultDaoImpl(QObject *parent = nullptr);
-    ResultDaoImpl(const QString& tabName,QObject *parent = nullptr);
+//    ResultDaoImpl(const QString& tabName,QObject *parent = nullptr);
     QVector<Result> findAll();
     Result findByID(int r_id);
     int deleteByID(int r_id);
