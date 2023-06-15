@@ -9,6 +9,7 @@
 #include <QValueAxis>
 #include <QtCharts>
 #include "analysewindow.h"
+#include "betterchartview.h"
 
 #define MAX_X 50
 #define MAX_Y 70
@@ -26,7 +27,6 @@ class ChartForm : public QWidget
     Q_OBJECT
 
 public:
-//    explicit ChartForm(QWidget *parent = nullptr);
     explicit ChartForm(const ChartParam &param,QWidget *parent = nullptr);
     ~ChartForm();
 

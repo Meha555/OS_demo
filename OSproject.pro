@@ -29,6 +29,8 @@ INCLUDEPATH += \
 
 SOURCES += \
     analysewindow.cpp \
+    statitics.cpp \
+    utils/betterchartview.cpp \
     chartform.cpp \
     daoconfigform.cpp \
     entity/buffer.cpp \
@@ -49,6 +51,8 @@ SOURCES += \
 
 HEADERS += \
     analysewindow.h \
+    statitics.h \
+    utils/betterchartview.h \
     chartform.h \
     daoconfigform.h \
     entity/buffer.h \

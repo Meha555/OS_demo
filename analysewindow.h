@@ -57,7 +57,7 @@ public:
 //    QPushButton* btnCancel;
 //    QPushButton* btnHelp;
     QtMaterialRaisedButton* btnOK;
-    QtMaterialRaisedButton* btnCancel;
+    QtMaterialRaisedButton* btnClose;
     QtMaterialRaisedButton* btnHelp;
 };
 

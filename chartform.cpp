@@ -3,16 +3,9 @@
 
 extern QStringList profiles;
 
-//ChartForm::ChartForm(QWidget* parent)
-//    : QWidget(parent),
-//      ui(new Ui::ChartForm) {
-//    ui->setupUi(this);
-//}
-
 ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
     : QWidget(parent), ui(new Ui::ChartForm) {
     ui->setupUi(this);
-    ui->chartView->setRubberBand(QChartView::RectangleRubberBand);
     timeRefresh = new QTimer(this);
     timeRefresh->start(100);
     chartName = param.buf + "-" + profiles[param.type];

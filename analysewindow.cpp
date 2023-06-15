@@ -3,6 +3,18 @@
 
 QStringList profiles = {"Buffer数据量变化趋势", "Buffer数据量分布", "取出/放入数据变化趋势", "线程状态变化趋势"};
 
+static const QString help = "<b>图表类型：</b><br>"
+                            "- Buffer数据量变化趋势<br>"
+                            "- Buffer数据量分布<br>"
+                            "- 取出/放入数据变化趋势<br>"
+                            "- 线程状态变化趋势<br><br>"
+                            "<b>使用说明：</b><br>"
+                            "- 鼠标框选可以放大指定区域<br>"
+                            "- 鼠标右键可以缩小<br>"
+                            "- 鼠标滚轮可以缩放<br>"
+                            "- 鼠标中键可以拖动";
+
+
 AnalyseWindow::AnalyseWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::AnalyseWindow)
@@ -30,20 +42,20 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     // 什么图表风格
     QLabel* lab3 = new QLabel("图表风格: ",this);
     comboxStyle = new QComboBox(this);
-    // OK & Cancel
+    // OK & Close
 //    btnOK = new QPushButton(this);
 //    btnCancel = new QPushButton(this);
 //    btnHelp = new QPushButton(this);
     btnOK = new QtMaterialRaisedButton(this);
-    btnCancel = new QtMaterialRaisedButton(this);
+    btnClose = new QtMaterialRaisedButton(this);
     btnHelp = new QtMaterialRaisedButton(this);
     btnOK->setRole(Material::Secondary);
-    btnCancel->setRole(Material::Primary);
+    btnClose->setRole(Material::Primary);
     btnOK->setText("绘制");
-    btnCancel->setText("关闭全部");
-    btnHelp->setText("图表说明");
+    btnClose->setText("关闭全部");
+    btnHelp->setText("使用说明");
     btnOK->setFixedSize(100, 30);
-    btnCancel->setFixedSize(100,30);
+    btnClose->setFixedSize(100,30);
 //    comboxProfile->addItem("")
     comboxBuffer->addItem("Buffer1");
     comboxBuffer->addItem("Buffer2");
@@ -62,13 +74,13 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     comboxStyle->addItem("Qt", QChart::ChartThemeQt);
 
     connect(btnOK, &QPushButton::clicked, this, &AnalyseWindow::createTab);
-    connect(btnCancel, &QPushButton::clicked, this, [this](){
+    connect(btnClose, &QPushButton::clicked, this, [this](){
         for (int i = 0; i < ui->tabWidget->count(); ++i) { // 获取所有选项卡的个数，并逐一关闭之
             ui->tabWidget->widget(i)->close();
         }
     });
     connect(btnHelp,&QPushButton::clicked,this,[this](){
-        QMessageBox::information(this, "帮助信息", "这是一条帮助信息。");
+        QMessageBox::information(this, "帮助信息", help);
     });
     connect(dynamic_cast<MainWindow*>(parent),
             &MainWindow::sigPause,this,[this](){statLED->setStatus(BLOCK);},Qt::DirectConnection);
@@ -87,7 +99,7 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     btnLayout->addWidget(lab2, 1, 0);
     btnLayout->addWidget(comboxProfile, 1, 1);
     btnLayout->addWidget(btnOK, 1, 2);
-    btnLayout->addWidget(btnCancel, 1, 3);
+    btnLayout->addWidget(btnClose, 1, 3);
 //    ui->toolBar->addWidget(lab1);
 //    ui->toolBar->addWidget(comboxBuffer);
 //    ui->toolBar->addWidget(lab2);
@@ -112,17 +124,17 @@ AnalyseWindow::~AnalyseWindow()
 
 void AnalyseWindow::createTab()
 {
-    ChartParam parm{
+    ChartParam param{
         .buf = comboxBuffer->currentText(),
         .type = static_cast<ProfileType>(comboxProfile->currentIndex())
     };
 
     //创建ChartForm窗体，并在tabWidget中显示
-    ChartForm *chartForm = new ChartForm(parm,this); //不指定父窗口，单独用show()方法显示
+    ChartForm *chartForm = new ChartForm(param,this); //不指定父窗口，单独用show()方法显示
     chartForm->setAttribute(Qt::WA_DeleteOnClose); //关闭时自动删除
 
-    int cur=ui->tabWidget->addTab(chartForm,
-            QString::asprintf("图表 %d",ui->tabWidget->count()));
+    int cur = ui->tabWidget->addTab(chartForm
+            ,param.buf + "-" + profiles[param.type]+QString::number(ui->tabWidget->count()));
     ui->tabWidget->setCurrentIndex(cur);
     ui->tabWidget->setVisible(true);
 }
