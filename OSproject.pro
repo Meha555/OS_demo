@@ -64,7 +64,8 @@ HEADERS += \
     progressball.h \
     entity/result.h \
     entity/message.h \
-    utils/semaphore.h \
+    utils/semaphore.h \ \
+    utils/utils.h
 
 FORMS += \
     analysewindow.ui \

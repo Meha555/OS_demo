@@ -9,12 +9,10 @@ int thread_put_num; //put操作个数
 int thread_move_num; //move操作个数
 int thread_get_num; //get操作个数
 
-int put_blocked_num; //当前阻塞的put线程数
-int move_blocked_num; //当前阻塞的move线程数
-int get_blocked_num; //当前阻塞的get线程数
-
 int putin_num; //已放入的数据个数
 int getout_num; //已取出的数据个数
+
+Statitics statics;
 
 //for GET
 QWaitCondition cond_get;
@@ -51,9 +49,9 @@ void Operation::run()
 //        mutex.unlock();
         if(state == BLOCK){//暂停
             mutex.lock();
-            put_blocked_num = thread_put_num;
-            move_blocked_num = thread_move_num;
-            get_blocked_num = thread_get_num;
+            statics.put_blocked_num = thread_put_num;
+            statics.move_blocked_num = thread_move_num;
+            statics.get_blocked_num = thread_get_num;
             condition.wait(&mutex);
             mutex.unlock();
         }
@@ -251,7 +249,6 @@ void Operation::putinData(const int bid)
     default:break;
     }
     qDebug()<<log;
-//    qDebug()<<log<<QTime::currentTime();
 //    emit putIn(1);
 }
 
@@ -291,7 +288,6 @@ void Operation::getoutData(const int bid)
     default:break;
     }
     qDebug()<<log;
-//    qDebug()<<log<<QTime::currentTime();
 //    emit getOut(-1);
 }
 

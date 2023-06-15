@@ -21,7 +21,7 @@ public:
     int t_id;//是哪个线程放进来的
     int b_id;//是在哪个buffer里的
     Op_Type op_type;//放入的线程是什么类型
-    QString data;
+    QString data;//数据内容
 };
 
 // 注册入元对象系统，以便QVariant使用

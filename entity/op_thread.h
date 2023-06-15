@@ -9,6 +9,7 @@
 #include "mainwindow.h"
 #include "semaphore.h"
 #include "message.h"
+#include "utils.h"
 
 #ifdef Q_OS_LINUX
 #include <pthread.h>
@@ -16,9 +17,6 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
-
-//typedef enum {RUNNING,BLOCK,TERMINATED} ThreadState;
-using ThreadState = enum{RUNNING,BLOCK,TERMINATED};
 
 class MainWindow;
 
@@ -36,7 +34,6 @@ protected:
 signals:
     void putIn(qreal val);
     void getOut(qreal val);
-    void logging();
 
 private:
     QString genRandData();// 生成随机数

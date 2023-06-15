@@ -7,12 +7,10 @@ extern int thread_put_num; //put操作个数
 extern int thread_move_num; //move操作个数
 extern int thread_get_num; //get操作个数
 
-extern int put_blocked_num; //当前阻塞的put线程数
-extern int move_blocked_num; //当前阻塞的move线程数
-extern int get_blocked_num; //当前阻塞的get线程数
-
 extern int putin_num; //已放入的数据个数
 extern int getout_num; //已取出的数据个数
+
+extern Statitics statics;
 
 bool first_start = true;
 
@@ -31,9 +29,9 @@ void MainWindow::resetStatistics()
     thread_move_num = config.move_num; //move操作个数
     thread_get_num = config.get_num; //get操作个数
 
-    put_blocked_num = 0; //当前阻塞的put线程数
-    move_blocked_num = 0; //当前阻塞的move线程数
-    get_blocked_num = 0; //当前阻塞的get线程数
+    statics.put_blocked_num = 0; //当前阻塞的put线程数
+    statics.move_blocked_num = 0; //当前阻塞的move线程数
+    statics.get_blocked_num = 0; //当前阻塞的get线程数
 
     putin_num = 0; //已放入的数据个数
     getout_num = 0; //已取出的数据个数
@@ -252,12 +250,14 @@ void MainWindow::on_actStart_triggered()
 //            get->getTID();
         }
         first_start = false;
+        emit sigRun();
         ui->actPasue->setEnabled(true);
         ui->actRestart->setEnabled(true);
         ui->actTerminate->setEnabled(true);
     }
     else{
         Operation::resumeThread();
+        emit sigRun();
     }
     ui->actAnalyse->setEnabled(false);
 }
@@ -265,6 +265,7 @@ void MainWindow::on_actStart_triggered()
 void MainWindow::on_actPasue_triggered()
 {
     Operation::pauseThread();
+    emit sigPause();
     ui->actAnalyse->setEnabled(true);
 }
 
@@ -272,12 +273,9 @@ void MainWindow::on_actTerminate_triggered()
 {
     first_start = true;
     Operation::terminateThread();
+    emit sigStop();
     qreal avg = qreal(buffer1->cur_num+buffer2->cur_num+buffer3->cur_num) / 3;
     result.summaryResult(avg,timeCounter->elapsed());
-//    result.resultInfo();
-//    buffer1->showBuffer();
-//    buffer2->showBuffer();
-//    buffer3->showBuffer();
     //将数据写回数据库
     updateRes2DB();
 

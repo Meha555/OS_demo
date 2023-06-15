@@ -12,9 +12,12 @@
 #include <QHash>
 #include "chartform.h"
 #include "ledlabel.h"
+#include "op_thread.h"
 
 // 美化SDK
 #include "qtmaterialraisedbutton.h"
+
+class MainWindow;
 
 using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,PUT_OUT_TREND,THREAD_STATE_TREND};
 
@@ -42,6 +45,11 @@ private slots:
 private:
     Ui::AnalyseWindow *ui;
 public:
+    QLabel* labPut;
+    QLabel* labMove;
+    QLabel* labGet;
+    LedLabel* statLED;
+
     QComboBox* comboxBuffer;
     QComboBox* comboxProfile;
     QComboBox* comboxStyle;

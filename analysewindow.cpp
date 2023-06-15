@@ -8,15 +8,14 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     ui(new Ui::AnalyseWindow)
 {
     ui->setupUi(this);
-    QLabel* labPut = new QLabel("PUT线程阻塞数量: 0",this);
+    labPut = new QLabel("PUT线程阻塞数量: 0",this);
     labPut->setMinimumWidth(250);
-    QLabel* labMove = new QLabel("MOVE线程阻塞数量: 0",this);
+    labMove = new QLabel("MOVE线程阻塞数量: 0",this);
     labMove->setMinimumWidth(250);
-    QLabel* labGet = new QLabel("GET线程阻塞数量: 0",this);
+    labGet = new QLabel("GET线程阻塞数量: 0",this);
     labGet->setMinimumWidth(250);
-    LedLabel* statLED = new LedLabel(this);
+    statLED = new LedLabel(this);
     statLED->setText("当前状态: ");
-    statLED->setColor("grey");
     ui->statusbar->addWidget(labPut);
     ui->statusbar->addWidget(labMove);
     ui->statusbar->addWidget(labGet);
@@ -71,6 +70,12 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     connect(btnHelp,&QPushButton::clicked,this,[this](){
         QMessageBox::information(this, "帮助信息", "这是一条帮助信息。");
     });
+    connect(dynamic_cast<MainWindow*>(parent),
+            &MainWindow::sigPause,this,[this](){statLED->setStatus(BLOCK);},Qt::DirectConnection);
+    connect(dynamic_cast<MainWindow*>(parent),
+            &MainWindow::sigStop,this,[this](){statLED->setStatus(TERMINATED);},Qt::DirectConnection);
+    connect(dynamic_cast<MainWindow*>(parent),
+            &MainWindow::sigRun,this,[this](){statLED->setStatus(RUNNING);},Qt::DirectConnection);
 
     // 创建栅格布局，以坐标形式限定各组件的位置
     QGridLayout* btnLayout = new QGridLayout;

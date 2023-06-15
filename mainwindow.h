@@ -22,6 +22,7 @@
 #include "configform.h"
 #include "daoconfigform.h"
 #include "analysewindow.h"
+#include "utils.h"
 
 //#include "dao.h"
 #include "messagedaoimpl.h"
@@ -45,6 +46,11 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+// 前向声明
+class ConfigForm;
+class DaoConfigForm;
+class AnalyseWindow;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -64,6 +70,13 @@ public slots:
     void setConfig();//设置config
     void changeSpeed(int val);
     void updateRes2DB();
+
+signals:
+    void sigPause();
+    void sigRun();
+    void sigStop();
+    void sendStatictics();
+
 
 private slots:
 //    void receiveConfig(Config& cfg);

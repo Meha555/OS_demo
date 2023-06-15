@@ -7,6 +7,7 @@
 #include <QPen>
 #include <QHash>
 #include <QString>
+#include "utils.h"
 
 namespace Ui {
 class LedLabel;
@@ -21,7 +22,7 @@ public:
     ~LedLabel();
 
     void setText(const QString& text);
-    void setColor(const QString& color);
+    void setStatus(const ThreadState& stat);
 
 private:
     Ui::LedLabel *ui;
