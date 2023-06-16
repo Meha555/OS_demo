@@ -7,19 +7,19 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QVariant>
+#include "statgatherer.h"
 
 // 绘图所需数据 - 父类
-class Statistics
+class ChartStat
 {
 public:
-    Statistics() = default;
+    explicit ChartStat();
 
     virtual bool readJson(const QString& json) = 0;
     virtual void writeJson() = 0;
 
 public:
-    int interval = 100; // 采样间隔ms
-    QVector<int> time_staps; // 采样出的时间戳
+    StatGatherer* _data_source;
     QJsonObject json;
 };
 

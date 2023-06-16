@@ -11,8 +11,10 @@
 #include "analysewindow.h"
 #include "betterchartview.h"
 
-#define MAX_X 50
-#define MAX_Y 70
+#include "statgatherer.h"
+
+#define MAX_X 1000
+#define MAX_Y 1000
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -42,10 +44,14 @@ public slots:
 
 private:
     Ui::ChartForm *ui;
+
     QTimer *timeRefresh;
     QString chartName;
     QChart* chart;
     QLineSeries* lineSeries;
+
+    StatGatherer* data_source;
+
 };
 
 #endif // CHARTFORM_H

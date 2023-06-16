@@ -1,12 +1,11 @@
 #include "analysewindow.h"
 #include "ui_analysewindow.h"
 
-QStringList profiles = {"Buffer数据量变化趋势", "Buffer数据量分布", "取出/放入数据变化趋势", "线程状态变化趋势"};
+QStringList profiles = {"Buffer数据量变化趋势", "Buffer数据量分布", "线程状态变化趋势"};
 
 static const QString help = "<b>图表类型：</b><br>"
                             "- Buffer数据量变化趋势<br>"
                             "- Buffer数据量分布<br>"
-                            "- 取出/放入数据变化趋势<br>"
                             "- 线程状态变化趋势<br><br>"
                             "<b>使用说明：</b><br>"
                             "- 鼠标框选可以放大指定区域<br>"

@@ -30,9 +30,9 @@ INCLUDEPATH += \
 SOURCES += \
     analysewindow.cpp \
     chartdatachangedtrend.cpp \
+    chartstat.cpp \
     loginform.cpp \
     statgatherer.cpp \
-    statistics.cpp \
     utils/betterchartview.cpp \
     chartform.cpp \
     daoconfigform.cpp \
@@ -55,9 +55,9 @@ SOURCES += \
 HEADERS += \
     analysewindow.h \
     chartdatachangedtrend.h \
+    chartstat.h \
     loginform.h \
     statgatherer.h \
-    statistics.h \
     utils/betterchartview.h \
     chartform.h \
     daoconfigform.h \

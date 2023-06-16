@@ -19,7 +19,7 @@
 
 class MainWindow;
 
-using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,PUT_OUT_TREND,THREAD_STATE_TREND};
+using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,THREAD_STATE_TREND};
 
 struct ChartParam{
     QString buf;

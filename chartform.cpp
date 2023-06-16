@@ -7,6 +7,8 @@ ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
     : QWidget(parent), ui(new Ui::ChartForm) {
     ui->setupUi(this);
     timeRefresh = new QTimer(this);
+    // data_source = StatGatherer::instance();
+    data_source = new StatGatherer();
     timeRefresh->start(100);
     chartName = param.buf + "-" + profiles[param.type];
     qDebug()<<chartName;
@@ -34,11 +36,6 @@ ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
 
 //        initBarChart();
 //        drawBarChart();
-        break;
-    }
-    case PUT_OUT_TREND:{//取出/放入数据变化趋势【曲线图】
-        initLineChart();
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawLineChart);
         break;
     }
     case THREAD_STATE_TREND:{//线程状态变化趋势【曲线图】
@@ -272,18 +269,21 @@ void ChartForm::initLineChart()
 
 void ChartForm::drawLineChart()
 {
-    static int count = 0;
+    // 制作X轴
+//    static int count = 0;
+    for(int count = 0; count <= data_source->getData_num(); count++){
         if(count > MAX_X)
         {
             //当曲线上最早的点超出X轴的范围时，剔除最早的点，
             lineSeries->removePoints(0,lineSeries->count() - MAX_X);
             // 更新X轴的范围
-//            chart->axisX()->setMin(count - MAX_X);
-//            chart->axisX()->setMax(count);
+            //        chart->axisX()->setMin(count - MAX_X);
+            //        chart->axisX()->setMax(count);
             chart->axes(Qt::Horizontal).back()->setMin(count - MAX_X);
             chart->axes(Qt::Horizontal).back()->setMax(count);
         }
         //增加新的点到曲线末端
-        lineSeries->append(count, rand()%65);//随机生成0到65的随机数
-        count ++;
+        lineSeries->append(count, data_source->buffer1_data[count]);
+    }
+
 }

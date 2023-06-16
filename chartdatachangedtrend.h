@@ -1,10 +1,10 @@
 #ifndef CHARTDATACHANGEDTREND_H
 #define CHARTDATACHANGEDTREND_H
 
-#include "statistics.h"
+#include "chartstat.h"
 #include "utils.hpp"
 
-class ChartDataChangedTrend : public Statistics
+class ChartDataChangedTrend : public ChartStat
 {
 public:
     ChartDataChangedTrend();
@@ -12,10 +12,6 @@ public:
     bool readJson(const QString &str) override;
     void writeJson() override;
 
-private:
-    QVector<int> buffer1_data;
-    QVector<int> buffer2_data;
-    QVector<int> buffer3_data;
 };
 
 #endif // CHARTDATACHANGEDTREND_H

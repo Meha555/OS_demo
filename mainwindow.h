@@ -147,7 +147,7 @@ public:
 
 public:
     Ui::MainWindow *ui;
-    QTimer*  timerWalker;      //时间段计时器
+    QTimer*  timerWalker;       //时间段计时器
     QElapsedTimer *timeCounter; //时间差计时器
     QLabel*  label1;
     QLabel*  label2;
@@ -155,8 +155,8 @@ public:
     QLabel*  labelSpeed;
 //    QSlider* slider;
     QtMaterialSlider* slider;
-    QString dbName = "G://Code//QT//OSproject//db//CP_db.db";
-    StatGatherer gatherer; // 数据收集器
+    QString dbName = "G://Code//QT//os_demo//db//CP_db.db";
+    StatGatherer* gatherer; // 数据收集器单例
     ConfigForm* configFrom = nullptr;//设置信息对话框
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
     AnalyseWindow* analyseWindow = nullptr;//数据分析窗口
