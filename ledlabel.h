@@ -7,7 +7,7 @@
 #include <QPen>
 #include <QHash>
 #include <QString>
-#include "utils.h"
+#include "statgatherer.h"
 
 namespace Ui {
 class LedLabel;

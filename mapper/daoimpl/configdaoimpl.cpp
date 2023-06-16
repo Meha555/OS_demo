@@ -1,8 +1,13 @@
 #include "configdaoimpl.h"
 
-ConfigDaoImpl::ConfigDaoImpl(QObject* parent): Dao("Config",parent)
+ConfigDaoImpl::ConfigDaoImpl(const QString &dbName, QObject* parent)
+    : Dao(dbName,"Config",parent)
 {
-//    tableName = "Config";
+}
+
+ConfigDaoImpl::ConfigDaoImpl(const QString& dbName, QString tabName, QObject *parent)
+    : Dao(dbName,"Config",parent)
+{
 }
 
 QVector<Config> ConfigDaoImpl::findAll()

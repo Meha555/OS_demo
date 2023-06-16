@@ -7,7 +7,7 @@
 #define _DEBUG
 
 #define DATA_LEN 10
-typedef enum {PUT,MOVE1,MOVE2,GET} Op_Type;
+typedef enum {PUT,MOVE1_2,MOVE1_3,GET2,GET3} Op_Type;
 
 class Message
 {

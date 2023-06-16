@@ -1,21 +1,23 @@
 #include "dao.h"
 
 // 使用默认连接
-Dao::Dao(QObject* parent)
-    : QObject(parent) {
+Dao::Dao(const QString& dbName, QObject* parent)
+    : QObject(parent), dbName(dbName) {
     db = QSqlDatabase::addDatabase("QSQLITE");
     sqlHandler = QSqlQuery(db);
+    qDebug()<<"数据库文件:"+dbName;
     qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
-    qDebug()<<"当前数据库连接"<<db.connectionName();
+    qDebug()<<"当前数据库连接:"<<db.connectionName();
 }
 
 // 使用特定连接
-Dao::Dao(const QString &tabName, QObject* parent)
-    : QObject(parent),tableName(tabName) {
+Dao::Dao(const QString& dbName, const QString &tabName, QObject* parent)
+    : QObject(parent),dbName(dbName), tableName(tabName) {
     db = QSqlDatabase::addDatabase("QSQLITE",tabName);
     sqlHandler = QSqlQuery(db);
+    qDebug()<<"数据库文件:"+dbName;
     qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
-    qDebug()<<"当前数据库连接"<<db.connectionName();
+    qDebug()<<"当前数据库连接:"<<db.connectionName();
 }
 
 Dao::~Dao()
@@ -26,7 +28,7 @@ Dao::~Dao()
 // 连接到数据库
 bool Dao::getConnection() {
     if(db.isOpen()) return true;
-    else db.setDatabaseName("G://Code//QT//OSproject//db//CP_db.db");  // 数据库位置
+    else db.setDatabaseName(dbName);  // 数据库位置"G://Code//QT//OSproject//db//CP_db.db"
     if (!db.open()) {
         QMessageBox::critical(0, "无法打开数据库",
                               "无法建立数据库连接");

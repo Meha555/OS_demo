@@ -15,7 +15,7 @@ class ConfigForm : public QDialog
     Q_OBJECT
 
 public:
-    explicit ConfigForm(QWidget *parent = nullptr);
+    explicit ConfigForm(const QString& dbName, QWidget *parent = nullptr);
     ~ConfigForm();
 
 signals:

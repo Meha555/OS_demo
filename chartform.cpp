@@ -26,21 +26,25 @@ ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
 
 //        initBarChart();
 //        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawBarChart);
+        break;
     }
     case DATA_DISTRIBUTION:{//Buffer数据量分布【柱状/饼图】
         initPieChart();
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawPieChart);
+        drawPieChart();
 
 //        initBarChart();
-//        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawBarChart);
+//        drawBarChart();
+        break;
     }
     case PUT_OUT_TREND:{//取出/放入数据变化趋势【曲线图】
         initLineChart();
         connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawLineChart);
+        break;
     }
     case THREAD_STATE_TREND:{//线程状态变化趋势【曲线图】
         initLineChart();
         connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawLineChart);
+        break;
     }
     }
 }
@@ -51,8 +55,8 @@ ChartForm::~ChartForm() {
 
 // 初始化柱状图
 void ChartForm::initBarChart() {
-    QChart* chart = new QChart();  // 创建chart
-    chart->setTitle("Barchart演示");
+    chart = new QChart();  // 创建chart
+    chart->setTitle(chartName);
     chart->setAnimationOptions(QChart::SeriesAnimations);
     ui->chartView->setChart(chart);  // 为ChartView设置chart
     ui->chartView->setRenderHint(QPainter::Antialiasing);
@@ -137,7 +141,7 @@ void ChartForm::drawBarChart() {
 // 初始化饼图
 void ChartForm::initPieChart() {
     chart = new QChart();
-    chart->setTitle("饼图");
+    chart->setTitle(chartName);
     chart->setAnimationOptions(QChart::SeriesAnimations);
     ui->chartView->setChart(chart);
     ui->chartView->setRenderHint(QPainter::Antialiasing);
@@ -145,11 +149,8 @@ void ChartForm::initPieChart() {
 
 // 绘制饼图
 void ChartForm::drawPieChart() {
-    QChart* chart = ui->chartView->chart();  // 获取chart对象
     chart->removeAllSeries();                // 删除所有序列
-
     QPieSeries* series = new QPieSeries();  // 创建饼图序列
-
     for (int i = 1; i <= 3; i++)  // 添加分块数据
     {
         series->append("Buffer" + QString::number(i), 25);  // 添加一个饼图分块数据,标签，数值
@@ -161,14 +162,14 @@ void ChartForm::drawPieChart() {
         slice = series->slices().at(i);                                       // 获取分块
         slice->setLabel(slice->label() + QString::asprintf(": %.0f, %.1f%%",  // 设置分块的标签
                                                            slice->value(), slice->percentage() * 100));
-        // 信号与槽函数关联，鼠标落在某个分块上时，此分块弹出
-        connect(slice, SIGNAL(hovered(bool)),
-                this, SLOT(on_PieSliceHighlight(bool)));
+        // 信号与槽函数关联，鼠标移入、移出某个分块时，此分块弹出、收回
+        connect(slice, &QPieSlice::hovered, this, [this](bool show){
+            static_cast<QPieSlice*>(sender())->setExploded(show);
+        });
     }
-    slice->setExploded(true);        // 最后一个设置为exploded
+    slice->setExploded(true);        // 最后一个设置为exploded，与切片分离
     series->setLabelsVisible(true);  // 只影响当前的slices，必须添加完slice之后再设置
     chart->addSeries(series);        // 添加饼图序列
-    chart->setTitle("饼图----测试一下");
     // 图例
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignRight);
@@ -177,7 +178,7 @@ void ChartForm::drawPieChart() {
 // 百分比柱状图初始化
 void ChartForm::initPercentBar() {
     QChart* chart = new QChart();
-    chart->setTitle("PercentBar 演示");
+    chart->setTitle(chartName);
     chart->setAnimationOptions(QChart::SeriesAnimations);
     ui->chartView->setChart(chart);
     ui->chartView->setRenderHint(QPainter::Antialiasing);
@@ -234,7 +235,7 @@ void ChartForm::drawPercentBar() {
 void ChartForm::initLineChart()
 {
     //初始化QChart的实例
-    chart = ui->chartView->chart();  // 获取chart对象
+    chart = new QChart();  // 创建chart
     //初始化QSplineSeries的实例
     lineSeries = new QSplineSeries();
     //设置曲线的名称
@@ -265,7 +266,7 @@ void ChartForm::initLineChart()
     lineSeries->attachAxis(axisX);
     lineSeries->attachAxis(axisY);
     //把chart显示到窗口上
-//    ui->chartView->setChart(chart);
+    ui->chartView->setChart(chart);
     ui->chartView->setRenderHint(QPainter::Antialiasing);
 }
 
@@ -277,8 +278,10 @@ void ChartForm::drawLineChart()
             //当曲线上最早的点超出X轴的范围时，剔除最早的点，
             lineSeries->removePoints(0,lineSeries->count() - MAX_X);
             // 更新X轴的范围
-            chart->axisX()->setMin(count - MAX_X);
-            chart->axisX()->setMax(count);
+//            chart->axisX()->setMin(count - MAX_X);
+//            chart->axisX()->setMax(count);
+            chart->axes(Qt::Horizontal).back()->setMin(count - MAX_X);
+            chart->axes(Qt::Horizontal).back()->setMax(count);
         }
         //增加新的点到曲线末端
         lineSeries->append(count, rand()%65);//随机生成0到65的随机数

@@ -108,7 +108,7 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 void ProgressBall::updateProgress(qreal val) {
 //    mutex.lock();
     _progress += val;
-    qDebug()<<this<<" 进度"<<_progress<<" "<<_progress/_capacity;
+//    qDebug()<<this<<" 进度"<<_progress<<" "<<_progress/_capacity;
     update();
 //    mutex.unlock();
 }

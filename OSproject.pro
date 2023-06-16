@@ -29,7 +29,10 @@ INCLUDEPATH += \
 
 SOURCES += \
     analysewindow.cpp \
-    statitics.cpp \
+    chartdatachangedtrend.cpp \
+    loginform.cpp \
+    statgatherer.cpp \
+    statistics.cpp \
     utils/betterchartview.cpp \
     chartform.cpp \
     daoconfigform.cpp \
@@ -51,7 +54,10 @@ SOURCES += \
 
 HEADERS += \
     analysewindow.h \
-    statitics.h \
+    chartdatachangedtrend.h \
+    loginform.h \
+    statgatherer.h \
+    statistics.h \
     utils/betterchartview.h \
     chartform.h \
     daoconfigform.h \
@@ -69,7 +75,7 @@ HEADERS += \
     entity/result.h \
     entity/message.h \
     utils/semaphore.h \ \
-    utils/utils.h
+    utils/utils.hpp
 
 FORMS += \
     analysewindow.ui \
@@ -77,6 +83,7 @@ FORMS += \
     configform.ui \
     daoconfigform.ui \
     ledlabel.ui \
+    loginform.ui \
     mainwindow.ui
 
 # Default rules for deployment.
@@ -87,3 +94,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += res.qrc
 
 RC_ICONS = assets\icons\logo.ico
+
+DISTFILES +=

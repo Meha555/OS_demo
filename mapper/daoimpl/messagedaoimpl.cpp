@@ -1,8 +1,13 @@
 #include "messagedaoimpl.h"
 
-MessageDaoImpl::MessageDaoImpl(QObject* parent): Dao("Message",parent)
+MessageDaoImpl::MessageDaoImpl(const QString &dbName, QObject *parent)
+    : Dao(dbName,"Message",parent)
 {
-//    tableName = "Message";
+}
+
+MessageDaoImpl::MessageDaoImpl(const QString& dbName, const QString& tabName,QObject *parent)
+    : Dao(dbName,"Message",parent)
+{
 }
 
 QVector<Message> MessageDaoImpl::findAll()

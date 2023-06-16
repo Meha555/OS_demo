@@ -1,17 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-extern int speed_coefficient;
-
-extern int thread_put_num; //put操作个数
-extern int thread_move_num; //move操作个数
-extern int thread_get_num; //get操作个数
-
-extern int putin_num; //已放入的数据个数
-extern int getout_num; //已取出的数据个数
-
-extern Statitics statics;
-
 bool first_start = true;
 
 void MainWindow::initalizeData()
@@ -23,18 +12,18 @@ void MainWindow::initalizeData()
 
 void MainWindow::resetStatistics()
 {
-    speed_coefficient = 1000;//速度系数(ms)
+    gatherer.speed_coefficient = 1000;//速度系数(ms)
 
-    thread_put_num = config.put_num; //put操作个数
-    thread_move_num = config.move_num; //move操作个数
-    thread_get_num = config.get_num; //get操作个数
+    gatherer.thread_put_num = config.put_num; //put操作个数
+    gatherer.thread_move_num = config.move_num; //move操作个数
+    gatherer.thread_get_num = config.get_num; //get操作个数
 
-    statics.put_blocked_num = 0; //当前阻塞的put线程数
-    statics.move_blocked_num = 0; //当前阻塞的move线程数
-    statics.get_blocked_num = 0; //当前阻塞的get线程数
+    gatherer.put_blocked_num = 0; //当前阻塞的put线程数
+    gatherer.move_blocked_num = 0; //当前阻塞的move线程数
+    gatherer.get_blocked_num = 0; //当前阻塞的get线程数
 
-    putin_num = 0; //已放入的数据个数
-    getout_num = 0; //已取出的数据个数
+    gatherer.putin_num = 0; //已放入的数据个数
+    gatherer.getout_num = 0; //已取出的数据个数
 
     ui->bufBall1->resetProgress();
     ui->bufBall2->resetProgress();
@@ -52,16 +41,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     qRegisterMetaType<QTextCursor>("QTextCursor");
 
-    cfgDao = new ConfigDaoImpl(this);
-    msgDao = new MessageDaoImpl(this);
-    resDao = new ResultDaoImpl(this);
+    cfgDao = new ConfigDaoImpl(dbName,this);
+    msgDao = new MessageDaoImpl(dbName,this);
+    resDao = new ResultDaoImpl(dbName,this);
 
     // 界面相关设置
     label1 = new QLabel("操作速度控制：", this);
 //    slider = new QSlider(Qt::Horizontal, this);
     slider = new QtMaterialSlider(this);
     label2 = new QLabel("慢 ", this);
-    labelSpeed = new QLabel(QString(" 当前速度：%1x").arg(static_cast<qreal>(speed_coefficient/1000),0,'g',2));
+    labelSpeed = new QLabel(QString(" 当前速度：%1x").arg(static_cast<qreal>(gatherer.speed_coefficient/1000),0,'g',2));
     labelSpeed->setFixedSize(140,20);
     labelSpeed->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);  // 设置大小策略为固定大小
     label3 = new QLabel(" 快", this);
@@ -98,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 信号相关
     connect(slider, &QSlider::valueChanged, this, &MainWindow::changeSpeed);
     connect(timerWalker, &QTimer::timeout, this, [this](){
-        result.collectResult(buffer1->cur_num+buffer2->cur_num+buffer3->cur_num,putin_num,getout_num);
+        result.collectResult(buffer1->cur_num+buffer2->cur_num+buffer3->cur_num,gatherer.putin_num,gatherer.getout_num);
     });
 
     // 最后的准备工作
@@ -121,9 +110,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::changeSpeed(int val){
-    speed_coefficient = val;
-    labelSpeed->setText(QString(" 当前速度：%1x").arg(static_cast<qreal>(speed_coefficient)/1000,0,'g',2));
-    qDebug()<<"Current Speed: "<<speed_coefficient;
+    gatherer.speed_coefficient = val;
+    labelSpeed->setText(QString(" 当前速度：%1x").arg(static_cast<qreal>(gatherer.speed_coefficient)/1000,0,'g',2));
+    qDebug()<<"当前速度: "<<gatherer.speed_coefficient;
 }
 
 // 每隔一段时间就将buffer的情况写入到数据库中
@@ -162,12 +151,18 @@ void MainWindow::setConfig()
     ui->bufBall3->setCapacity(config.buffer3_size);
 
     // 初始化各信号量
-    empty1 = new QSemaphore(buffer1->capacity);
-    full1 = new QSemaphore(0);
-    empty2 = new QSemaphore(buffer2->capacity);
-    full2 = new QSemaphore(0);
-    empty3 = new QSemaphore(buffer3->capacity);
-    full3 = new QSemaphore(0);
+//    empty1 = new QSemaphore(buffer1->capacity);
+//    full1 = new QSemaphore(0);
+//    empty2 = new QSemaphore(buffer2->capacity);
+//    full2 = new QSemaphore(0);
+//    empty3 = new QSemaphore(buffer3->capacity);
+//    full3 = new QSemaphore(0);
+    empty1 = new Semaphore(buffer1->capacity);
+    full1 = new Semaphore(0);
+    empty2 = new Semaphore(buffer2->capacity);
+    full2 = new Semaphore(0);
+    empty3 = new Semaphore(buffer3->capacity);
+    full3 = new Semaphore(0);
     mutex1 = new QMutex;
     mutex2 = new QMutex;
     mutex3 = new QMutex;
@@ -190,7 +185,7 @@ void MainWindow::on_actSetConfig_triggered()
 {
     // 弹出对话框来设置信号量
     if(configFrom == nullptr)
-        configFrom = new ConfigForm(this);
+        configFrom = new ConfigForm(dbName,this);
     configFrom->setWindowFlags(configFrom->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
 
     // 接收设置
@@ -221,16 +216,16 @@ void MainWindow::on_actStart_triggered()
             put->start();
 //            put->getTID();
         }
-        int t = ceil(config.move_num/2.0);
-        for(int i=1;i<=t;i++) {
+        int movet = ceil(config.move_num/2.0);
+        for(int i=1;i<=movet;i++) {
 //            qDebug()<<"启动2个MOVE";
             displayLogTextSys("启动2个MOVE");
-            Operation* move1 = new Operation(MOVE1,config.move_speed,this);
+            Operation* move1 = new Operation(MOVE1_2,config.move_speed,this);
             connect(ui->actTerminate,&QAction::triggered,move1,[move1](){move1->quit();move1->wait();move1->deleteLater();});
             connect(move1, &Operation::getOut, ui->bufBall1, &ProgressBall::updateProgress,Qt::DirectConnection);
             connect(move1, &Operation::putIn, ui->bufBall2, &ProgressBall::updateProgress,Qt::DirectConnection);
 //            connect(_pTimerUpdate, &QTimer::timeout, move1, [move1](){move1->getStatus();});
-            Operation* move2 = new Operation(MOVE2,config.move_speed,this);
+            Operation* move2 = new Operation(MOVE1_3,config.move_speed,this);
             connect(ui->actTerminate,&QAction::triggered,move2,[move2](){move2->quit();move2->wait();move2->deleteLater();});
             connect(move2, &Operation::getOut, ui->bufBall1, &ProgressBall::updateProgress,Qt::DirectConnection);
             connect(move2, &Operation::putIn, ui->bufBall3, &ProgressBall::updateProgress,Qt::DirectConnection);
@@ -238,16 +233,26 @@ void MainWindow::on_actStart_triggered()
             move1->start();move2->start();
 //            move1->getTID();move2->getTID();
         }
-        for(int i=1;i<=config.get_num;i++){
+        int gett = config.get_num/2; int gett2 = config.get_num - (gett << 1);
+        for(int i=1;i<=gett;i++){
 //            qDebug()<<"启动1个GET";
             displayLogTextSys("启动1个GET");
-            Operation* get = new Operation(GET,config.get_speed,this);
-            connect(ui->actTerminate,&QAction::triggered,get,[get](){get->quit();get->wait();get->deleteLater();});
-            connect(get, &Operation::getOut, ui->bufBall2, &ProgressBall::updateProgress,Qt::DirectConnection);
-            connect(get, &Operation::getOut, ui->bufBall3, &ProgressBall::updateProgress,Qt::DirectConnection);
+            Operation* get2 = new Operation(GET2,config.get_speed,this);
+            Operation* get3 = new Operation(GET3,config.get_speed,this);
+            connect(ui->actTerminate,&QAction::triggered,get2,[get2](){get2->quit();get2->wait();get2->deleteLater();});
+            connect(ui->actTerminate,&QAction::triggered,get3,[get3](){get3->quit();get3->wait();get3->deleteLater();});
+            connect(get2, &Operation::getOut, ui->bufBall2, &ProgressBall::updateProgress,Qt::DirectConnection);
+            connect(get3, &Operation::getOut, ui->bufBall3, &ProgressBall::updateProgress,Qt::DirectConnection);
 //            connect(_pTimerUpdate, &QTimer::timeout, get, [get](){get->getStatus();});
-            get->start();
+            get2->start();get3->start();
 //            get->getTID();
+        }
+        if(gett2){
+            //            qDebug()<<"启动1个GET";
+            displayLogTextSys("启动1个GET");
+            Operation* get2 = new Operation(GET2,config.get_speed,this);
+            connect(ui->actTerminate,&QAction::triggered,get2,[get2](){get2->quit();get2->wait();get2->deleteLater();});
+            connect(get2, &Operation::getOut, ui->bufBall2, &ProgressBall::updateProgress,Qt::DirectConnection);
         }
         first_start = false;
         emit sigRun();
@@ -292,7 +297,7 @@ void MainWindow::on_actRestart_triggered()
 void MainWindow::on_actImportConfig_triggered()
 {
     if(dao_configForm == nullptr)
-        dao_configForm = new DaoConfigForm(this);
+        dao_configForm = new DaoConfigForm(dbName,this);
 //    dao_configForm->setWindowFlags(dao_configForm->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
 
     // 接收设置

@@ -9,7 +9,7 @@ void DaoConfigForm::selectData()
     qDebug()<<"查找了数据库";
 }
 
-DaoConfigForm::DaoConfigForm(QWidget *parent) :
+DaoConfigForm::DaoConfigForm(const QString& dbName, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DaoConfigForm)
 {
@@ -17,7 +17,7 @@ DaoConfigForm::DaoConfigForm(QWidget *parent) :
     ui->btnChose->setRole(Material::Secondary);
     ui->btnCancel->setRole(Material::Primary);
     launchFlag = true;
-    cfgDao = new ConfigDaoImpl(this);
+    cfgDao = new ConfigDaoImpl(dbName,this);
 //    dao.setTableName("Config");//设置表名
     connect(ui->tableView,&QTableView::clicked,this,[this](){qDebug()<<ui->tableView->currentIndex().row();});
 //    res_set = dao.sqlQuery("select * from config");

@@ -13,8 +13,8 @@
 class MessageDaoImpl : public Dao
 {
 public:
-    MessageDaoImpl(QObject *parent = nullptr);
-//    MessageDaoImpl(const QString& tabName,QObject *parent = nullptr);
+    MessageDaoImpl(const QString& dbName, QObject *parent = nullptr);
+    MessageDaoImpl(const QString& dbName, const QString& tabName,QObject *parent = nullptr);
     QVector<Message> findAll();
     Message findByID(int m_id);
     int deleteByID(int m_id);

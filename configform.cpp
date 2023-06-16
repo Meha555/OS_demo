@@ -1,14 +1,14 @@
 #include "configform.h"
 #include "ui_configform.h"
 
-ConfigForm::ConfigForm(QWidget *parent) :
+ConfigForm::ConfigForm(const QString& dbName, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ConfigForm)
 {
     ui->setupUi(this);
     ui->btnOK->setRole(Material::Secondary);
     ui->btnCancel->setRole(Material::Primary);
-    cfgDao = new ConfigDaoImpl(this);
+    cfgDao = new ConfigDaoImpl(dbName,this);
 //    dao.setTableName("Config");
 }
 

@@ -11,6 +11,7 @@
         <file>assets/icons/analyse.png</file>
         <file>assets/icons/selection.png</file>
         <file>assets/icons/shapshot.png</file>
+        <file>assets/icons/loading.gif</file>
     </qresource>
     <qresource prefix="/stylesheet">
         <file>assets/stylesheet/black.css</file>

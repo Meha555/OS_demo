@@ -661,15 +661,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QtMaterialRaisedButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qtmaterialraisedbutton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ProgressBall</class>
    <extends>QWidget</extends>
    <header>progressball.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtMaterialRaisedButton</class>
-   <extends>QPushButton</extends>
-   <header location="global">qtmaterialraisedbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

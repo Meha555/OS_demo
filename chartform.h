@@ -30,9 +30,6 @@ public:
     explicit ChartForm(const ChartParam &param,QWidget *parent = nullptr);
     ~ChartForm();
 
-    QString getType() const;
-    void setType(const QString &type);
-
 public slots:
     void initLineChart();
     void initPieChart();

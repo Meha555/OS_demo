@@ -1,8 +1,13 @@
 #include "resultdaoimpl.h"
 
-ResultDaoImpl::ResultDaoImpl(QObject* parent): Dao("Result",parent)
+ResultDaoImpl::ResultDaoImpl(const QString &dbName, QObject *parent)
+    : Dao(dbName,"Result",parent)
 {
-//    tableName = "Result";
+}
+
+ResultDaoImpl::ResultDaoImpl(const QString &dbName, const QString& tabName, QObject* parent)
+    : Dao(dbName,"Result",parent)
+{
 }
 
 QVector<Result> ResultDaoImpl::findAll()

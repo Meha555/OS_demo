@@ -4,6 +4,7 @@
 #include <QFont>
 #include <QTextCodec>
 #include "mainwindow.h"
+#include "loginform.h"
 
 #include <QQueue>
 #include <QVector>
@@ -24,8 +25,19 @@ int main(int argc, char *argv[])
     // file.open(QFile::ReadOnly);
     // QString css = QLatin1String(file.readAll());
     // qApp->setStyleSheet(css);
+
+//    LoginForm *l = new LoginForm;
+//    if(l->exec() == QDialog::Accepted){
+//        MainWindow w;
+//        w.dbName = l->getDbName();
+//        w.show();
+//        delete l;
+//        return a.exec();
+//    }
     MainWindow w;
     w.show();
+    return a.exec();
+
 //    Dao* dao = new MessageDaoImpl("Message");
 //    QVector<Message> lm = dynamic_cast<MessageDaoImpl*>(dao)->findAll();
 //    ResultDaoImpl resDao;
@@ -43,5 +55,5 @@ int main(int argc, char *argv[])
 //    auto lm = msgDao.findAll();
 //    for(auto& ele: lm) ele.messageInfo();
 //    msgDao.deleteAll();
-    return a.exec();
+    return 0;
 }

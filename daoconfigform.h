@@ -17,7 +17,7 @@ class DaoConfigForm : public QDialog
     Q_OBJECT
 
 public:
-    explicit DaoConfigForm(QWidget *parent = nullptr);
+    explicit DaoConfigForm(const QString& dbName, QWidget *parent = nullptr);
     ~DaoConfigForm();
     void showEvent(QShowEvent *event) override;
 

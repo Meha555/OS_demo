@@ -22,7 +22,7 @@
 #include "configform.h"
 #include "daoconfigform.h"
 #include "analysewindow.h"
-#include "utils.h"
+#include "statgatherer.h"
 
 //#include "dao.h"
 #include "messagedaoimpl.h"
@@ -108,23 +108,25 @@ public:
     Buffer* buffer2;
     Buffer* buffer3;
 
+    /* 以下采用集中式锁 */
+
     // 同步信号量
-//    Semaphore* empty1;
-//    Semaphore* full1;
+    Semaphore* empty1;
+    Semaphore* full1;
 
-//    Semaphore* empty2;
-//    Semaphore* full2;
+    Semaphore* empty2;
+    Semaphore* full2;
 
-//    Semaphore* empty3;
-//    Semaphore* full3;
-    QSemaphore* empty1;
-    QSemaphore* full1;
+    Semaphore* empty3;
+    Semaphore* full3;
+//    QSemaphore* empty1;
+//    QSemaphore* full1;
 
-    QSemaphore* empty2;
-    QSemaphore* full2;
+//    QSemaphore* empty2;
+//    QSemaphore* full2;
 
-    QSemaphore* empty3;
-    QSemaphore* full3;
+//    QSemaphore* empty3;
+//    QSemaphore* full3;
 
     // 互斥信号量
     QMutex* mutex1;
@@ -153,6 +155,8 @@ public:
     QLabel*  labelSpeed;
 //    QSlider* slider;
     QtMaterialSlider* slider;
+    QString dbName = "G://Code//QT//OSproject//db//CP_db.db";
+    StatGatherer gatherer; // 数据收集器
     ConfigForm* configFrom = nullptr;//设置信息对话框
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
     AnalyseWindow* analyseWindow = nullptr;//数据分析窗口
