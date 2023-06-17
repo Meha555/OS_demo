@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QQueue>
-#include <QDebug>
 #include "message.h"
 
 class Buffer : public QObject

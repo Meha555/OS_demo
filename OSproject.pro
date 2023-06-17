@@ -25,66 +25,69 @@ INCLUDEPATH += \
     entity/ \
     service/ \
     utils/ \
-    libs/
+    libs/ \
+    form/
 
 SOURCES += \
-    analysewindow.cpp \
     chartdatachangedtrend.cpp \
     chartstat.cpp \
-    loginform.cpp \
-    statgatherer.cpp \
-    utils/betterchartview.cpp \
-    chartform.cpp \
-    daoconfigform.cpp \
     entity/buffer.cpp \
     entity/config.cpp \
-    configform.cpp \
-    ledlabel.cpp \
-    mapper/dao.cpp \
-    main.cpp \
-    mainwindow.cpp \
+    entity/message.cpp \
     entity/op_thread.cpp \
+    entity/result.cpp \
+    form/analysewindow.cpp \
+    form/chartform.cpp \
+    form/configform.cpp \
+    form/daoconfigform.cpp \
+    form/ledlabel.cpp \
+    form/loginform.cpp \
+    form/mainwindow.cpp \
+    form/progressball.cpp \
+    main.cpp \
+    mapper/dao.cpp \
     mapper/daoimpl/configdaoimpl.cpp \
     mapper/daoimpl/messagedaoimpl.cpp \
     mapper/daoimpl/resultdaoimpl.cpp \
-    progressball.cpp \
-    entity/result.cpp \
-    entity/message.cpp \
-    utils/semaphore.cpp \
+    statgatherer.cpp \
+    utils/betterchartview.cpp \
+    utils/semaphore.cpp
+
 
 HEADERS += \
-    analysewindow.h \
     chartdatachangedtrend.h \
     chartstat.h \
-    loginform.h \
-    statgatherer.h \
-    utils/betterchartview.h \
-    chartform.h \
-    daoconfigform.h \
     entity/buffer.h \
     entity/config.h \
-    configform.h \
-    ledlabel.h \
-    mapper/dao.h \
-    mainwindow.h \
+    entity/message.h \
     entity/op_thread.h \
+    entity/result.h \
+    form/analysewindow.h \
+    form/chartform.h \
+    form/configform.h \
+    form/daoconfigform.h \
+    form/ledlabel.h \
+    form/loginform.h \
+    form/mainwindow.h \
+    form/progressball.h \
+    mapper/dao.h \
     mapper/daoimpl/configdaoimpl.h \
     mapper/daoimpl/messagedaoimpl.h \
     mapper/daoimpl/resultdaoimpl.h \
-    progressball.h \
-    entity/result.h \
-    entity/message.h \
-    utils/semaphore.h \ \
+    statgatherer.h \
+    utils/betterchartview.h \
+    utils/semaphore.h \
     utils/utils.hpp
 
+
 FORMS += \
-    analysewindow.ui \
-    chartform.ui \
-    configform.ui \
-    daoconfigform.ui \
-    ledlabel.ui \
-    loginform.ui \
-    mainwindow.ui
+    form/analysewindow.ui \
+    form/chartform.ui \
+    form/configform.ui \
+    form/daoconfigform.ui \
+    form/ledlabel.ui \
+    form/loginform.ui \
+    form/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -94,5 +97,3 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += res.qrc
 
 RC_ICONS = assets\icons\logo.ico
-
-DISTFILES +=

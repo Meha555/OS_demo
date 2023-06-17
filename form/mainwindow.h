@@ -32,11 +32,7 @@
 // 美化SDK
 #include "qtmaterialslider.h"
 
-#define _DEBUG
-
-#ifdef _DEBUG
-    #include <QDebug>
-#endif
+#include "utils.hpp"
 
 #define MIN_SPEED 50
 #define MAX_SPEED 5000
@@ -111,6 +107,7 @@ public:
     /* 以下采用集中式锁 */
 
     // 同步信号量
+#ifdef _MY
     Semaphore* empty1;
     Semaphore* full1;
 
@@ -119,14 +116,17 @@ public:
 
     Semaphore* empty3;
     Semaphore* full3;
-//    QSemaphore* empty1;
-//    QSemaphore* full1;
+#endif
+#ifndef _MY
+    QSemaphore* empty1;
+    QSemaphore* full1;
 
-//    QSemaphore* empty2;
-//    QSemaphore* full2;
+    QSemaphore* empty2;
+    QSemaphore* full2;
 
-//    QSemaphore* empty3;
-//    QSemaphore* full3;
+    QSemaphore* empty3;
+    QSemaphore* full3;
+#endif
 
     // 互斥信号量
     QMutex* mutex1;

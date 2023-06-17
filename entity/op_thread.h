@@ -10,6 +10,7 @@
 #include "semaphore.h"
 #include "message.h"
 #include "statgatherer.h"
+#include "utils.hpp"
 
 #ifdef Q_OS_LINUX
 #include <pthread.h>

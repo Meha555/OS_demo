@@ -1,34 +1,48 @@
 #include "semaphore.h"
 
-Semaphore::Semaphore(int val):_count(val) {}
+//#define _WANGDAO_
 
-void Semaphore::registerIn() {
-    _mutex.lock();
-    _count += 1;
-    _registration = true;
-    _mutex.unlock();
-}
+Semaphore::Semaphore(int val):_count(val) {}
 
 int Semaphore::getCount() const {
     return _count;
 }
 
-void P(Semaphore* s) {
+void P(Semaphore* s, int n) {
+    Q_ASSERT_X(n >= 0, "Semaphore::P", "parameter 'n' must be non-negative");
+
     s->_mutex.lock();
-    s->_count--;
-    while(s->_count<0){//如果资源不够
+#ifndef _WANGDAO_
+    while (n > s->_count) {
         emit s->blocked();
         s->_condition.wait(&s->_mutex);
     }
+    s->_count -= n;
+#endif
+#ifdef _WANGDAO_
+    s->_count -= n;
+    while(s->_count < 0){//如果资源不够
+        emit s->blocked();
+        s->_condition.wait(&s->_mutex);
+    }
+#endif
     s->_mutex.unlock();
 }
 
-void V(Semaphore* s) {
+void V(Semaphore* s, int n) {
+    Q_ASSERT_X(n >= 0, "Semaphore::V", "parameter 'n' must be non-negative");
+
     s->_mutex.lock();
-    s->_count++;
-    if(s->_count<=0){//如果有人在等待
-        s->_condition.wakeOne();
+    s->_count += n;
+#ifndef _WANGDAO_
+    s->_condition.wakeAll();
+    emit s->wakeuped();
+#endif
+#ifdef _WANGDAO_
+    if(s->_count <= 0){//如果有人在等待
+        s->_condition.wakeAll();
         emit s->wakeuped();
     }
+#endif
     s->_mutex.unlock();
 }

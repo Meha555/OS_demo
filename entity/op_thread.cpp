@@ -8,7 +8,7 @@ ThreadState Operation::state = RUNNING;  // 初始所有线程状态为运行
 QMutex Operation::mutex;                 // 互斥锁，用于实现线程暂停
 QWaitCondition Operation::condition;     // 等待条件，用于实现线程暂停
 MainWindow* Operation::ptr = nullptr;
-//StatGatherer* Operation::gatherer = StatGatherer::instance();  // Operation::ptr->gatherer.
+// StatGatherer* Operation::gatherer = StatGatherer::instance();  // Operation::ptr->gatherer.
 
 Operation::Operation(QObject* p)
     : QThread(p) {
@@ -21,7 +21,6 @@ Operation::Operation(Op_Type type, int speed, QObject* p)
 }
 
 void Operation::run() {
-    //    getStatus();
     //    Operation::ptr = static_cast<MainWindow*>(parent());
     while (state != TERMINATED) {
         //        mutex.lock();
@@ -41,92 +40,134 @@ void Operation::run() {
             mutex.unlock();
         }
         switch (op_type) {
-            case PUT: {
-                P(Operation::ptr->empty1);
-                //            Operation::ptr->empty1->acquire();
-                Operation::ptr->mutex1->lock();
-                // 向buffer1放入op_speed个数据
-                for (int i = 1; i <= op_speed; ++i) {
-                    data = genRandData();
-                    putinData(1);
-                }
-                Operation::ptr->mutex1->unlock();
-                //            Operation::ptr->full1->release();
-                V(Operation::ptr->full1);
-                break;
+        case PUT: {
+#ifdef _MY
+            P(Operation::ptr->empty1, op_speed);
+#endif
+#ifndef _MY
+            Operation::ptr->empty1->acquire(op_speed);
+#endif
+            Operation::ptr->mutex1->lock();
+            // 向buffer1放入op_speed个数据
+            for (int i = 1; i <= op_speed; ++i) {
+                data = genRandData();
+                putinData(1);
             }
-            case MOVE1_2: {
-                P(Operation::ptr->full1);
-                P(Operation::ptr->empty2);
-                //            Operation::ptr->full1->acquire();
-                //            Operation::ptr->empty2->acquire();
-                Operation::ptr->mutex1->lock();
-                Operation::ptr->mutex2->lock();
-                for (int i = 1; i <= op_speed; ++i) {
-                    // 从Buffer1中取出1个数据
-                    getoutData(1);
-                    // 向Buffer2中放入1个数据
-                    putinData(2);
-                }
-                Operation::ptr->mutex1->unlock();
-                Operation::ptr->mutex2->unlock();
-                //            Operation::ptr->empty1->release();
-                //            Operation::ptr->full2->release();
-                V(Operation::ptr->empty1);
-                V(Operation::ptr->full2);
-                break;
-            }
-            case MOVE1_3: {
-                P(Operation::ptr->full1);
-                P(Operation::ptr->empty3);
-                //            Operation::ptr->full1->acquire();
-                //            Operation::ptr->empty3->acquire();
-                Operation::ptr->mutex1->lock();
-                Operation::ptr->mutex3->lock();
-                for (int i = 1; i <= op_speed; ++i) {
-                    // 从Buffer1中取出1个数据
-                    getoutData(1);
-                    // 向Buffer3中放入1个数据
-                    putinData(3);
-                }
-                Operation::ptr->mutex1->unlock();
-                Operation::ptr->mutex3->unlock();
-                //            Operation::ptr->empty1->release();
-                //            Operation::ptr->full3->release();
-                V(Operation::ptr->empty1);
-                V(Operation::ptr->full3);
-                break;
-            }
-            case GET2: {
-                P(Operation::ptr->full2);
-                //            Operation::ptr->empty2->acquire();
-                Operation::ptr->mutex2->lock();
-                for (int i = 1; i <= op_speed; ++i) {
-                    // 从buffer2取出1个数据
-                    getoutData(2);
-                }
-                Operation::ptr->mutex2->unlock();
-                //            Operation::ptr->full2->release();
-                V(Operation::ptr->empty2);
-                break;
-            }
-            case GET3: {
-                P(Operation::ptr->full3);
-                //            Operation::ptr->empty3->acquire();
-                Operation::ptr->mutex3->lock();
-                for (int i = 1; i <= op_speed; ++i) {
-                    // 从buffer3取出1个数据
-                    getoutData(3);
-                }
-                Operation::ptr->mutex3->unlock();
-                //            Operation::ptr->full3->release();
-                V(Operation::ptr->empty3);
-                break;
-            }
-            default:
-                return;
+            Operation::ptr->mutex1->unlock();
+#ifndef _MY
+            Operation::ptr->full1->release(op_speed);
+#endif
+#ifdef _MY
+            V(Operation::ptr->full1, op_speed);
+#endif
+            break;
         }
-        //        getStatus();
+        case MOVE1_2: {
+#ifdef _MY
+            P(Operation::ptr->full1, op_speed);
+            P(Operation::ptr->empty2, op_speed);
+#endif
+#ifndef _MY
+            Operation::ptr->full1->acquire(op_speed);
+            Operation::ptr->empty2->acquire(op_speed);
+#endif
+            Operation::ptr->mutex1->lock();
+            Operation::ptr->mutex2->lock();
+            PRINT("before Move")
+            for (int i = 1; i <= op_speed; ++i) {
+                PRINT("within Move")
+                // 从Buffer1中取出1个数据
+                getoutData(1);
+                // 向Buffer2中放入1个数据
+                putinData(2);
+            }
+            PRINT("after Move")
+            Operation::ptr->mutex1->unlock();
+            Operation::ptr->mutex2->unlock();
+#ifndef _MY
+            Operation::ptr->empty1->release(op_speed);
+            Operation::ptr->full2->release(op_speed);
+#endif
+#ifdef _MY
+            V(Operation::ptr->empty1, op_speed);
+            V(Operation::ptr->full2, op_speed);
+#endif
+            break;
+        }
+        case MOVE1_3: {
+#ifdef _MY
+            P(Operation::ptr->full1, op_speed);
+            P(Operation::ptr->empty3, op_speed);
+#endif
+#ifndef _MY
+            Operation::ptr->full1->acquire(op_speed);
+            Operation::ptr->empty3->acquire(op_speed);
+#endif
+            Operation::ptr->mutex1->lock();
+            Operation::ptr->mutex3->lock();
+            for (int i = 1; i <= op_speed; ++i) {
+                // 从Buffer1中取出1个数据
+                getoutData(1);
+                // 向Buffer3中放入1个数据
+                putinData(3);
+            }
+            Operation::ptr->mutex1->unlock();
+            Operation::ptr->mutex3->unlock();
+#ifndef _MY
+            Operation::ptr->empty1->release(op_speed);
+            Operation::ptr->full3->release(op_speed);
+#endif
+#ifdef _MY
+            V(Operation::ptr->empty1, op_speed);
+            V(Operation::ptr->full3, op_speed);
+#endif
+            break;
+        }
+        case GET2: {
+#ifdef _MY
+            P(Operation::ptr->full2, op_speed);
+#endif
+#ifndef _MY
+            Operation::ptr->full2->acquire(op_speed);
+#endif
+            Operation::ptr->mutex2->lock();
+            for (int i = 1; i <= op_speed; ++i) {
+                // 从buffer2取出1个数据
+                getoutData(2);
+            }
+            Operation::ptr->mutex2->unlock();
+#ifndef _MY
+            Operation::ptr->empty2->release(op_speed);
+#endif
+#ifdef _MY
+            V(Operation::ptr->empty2, op_speed);
+#endif
+            break;
+        }
+        case GET3: {
+#ifdef _MY
+            P(Operation::ptr->full3, op_speed);
+#endif
+#ifndef _MY
+            Operation::ptr->full3->acquire(op_speed);
+#endif
+            Operation::ptr->mutex3->lock();
+            for (int i = 1; i <= op_speed; ++i) {
+                // 从buffer3取出1个数据
+                getoutData(3);
+            }
+            Operation::ptr->mutex3->unlock();
+#ifndef _MY
+            Operation::ptr->empty3->release(op_speed);
+#endif
+#ifdef _MY
+            V(Operation::ptr->empty3, op_speed);
+#endif
+            break;
+        }
+        default:
+            return;
+        }
         msleep(MAX_SPEED - Operation::ptr->gatherer->speed_coefficient);  // 延迟一段时间
     }
 }
@@ -181,21 +222,21 @@ void Operation::getStatus() {
     QString s;
     QString name;
     switch (op_type) {
-        case PUT:
-            name = "PUT";
-            break;
-        case MOVE1_2:
-            name = "MOVE1";
-            break;
-        case MOVE1_3:
-            name = "MOVE2";
-            break;
-        case GET2:
-            name = "GET2";
-            break;
-        case GET3:
-            name = "GET3";
-            break;
+    case PUT:
+        name = "PUT";
+        break;
+    case MOVE1_2:
+        name = "MOVE1";
+        break;
+    case MOVE1_3:
+        name = "MOVE2";
+        break;
+    case GET2:
+        name = "GET2";
+        break;
+    case GET3:
+        name = "GET3";
+        break;
     }
     s = name + "线程=>" + "速度:" + QString::number(op_speed) + " 运行:" + (isRunning() ? "是" : "否") + " 结束:" + (isFinished() ? "是" : "否");
     qDebug() << s;
@@ -220,29 +261,28 @@ void Operation::putinData(const int bid) {
     Message msg(getTID(), bid, op_type, data);
     QString log;
     switch (op_type) {
-        case PUT: {
-            log = "PUT向buffer1放入1个数据" + data;
-            Operation::ptr->buffer1->putinBuffer(msg);
-            Operation::ptr->displayLogText(ptr->ui->plainText_log1, log);
-            Operation::ptr->ui->bufBall1->updateProgress(op_speed);
-            break;
-        }
-        case MOVE1_2: {
-            log = "MOVE1_2向Buffer2中放入1个数据" + data;
-            Operation::ptr->buffer2->putinBuffer(msg);
-            Operation::ptr->displayLogText(ptr->ui->plainText_log2, log);
-            Operation::ptr->ui->bufBall2->updateProgress(op_speed);
-            break;
-        }
-        case MOVE1_3: {
-            log = "MOVE1_3向Buffer3中放入1个数据" + data;
-            Operation::ptr->buffer3->putinBuffer(msg);
-            Operation::ptr->displayLogText(ptr->ui->plainText_log3, log);
-            Operation::ptr->ui->bufBall3->updateProgress(op_speed);
-            break;
-        }
-        default:
-            break;
+    case PUT: {
+        log = "PUT向buffer1放入1个数据" + data;
+        Operation::ptr->buffer1->putinBuffer(msg);
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
+        Operation::ptr->ui->bufBall1->updateProgress(1);
+        break;
+    }
+    case MOVE1_2: {
+        log = "MOVE1_2向Buffer2中放入1个数据" + data;
+        Operation::ptr->buffer2->putinBuffer(msg);
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log2, log);
+        Operation::ptr->ui->bufBall2->updateProgress(1);
+        break;
+    }
+    case MOVE1_3: {
+        log = "MOVE1_3向Buffer3中放入1个数据" + data;
+        Operation::ptr->buffer3->putinBuffer(msg);
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log3, log);
+        Operation::ptr->ui->bufBall3->updateProgress(1);
+        break;
+    }
+    default: break;
     }
     qDebug() << log;
     //    emit putIn(1);
@@ -253,36 +293,35 @@ void Operation::getoutData(const int bid) {
     Operation::ptr->gatherer->getout_num++;
     QString log;
     switch (op_type) {
-        case MOVE1_2: {
-            log = "MOVE1_2从Buffer1中取出1个数据" + data;
-            Operation::ptr->displayLogText(ptr->ui->plainText_log1, log);
-            data = Operation::ptr->buffer1->getoutBuffer().data;
-            Operation::ptr->ui->bufBall1->updateProgress(-op_speed);
-            break;
-        }
-        case MOVE1_3: {
-            log = "MOVE1_3从Buffer1中取出1个数据" + data;
-            Operation::ptr->displayLogText(ptr->ui->plainText_log1, log);
-            data = Operation::ptr->buffer1->getoutBuffer().data;
-            Operation::ptr->ui->bufBall1->updateProgress(-op_speed);
-            break;
-        }
-        case GET2: {
-            log = "GET2从buffer2中取出1个数据" + data;
-            Operation::ptr->displayLogText(ptr->ui->plainText_log2, log);
-            data = Operation::ptr->buffer2->getoutBuffer().data;
-            Operation::ptr->ui->bufBall2->updateProgress(-op_speed);
-            break;
-        }
-        case GET3: {
-            log = "GET3从buffer3中取出1个数据" + data;
-            Operation::ptr->displayLogText(ptr->ui->plainText_log3, log);
-            data = Operation::ptr->buffer3->getoutBuffer().data;
-            Operation::ptr->ui->bufBall3->updateProgress(-op_speed);
-            break;
-        }
-        default:
-            break;
+    case MOVE1_2: {
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
+        data = Operation::ptr->buffer1->getoutBuffer().data;
+        Operation::ptr->ui->bufBall1->updateProgress(-1);
+        log = "MOVE1_2从Buffer1中取出1个数据" + data;
+        break;
+    }
+    case MOVE1_3: {
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
+        data = Operation::ptr->buffer1->getoutBuffer().data;
+        Operation::ptr->ui->bufBall1->updateProgress(-1);
+        log = "MOVE1_3从Buffer1中取出1个数据" + data;
+        break;
+    }
+    case GET2: {
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log2, log);
+        data = Operation::ptr->buffer2->getoutBuffer().data;
+        Operation::ptr->ui->bufBall2->updateProgress(-1);
+        log = "GET2从buffer2中取出1个数据" + data;
+        break;
+    }
+    case GET3: {
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log3, log);
+        data = Operation::ptr->buffer3->getoutBuffer().data;
+        Operation::ptr->ui->bufBall3->updateProgress(-1);
+        log = "GET3从buffer3中取出1个数据" + data;
+        break;
+    }
+    default: break;
     }
     qDebug() << log;
     //    emit getOut(-1);

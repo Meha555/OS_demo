@@ -85,29 +85,14 @@ MainWindow::MainWindow(QWidget* parent)
         result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, gatherer->putin_num, gatherer->getout_num);
     });
     // For gatherer
-    qDebug()<<"For gatherer";
     connect(timerWalker, &QTimer::timeout, this, [this]() {
         this->gatherer->setTime_staps(timeCounter->elapsed());
-    }); qDebug()<<"1111111111111111";
+    });
     connect(timerWalker, &QTimer::timeout, this, [this]() {
         this->gatherer->setBuffer1_data(buffer1->cur_num);
         this->gatherer->setBuffer2_data(buffer2->cur_num);
         this->gatherer->setBuffer3_data(buffer3->cur_num);
-    });qDebug()<<"222222222222222";
-    connect(timerWalker, &QTimer::timeout, gatherer, &StatGatherer::increPut_blocked_num);    // PUT放不进去
-    connect(empty1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);    // PUT放不进去
-    connect(empty2, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
-    connect(empty3, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
-    connect(full1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);     // MOVE拿不出来
-    connect(full2, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
-    connect(full3, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
-    connect(empty1, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE拿成功
-    connect(empty2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);   // GET拿成功
-    connect(empty3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);   // GET拿成功
-    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);    // PUT放成功
-    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE放成功
-    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE放成功
-    qDebug()<<"***********************************";
+    });
 
     // 最后的准备工作
     initalizeData();
@@ -168,21 +153,41 @@ void MainWindow::setConfig() {
     ui->bufBall3->setCapacity(config.buffer3_size);
 
     // 初始化各信号量
-    //    empty1 = new QSemaphore(buffer1->capacity);
-    //    full1 = new QSemaphore(0);
-    //    empty2 = new QSemaphore(buffer2->capacity);
-    //    full2 = new QSemaphore(0);
-    //    empty3 = new QSemaphore(buffer3->capacity);
-    //    full3 = new QSemaphore(0);
+#ifndef _MY
+    empty1 = new QSemaphore(buffer1->capacity);
+    full1 = new QSemaphore(0);
+    empty2 = new QSemaphore(buffer2->capacity);
+    full2 = new QSemaphore(0);
+    empty3 = new QSemaphore(buffer3->capacity);
+    full3 = new QSemaphore(0);
+#endif
+#ifdef _MY
     empty1 = new Semaphore(buffer1->capacity);
     full1 = new Semaphore(0);
     empty2 = new Semaphore(buffer2->capacity);
     full2 = new Semaphore(0);
     empty3 = new Semaphore(buffer3->capacity);
     full3 = new Semaphore(0);
+#endif
     mutex1 = new QMutex;
     mutex2 = new QMutex;
     mutex3 = new QMutex;
+
+    // For gather
+#ifdef _MY
+    connect(empty1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);    // PUT放不进去
+    connect(empty2, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
+    connect(empty3, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
+    connect(full1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);     // MOVE拿不出来
+    connect(full2, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
+    connect(full3, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
+    connect(empty1, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE拿成功
+    connect(empty2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);   // GET拿成功
+    connect(empty3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);   // GET拿成功
+    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);    // PUT放成功
+    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE放成功
+    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE放成功
+#endif
 
     ui->actStart->setEnabled(true);
 
