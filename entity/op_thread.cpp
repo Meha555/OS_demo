@@ -33,9 +33,9 @@ void Operation::run() {
         //        mutex.unlock();
         if (state == BLOCK) {  // 暂停
             mutex.lock();
-            Operation::ptr->gatherer->put_blocked_num = Operation::ptr->gatherer->thread_put_num;
-            Operation::ptr->gatherer->move_blocked_num = Operation::ptr->gatherer->thread_move_num;
-            Operation::ptr->gatherer->get_blocked_num = Operation::ptr->gatherer->thread_get_num;
+            Operation::ptr->gatherer->put_blocked_num.append(Operation::ptr->gatherer->thread_put_num);
+            Operation::ptr->gatherer->move_blocked_num.append(Operation::ptr->gatherer->thread_move_num);
+            Operation::ptr->gatherer->get_blocked_num.append(Operation::ptr->gatherer->thread_get_num);
             condition.wait(&mutex);
             mutex.unlock();
         }
@@ -257,7 +257,6 @@ inline int Operation::getTID() const {
 }
 
 void Operation::putinData(const int bid) {
-    Operation::ptr->gatherer->putin_num++;
     Message msg(getTID(), bid, op_type, data);
     QString log;
     switch (op_type) {
@@ -290,35 +289,34 @@ void Operation::putinData(const int bid) {
 
 void Operation::getoutData(const int bid) {
     Q_UNUSED(bid)
-    Operation::ptr->gatherer->getout_num++;
     QString log;
     switch (op_type) {
     case MOVE1_2: {
-        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
         data = Operation::ptr->buffer1->getoutBuffer().data;
         Operation::ptr->ui->bufBall1->updateProgress(-1);
         log = "MOVE1_2从Buffer1中取出1个数据" + data;
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
         break;
     }
     case MOVE1_3: {
-        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
         data = Operation::ptr->buffer1->getoutBuffer().data;
         Operation::ptr->ui->bufBall1->updateProgress(-1);
         log = "MOVE1_3从Buffer1中取出1个数据" + data;
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
         break;
     }
     case GET2: {
-        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log2, log);
         data = Operation::ptr->buffer2->getoutBuffer().data;
         Operation::ptr->ui->bufBall2->updateProgress(-1);
         log = "GET2从buffer2中取出1个数据" + data;
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log2, log);
         break;
     }
     case GET3: {
-        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log3, log);
         data = Operation::ptr->buffer3->getoutBuffer().data;
         Operation::ptr->ui->bufBall3->updateProgress(-1);
         log = "GET3从buffer3中取出1个数据" + data;
+        Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log3, log);
         break;
     }
     default: break;

@@ -7,7 +7,8 @@
 class ChartDataChangedTrend : public ChartStat
 {
 public:
-    ChartDataChangedTrend();
+    explicit ChartDataChangedTrend();
+    Q_DISABLE_COPY(ChartDataChangedTrend)
 
     bool readJson(const QString &str) override;
     void writeJson() override;
@@ -18,6 +19,10 @@ public:
 
 /*
 {
+  "param":{
+    "buf":"buffer_id",
+    "type":"type1"
+  },
   "buffer1_data": [], // 第一个缓冲区的数据数量列表
   "buffer2_data": [], // 第二个缓冲区的数据数量列表
   "buffer3_data": [], // 第三个缓冲区的数据数量列表

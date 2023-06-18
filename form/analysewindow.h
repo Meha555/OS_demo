@@ -9,6 +9,8 @@
 #include <QHBoxLayout>
 #include <QStringList>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QJsonDocument>
 #include <QHash>
 #include "chartform.h"
 #include "ledlabel.h"
@@ -18,13 +20,6 @@
 #include "qtmaterialraisedbutton.h"
 
 class MainWindow;
-
-using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,THREAD_STATE_TREND};
-
-struct ChartParam{
-    QString buf;
-    ProfileType type;
-};
 
 namespace Ui {
 class AnalyseWindow;
@@ -41,6 +36,10 @@ private slots:
     void createTab();
 
     void on_tabWidget_tabCloseRequested(int index);
+
+    void on_actSelectData_triggered();
+
+    void on_actSnapShot_triggered();
 
 private:
     Ui::AnalyseWindow *ui;
@@ -59,6 +58,8 @@ public:
     QtMaterialRaisedButton* btnOK;
     QtMaterialRaisedButton* btnClose;
     QtMaterialRaisedButton* btnHelp;
+
+    QString savePath;
 };
 
 #endif // ANALYSEWINDOW_H

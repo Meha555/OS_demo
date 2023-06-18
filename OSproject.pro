@@ -30,7 +30,9 @@ INCLUDEPATH += \
 
 SOURCES += \
     chartdatachangedtrend.cpp \
+    chartdatadistribution.cpp \
     chartstat.cpp \
+    chartthreadstatetrend.cpp \
     entity/buffer.cpp \
     entity/config.cpp \
     entity/message.cpp \
@@ -56,7 +58,9 @@ SOURCES += \
 
 HEADERS += \
     chartdatachangedtrend.h \
+    chartdatadistribution.h \
     chartstat.h \
+    chartthreadstatetrend.h \
     entity/buffer.h \
     entity/config.h \
     entity/message.h \

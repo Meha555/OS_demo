@@ -1,8 +1,7 @@
 #include "chartdatachangedtrend.h"
 
-ChartDataChangedTrend::ChartDataChangedTrend()
+ChartDataChangedTrend::ChartDataChangedTrend():ChartStat({.buf = "All",.type = DATA_CHANGE_TREND})
 {
-
 }
 
 bool ChartDataChangedTrend::readJson(const QString &str)
@@ -10,6 +9,7 @@ bool ChartDataChangedTrend::readJson(const QString &str)
     QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
     if(doc.isEmpty() || !doc.isObject()) return false;
     QJsonObject obj = doc.object();
+    this->recognize(obj);
     _data_source->buffer1_data = fromJsonArray<int>(obj["buffer1_data"].toArray());
     _data_source->buffer2_data = fromJsonArray<int>(obj["buffer2_data"].toArray());
     _data_source->buffer3_data = fromJsonArray<int>(obj["buffer3_data"].toArray());

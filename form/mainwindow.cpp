@@ -16,9 +16,9 @@ void MainWindow::resetStatistics() {
     gatherer->thread_move_num = config.move_num;  // move操作个数
     gatherer->thread_get_num = config.get_num;    // get操作个数
 
-    gatherer->put_blocked_num = 0;   // 当前阻塞的put线程数
-    gatherer->move_blocked_num = 0;  // 当前阻塞的move线程数
-    gatherer->get_blocked_num = 0;   // 当前阻塞的get线程数
+    QVector<int>(1).swap(gatherer->put_blocked_num);   // 当前阻塞的put线程数
+    QVector<int>(1).swap(gatherer->move_blocked_num);  // 当前阻塞的move线程数
+    QVector<int>(1).swap(gatherer->get_blocked_num);   // 当前阻塞的get线程数
 
     ui->bufBall1->resetProgress();
     ui->bufBall2->resetProgress();
@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget* parent)
     cfgDao = new ConfigDaoImpl(dbName, this);
     msgDao = new MessageDaoImpl(dbName, this);
     resDao = new ResultDaoImpl(dbName, this);
-    // gatherer = StatGatherer::instance();
-    gatherer = new StatGatherer();
+    gatherer = StatGatherer::instance(this);
+    // gatherer = new StatGatherer();
 
     // 界面相关设置
     label1 = new QLabel("操作速度控制：", this);
@@ -82,17 +82,24 @@ MainWindow::MainWindow(QWidget* parent)
     // 信号相关
     connect(slider, &QSlider::valueChanged, this, &MainWindow::changeSpeed);
     connect(timerWalker, &QTimer::timeout, this, [this]() {
-        result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, gatherer->putin_num, gatherer->getout_num);
+        result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, gatherer->putin_num.back(), gatherer->getout_num.back());
     });
     // For gatherer
     connect(timerWalker, &QTimer::timeout, this, [this]() {
         this->gatherer->setTime_staps(timeCounter->elapsed());
     });
-    connect(timerWalker, &QTimer::timeout, this, [this]() {
-        this->gatherer->setBuffer1_data(buffer1->cur_num);
-        this->gatherer->setBuffer2_data(buffer2->cur_num);
-        this->gatherer->setBuffer3_data(buffer3->cur_num);
-    });
+//    connect(timerWalker, &QTimer::timeout, this, [this]() {
+//        this->gatherer->setBuffer1_data(buffer1->cur_num);
+//        this->gatherer->setBuffer2_data(buffer2->cur_num);
+//        this->gatherer->setBuffer3_data(buffer3->cur_num);
+
+//        this->gatherer->cur_num[0] = buffer1->cur_num;
+//        this->gatherer->cur_num[1] = buffer2->cur_num;
+//        this->gatherer->cur_num[2] = buffer3->cur_num;
+//        this->gatherer->free_space_num[0] = buffer1->free_space_num;
+//        this->gatherer->free_space_num[1] = buffer2->free_space_num;
+//        this->gatherer->free_space_num[2] = buffer3->free_space_num;
+//    });
 
     // 最后的准备工作
     initalizeData();
@@ -148,6 +155,13 @@ void MainWindow::setConfig() {
     buffer3->setFree_space_num(buffer3->capacity);
     buffer3->setCur_num(0);
 
+    gatherer->capacity[0] = buffer1->capacity;
+    gatherer->capacity[1] = buffer2->capacity;
+    gatherer->capacity[2] = buffer3->capacity;
+    gatherer->free_space_num[0] = buffer1->free_space_num;
+    gatherer->free_space_num[1] = buffer2->free_space_num;
+    gatherer->free_space_num[2] = buffer3->free_space_num;
+
     ui->bufBall1->setCapacity(config.buffer1_size);
     ui->bufBall2->setCapacity(config.buffer2_size);
     ui->bufBall3->setCapacity(config.buffer3_size);
@@ -190,7 +204,6 @@ void MainWindow::setConfig() {
 #endif
 
     ui->actStart->setEnabled(true);
-
     ui->label_c_id->setText(QString::number(config.c_id));
     ui->label_buffer1_size->setText(QString::number(config.buffer1_size));
     ui->label_buffer2_size->setText(QString::number(config.buffer2_size));

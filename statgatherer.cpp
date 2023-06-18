@@ -4,84 +4,76 @@
 StatGatherer* StatGatherer::_instance = nullptr;
 std::once_flag StatGatherer::_flag;
 
+StatGatherer::StatGatherer(MainWindow* ptr)
+{
+//    capacity.resize(3);
+//    free_space_num.resize(3);
+//    cur_num.resize(3);
+//    putin_num.resize(3);
+//    getout_num.resize(3);
+    buffers.append(ptr->buffer1);
+    buffers.append(ptr->buffer2);
+    buffers.append(ptr->buffer3);
+}
+
 int StatGatherer::getGet_blocked_num() const
 {
-    return get_blocked_num;
+    return get_blocked_num.back();
 }
 
 void StatGatherer::setGet_blocked_num(int value)
 {
-    get_blocked_num = value;
+    get_blocked_num.append(value);
 }
 
 void StatGatherer::increGet_blocked_num()
 {
-    get_blocked_num++;
+    get_blocked_num.append(get_blocked_num.last()+1);
 }
 
 void StatGatherer::decreGet_blocked_num()
 {
-    get_blocked_num--;
+    get_blocked_num.append(get_blocked_num.last()-1);
 }
 
 int StatGatherer::getMove_blocked_num() const
 {
-    return move_blocked_num;
+    return move_blocked_num.back();
 }
 
 void StatGatherer::setMove_blocked_num(int value)
 {
-    move_blocked_num = value;
+    move_blocked_num.append(value);
 }
 
 void StatGatherer::increMove_blocked_num()
 {
-    move_blocked_num++;
+    move_blocked_num.append(move_blocked_num.last()+1);
 }
 
 void StatGatherer::decreMove_blocked_num()
 {
-    move_blocked_num--;
+    move_blocked_num.append(move_blocked_num.last()-1);;
 }
 
 int StatGatherer::getPut_blocked_num() const
 {
-    return put_blocked_num;
+    return put_blocked_num.back();
 }
 
 void StatGatherer::setPut_blocked_num(int value)
 {
-    put_blocked_num = value;
+    put_blocked_num.append(value);
 }
 
 void StatGatherer::increPut_blocked_num()
 {
-    put_blocked_num++;
+    put_blocked_num.append(put_blocked_num.last()+1);
 }
 
 void StatGatherer::decrePut_blocked_num()
 {
-    put_blocked_num--;
-}
-
-int StatGatherer::getGetout_num() const
-{
-    return getout_num;
-}
-
-void StatGatherer::setGetout_num(int value)
-{
-    getout_num = value;
-}
-
-int StatGatherer::getPutin_num() const
-{
-    return putin_num;
-}
-
-void StatGatherer::setPutin_num(int value)
-{
-    putin_num = value;
+    put_blocked_num.append(put_blocked_num.last()-1);
 }
 
 QVector<int> StatGatherer::getTime_staps() const

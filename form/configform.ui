@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>302</width>
-    <height>502</height>
+    <height>548</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>设置属性</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="res.qrc">
+   <iconset resource="../res.qrc">
     <normaloff>:/icons/assets/icons/config.png</normaloff>:/icons/assets/icons/config.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -401,7 +401,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections>
   <connection>

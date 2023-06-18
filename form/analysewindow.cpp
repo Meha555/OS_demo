@@ -142,3 +142,28 @@ void AnalyseWindow::on_tabWidget_tabCloseRequested(int index)
 {
     if (index >= 0) ui->tabWidget->widget(index)->close();
 }
+
+void AnalyseWindow::on_actSelectData_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,"选择数据源",QDir::currentPath(),"Json文件(.json)");
+    if(fileName.isEmpty()){
+        QMessageBox::warning(this,"文件选择错误","文件路径为空！");
+        return;
+    }
+    QFile aFile(fileName);QTextStream aStream(&aFile);QString str = aStream.readAll();
+    ChartForm *chartForm = new ChartForm(this); //不指定父窗口，单独用show()方法显示
+    chartForm->setAttribute(Qt::WA_DeleteOnClose); //关闭时自动删除
+    int cur = ui->tabWidget->addTab(chartForm
+            ,chartForm->getParam().buf + "-" + profiles[chartForm->getParam().type]+QString::number(ui->tabWidget->count()));
+    ui->tabWidget->setCurrentIndex(cur);
+    ui->tabWidget->setVisible(true);
+    chartForm->drawFromJson(str);
+}
+
+void AnalyseWindow::on_actSnapShot_triggered()
+{
+//    savePath = QFileDialog::getSaveFileName(this, "选择保存路径",
+//                                                    "data.json",
+//                                                    "json files");
+}
+

@@ -19,7 +19,7 @@
    <string>生产者消费者Demo</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="res.qrc">
+   <iconset resource="../res.qrc">
     <normaloff>:/icons/assets/icons/logo.png</normaloff>:/icons/assets/icons/logo.png</iconset>
   </property>
   <property name="toolButtonStyle">
@@ -195,8 +195,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>245</width>
-              <height>539</height>
+              <width>243</width>
+              <height>528</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -234,8 +234,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>246</width>
-              <height>539</height>
+              <width>242</width>
+              <height>528</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -273,8 +273,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>245</width>
-              <height>539</height>
+              <width>243</width>
+              <height>528</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -315,7 +315,7 @@
      <x>0</x>
      <y>0</y>
      <width>1109</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -541,7 +541,7 @@
              <x>0</x>
              <y>0</y>
              <width>274</width>
-             <height>301</height>
+             <height>289</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -564,7 +564,7 @@
   </widget>
   <action name="actSetConfig">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/config.png</normaloff>:/icons/assets/icons/config.png</iconset>
    </property>
    <property name="text">
@@ -576,7 +576,7 @@
   </action>
   <action name="actImportConfig">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/import.png</normaloff>:/icons/assets/icons/import.png</iconset>
    </property>
    <property name="text">
@@ -588,7 +588,7 @@
   </action>
   <action name="actExportResult">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/export.png</normaloff>:/icons/assets/icons/export.png</iconset>
    </property>
    <property name="text">
@@ -600,7 +600,7 @@
   </action>
   <action name="actStart">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/start.png</normaloff>:/icons/assets/icons/start.png</iconset>
    </property>
    <property name="text">
@@ -612,7 +612,7 @@
   </action>
   <action name="actPasue">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/pause.png</normaloff>:/icons/assets/icons/pause.png</iconset>
    </property>
    <property name="text">
@@ -624,7 +624,7 @@
   </action>
   <action name="actTerminate">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/terminate.png</normaloff>:/icons/assets/icons/terminate.png</iconset>
    </property>
    <property name="text">
@@ -636,7 +636,7 @@
   </action>
   <action name="actRestart">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/restart.png</normaloff>:/icons/assets/icons/restart.png</iconset>
    </property>
    <property name="text">
@@ -648,7 +648,7 @@
   </action>
   <action name="actAnalyse">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/icons/assets/icons/analyse.png</normaloff>:/icons/assets/icons/analyse.png</iconset>
    </property>
    <property name="text">
@@ -673,7 +673,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections/>
 </ui>
