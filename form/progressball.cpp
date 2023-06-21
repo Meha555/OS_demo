@@ -52,14 +52,14 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     ripplePath2.moveTo(ball.bottomLeft());
 
     /* 使用正弦波，以当前水位线为坐标横轴，圆形左下角为原点建系
-            y=Asin(ωx + φ) + k
+            y = Asin(ωx + φ) + k
     A：振幅，最高和最低的距离
     ω：角速度，用于控制周期大小，单位x中的起伏个数
     k：偏距，曲线整体上下偏移量，即水位线位置
     */
     qreal rippleLevel = _progress/_capacity;
-    qreal A = ball.width()*0.1;                           // 振幅
-    qreal k = (1 - rippleLevel) * ball.height();       // 高度
+    qreal A = ball.width() * 0.1;                         // 振幅
+    qreal k = (1 - rippleLevel) * ball.height();          // 高度
     qreal w = 2 * M_PI / static_cast<qreal>(ball.width());// 角速度
 
     //在直径上绘制水位线的切线
@@ -79,9 +79,9 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 
     //设置水的颜色和透明度
 
-    QColor waterColor1 = _progress < 7 ? (_progress < 4 ? _colorLow : _colorMedium) : _colorHigh;
+    QColor waterColor1 = rippleLevel < 0.7 ? (rippleLevel < 0.4 ? _colorLow : _colorMedium) : _colorHigh;
     waterColor1.setAlpha(100);
-    QColor waterColor2 = _progress < 7 ? (_progress < 4 ? _colorLow : _colorMedium) : _colorHigh;
+    QColor waterColor2 = rippleLevel < 0.7 ? (rippleLevel < 0.4 ? _colorLow : _colorMedium) : _colorHigh;
     waterColor2.setAlpha(200);
 
     QPainterPath path;
@@ -94,7 +94,7 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     painter.drawPath(path);
 
     // 绘制进度百分比
-    int fontSize = ball.width()/4;
+    int fontSize = ball.width() / 4;
     QFont font;
     font.setFamily("Microsoft Yahei");
     font.setPixelSize(fontSize);
@@ -102,15 +102,12 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 
     painter.setFont(font);
     painter.setPen(Qt::white);
-    painter.drawText(ball, Qt::AlignCenter,QString("%1%").arg(QString::number(rippleLevel*100)));
+    painter.drawText(ball, Qt::AlignCenter, QString("%1%").arg(QString::number(rippleLevel*100, 'f', 1)));
 }
 
 void ProgressBall::updateProgress(qreal val) {
-//    mutex.lock();
     _progress += val;
-//    qDebug()<<this<<" 进度"<<_progress<<" "<<_progress/_capacity;
     update();
-//    mutex.unlock();
 }
 
 void ProgressBall::updateRipple()

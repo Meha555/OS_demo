@@ -108,7 +108,7 @@ void MainWindow::updateRes2DB() {
     int bf1 = msgDao->batchInsert(buffer1->buffer);
     int bf2 = msgDao->batchInsert(buffer2->buffer);
     int bf3 = msgDao->batchInsert(buffer3->buffer);
-    qDebug() << "向Buffer中插入" << bf1 + bf2 + bf3 << "条记录";
+    qDebug() << "向Buffer表中插入" << bf1 + bf2 + bf3 << "条记录";
     // 写入运行结果
     resDao->insert(result);
 }
@@ -136,6 +136,9 @@ void MainWindow::setConfig() {
     gatherer->buffers.append(buffer1);
     gatherer->buffers.append(buffer2);
     gatherer->buffers.append(buffer3);
+    gatherer->setPut_blocked_num(0);
+    gatherer->setMove_blocked_num(0);
+    gatherer->setGet_blocked_num(0);
     gatherer->setConfig(&config);
 
     // For gatherer
@@ -145,25 +148,6 @@ void MainWindow::setConfig() {
         this->gatherer->setBuffer2_data(buffer2->cur_num);
         this->gatherer->setBuffer3_data(buffer3->cur_num);
     });
-//    connect(timerWalker, &QTimer::timeout, this, [this]() {
-//        this->gatherer->setBuffer1_data(buffer1->cur_num);
-//        this->gatherer->setBuffer2_data(buffer2->cur_num);
-//        this->gatherer->setBuffer3_data(buffer3->cur_num);
-
-//        this->gatherer->cur_num[0] = buffer1->cur_num;
-//        this->gatherer->cur_num[1] = buffer2->cur_num;
-//        this->gatherer->cur_num[2] = buffer3->cur_num;
-//        this->gatherer->free_space_num[0] = buffer1->free_space_num;
-//        this->gatherer->free_space_num[1] = buffer2->free_space_num;
-//        this->gatherer->free_space_num[2] = buffer3->free_space_num;
-//    });
-
-//    gatherer->capacity[0] = buffer1->capacity;
-//    gatherer->capacity[1] = buffer2->capacity;
-//    gatherer->capacity[2] = buffer3->capacity;
-//    gatherer->free_space_num[0] = buffer1->free_space_num;
-//    gatherer->free_space_num[1] = buffer2->free_space_num;
-//    gatherer->free_space_num[2] = buffer3->free_space_num;
 
     ui->bufBall1->setCapacity(config.buffer1_size);
     ui->bufBall2->setCapacity(config.buffer2_size);
@@ -190,7 +174,7 @@ void MainWindow::setConfig() {
     mutex2 = new QMutex;
     mutex3 = new QMutex;
 
-    // For gather
+    // For gatherer
 #ifdef _MY
     connect(empty1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);    // PUT放不进去
     connect(empty2, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
@@ -201,9 +185,9 @@ void MainWindow::setConfig() {
     connect(empty1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);   // PUT放成功
     connect(empty2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE放成功
     connect(empty3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE放成功
-    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);    // MOVE拿成功
-    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // GET拿成功
-    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // GET拿成功
+    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE拿成功
+    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);    // GET拿成功
+    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);    // GET拿成功
 #endif
 
     ui->actStart->setEnabled(true);

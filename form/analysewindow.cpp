@@ -85,9 +85,6 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     connect(ptr,&MainWindow::sigPause,this,[this](){statLED->setStatus(BLOCK);emit sigStop();},Qt::DirectConnection);
     connect(ptr,&MainWindow::sigStop,this,[this](){statLED->setStatus(TERMINATED);emit sigStop();},Qt::DirectConnection);
     connect(ptr,&MainWindow::sigRun,this,[this](){statLED->setStatus(RUNNING);emit sigStart();},Qt::DirectConnection);
-    qDebug()<<"======PUT====== "<<ptr->gatherer->getPut_blocked_num();
-    qDebug()<<"======MOVE===== "<<ptr->gatherer->getMove_blocked_num();
-    qDebug()<<"======GET====== "<<ptr->gatherer->getGet_blocked_num();
 //    connect(ptr->timerWalker,&QTimer::timeout,this,[this,&ptr](){
 //        labPut->setText(QString("PUT线程阻塞数量: %1").arg(ptr->gatherer->getPut_blocked_num()));
 //        labMove->setText(QString("MOVE线程阻塞数量: %1").arg(ptr->gatherer->getMove_blocked_num()));

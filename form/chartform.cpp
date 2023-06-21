@@ -70,9 +70,6 @@ void ChartForm::initialize(QWidget* parent)
 
 void ChartForm::drawFromJson(QString& str)
 {
-//    QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
-//    QJsonObject obj = doc.object();
-//    QString type = obj["param"].toObject()["type"].toString();
     if(param.type == DATA_CHANGE_TREND) {
         draft1->readJson(str);
         initLineChart(3,{"Buffer1","Buffer2","Buffer3"},tr("时间(ms)"),tr("数据数量"));
@@ -244,9 +241,9 @@ void ChartForm::drawChart_type3()
         }
     }
     //增加新的点到曲线末端
-    lineSeries[0]->append(count, data->getPut_blocked_num());qDebug()<<"coordinate:"<<count<<" "<<data->getPut_blocked_num();
-    lineSeries[1]->append(count, data->getMove_blocked_num());qDebug()<<"coordinate:"<<count<<" "<<data->getMove_blocked_num();
-    lineSeries[2]->append(count, data->getPut_blocked_num());qDebug()<<"coordinate:"<<count<<" "<<data->getPut_blocked_num();
+    lineSeries[0]->append(count, data->getPut_blocked_num());
+    lineSeries[1]->append(count, data->getMove_blocked_num());
+    lineSeries[2]->append(count, data->getPut_blocked_num());
     count++;
 }
 

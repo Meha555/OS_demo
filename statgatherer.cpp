@@ -26,7 +26,7 @@ void StatGatherer::increGet_blocked_num()
 
 void StatGatherer::decreGet_blocked_num()
 {
-    get_blocked_num.append(get_blocked_num.back()-1);
+    if(get_blocked_num.back() > 0) get_blocked_num.append(get_blocked_num.back()-1);
 }
 
 int StatGatherer::getMove_blocked_num() const
@@ -47,7 +47,7 @@ void StatGatherer::increMove_blocked_num()
 
 void StatGatherer::decreMove_blocked_num()
 {
-    move_blocked_num.append(move_blocked_num.back()-1);
+    if(move_blocked_num.back() > 0) move_blocked_num.append(move_blocked_num.back()-1);
 }
 
 int StatGatherer::getPut_blocked_num() const
@@ -68,7 +68,7 @@ void StatGatherer::increPut_blocked_num()
 
 void StatGatherer::decrePut_blocked_num()
 {
-    put_blocked_num.append(put_blocked_num.back()-1);
+    if(put_blocked_num.back() > 0) put_blocked_num.append(put_blocked_num.back()-1);
 }
 
 QVector<qint64> StatGatherer::getTime_staps() const

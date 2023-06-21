@@ -10,8 +10,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QtMath>
-#include <QDebug>
-#include <QMutex>
 
 // 通用的自定义进度球控件
 class ProgressBall : public QWidget
@@ -63,7 +61,6 @@ private:
     qreal _offset{};// 波纹偏移
     int parentWidth=0;
     int parentHeight=0;
-//    QMutex mutex;
 };
 
 #endif // PROGRESSBALL_H

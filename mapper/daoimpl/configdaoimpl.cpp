@@ -28,15 +28,11 @@ QVector<Config> ConfigDaoImpl::findAll()
                        sqlHandler.value("get_num").toInt(),
                        sqlHandler.value("get_speed").toInt());//创建一个Config对象返回
             ret.push_back(cfg);
-            cfg.configInfo();
         }
     }else{
         QMessageBox::critical(0, "数据库元组查询失败",
                               sqlHandler.lastError().text());
         qCritical()<<sqlHandler.lastError();
-    }
-    for(auto& ele: ret){
-        ele.configInfo();
     }
     return ret;
 }
