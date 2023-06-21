@@ -11,7 +11,7 @@ public:
     Q_DISABLE_COPY(ChartDataDistribution)
 
     bool readJson(const QString &str) override;
-    void writeJson() override;
+    QByteArray writeJson() override;
 };
 
 /*
@@ -20,11 +20,11 @@ public:
     "buf": "all",
     "type": "type2"
   },
-  "capacity": []
-  "cur_num": [],
-  "free_space_num": [],
-  "putin_num": [],
-  "getout_num": []
+  "buf1_cur_num": [],
+  "buf2_cur_num": [],
+  "buf3_cur_num": [],
+  "time_staps": [],
+  "interval": 500
 }
 */
 

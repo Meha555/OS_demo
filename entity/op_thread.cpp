@@ -33,9 +33,9 @@ void Operation::run() {
         //        mutex.unlock();
         if (state == BLOCK) {  // 暂停
             mutex.lock();
-            Operation::ptr->gatherer->put_blocked_num.append(Operation::ptr->gatherer->thread_put_num);
-            Operation::ptr->gatherer->move_blocked_num.append(Operation::ptr->gatherer->thread_move_num);
-            Operation::ptr->gatherer->get_blocked_num.append(Operation::ptr->gatherer->thread_get_num);
+            Operation::ptr->gatherer->setThread_put_num(Operation::ptr->gatherer->thread_put_num);
+            Operation::ptr->gatherer->setThread_move_num(Operation::ptr->gatherer->thread_move_num);
+            Operation::ptr->gatherer->setGet_blocked_num(Operation::ptr->gatherer->thread_get_num);
             condition.wait(&mutex);
             mutex.unlock();
         }

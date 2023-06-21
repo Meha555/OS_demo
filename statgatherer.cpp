@@ -47,7 +47,7 @@ void StatGatherer::increMove_blocked_num()
 
 void StatGatherer::decreMove_blocked_num()
 {
-    move_blocked_num.append(move_blocked_num.back()-1);;
+    move_blocked_num.append(move_blocked_num.back()-1);
 }
 
 int StatGatherer::getPut_blocked_num() const

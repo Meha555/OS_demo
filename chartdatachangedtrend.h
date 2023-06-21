@@ -11,7 +11,7 @@ public:
     Q_DISABLE_COPY(ChartDataChangedTrend)
 
     bool readJson(const QString &str) override;
-    void writeJson() override;
+    QByteArray writeJson() override;
 
 };
 

@@ -75,20 +75,23 @@ public:
     int thread_move_num; //move操作个数
     int thread_get_num; //get操作个数
 
-    QVector<Buffer *> buffers;
-
 //    QVector<int> capacity;//buffer容量
 //    QVector<int> free_space_num;//当前空闲空间个数
-//    QVector<int> cur_num;//当前的数据个数
 //    QVector<int> putin_num;//已放入当前Buffer中的数据个数
 //    QVector<int> getout_num;//已从当前Buffer中取出的数据个数
 
-    //  Buffer数据量变化趋势【曲线图+柱状/饼图】 Buffer数据量分布【柱状/饼图】
+    //  Buffer数据量变化趋势【曲线图】
     int interval = 100; // 采样间隔ms
     QVector<int> buffer1_data;
     QVector<int> buffer2_data;
     QVector<int> buffer3_data;
     QVector<qint64> time_staps; // 采样出的时间戳
+
+    // Buffer数据量分布【饼图】
+    QVector<Buffer *> buffers;
+    QVector<int> buf1_cur_num;//当前的数据个数
+    QVector<int> buf2_cur_num;//当前的数据个数
+    QVector<int> buf3_cur_num;//当前的数据个数
 
     // 线程状态变化趋势【曲线图】
     Config* config;
