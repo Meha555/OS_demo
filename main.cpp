@@ -38,22 +38,5 @@ int main(int argc, char *argv[])
     w.show();
     return a.exec();
 
-//    Dao* dao = new MessageDaoImpl("Message");
-//    QVector<Message> lm = dynamic_cast<MessageDaoImpl*>(dao)->findAll();
-//    ResultDaoImpl resDao;
-//    auto t = Result("325143",10,12,13,123.123);
-//    resDao.insert(t);
-//    QVector<Result> lm = resDao.findAll();
-//    std::for_each(lm.begin(),lm.end(),[&resDao](Result& ele)->void{ele.resultInfo();resDao.deleteByID(ele.r_id);});
-
-//    MessageDaoImpl msgDao;
-//    QQueue<Message> lm;
-//    for(int i = 1;i<=5;i++){
-//        lm.enqueue(Message());
-//    }
-//    msgDao.batchInsert(lm);
-//    auto lm = msgDao.findAll();
-//    for(auto& ele: lm) ele.messageInfo();
-//    msgDao.deleteAll();
     return 0;
 }

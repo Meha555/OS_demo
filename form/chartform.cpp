@@ -20,18 +20,27 @@ ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
 
     switch (param.type) {
     case DATA_CHANGE_TREND:{//Buffer数据量变化趋势【曲线图】
-        initLineChart(3,{"Buffer1","Buffer2","Buffer3"},tr("时间(ms)"),tr("数据数量"));
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type1);
+        setGrid(50,std::max({draft1->_data_source->buffers[0]->capacity,
+                             draft1->_data_source->buffers[1]->capacity,
+                             draft1->_data_source->buffers[2]->capacity}));
+        initLineChart(3,{"Buffer1","Buffer2","Buffer3"},tr("时间(s)"),tr("数据数量"));
+        connect(timerRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type1);
         break;
     }
     case DATA_DISTRIBUTION:{//Buffer数据量分布【饼图】
         initPieChart(3, {"Buffer1","Buffer2","Buffer3"});
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type2);
+        connect(timerRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type2);
         break;
     }
     case THREAD_STATE_TREND:{//线程状态变化趋势【曲线图】
+        setGrid(50,std::max({draft3->_data_source->config->put_num,
+                             draft3->_data_source->config->move_num,
+                             draft3->_data_source->config->get_num}));
+        disconnect(static_cast<AnalyseWindow*>(parent),nullptr,timerRefresh,nullptr);
+        disconnect(static_cast<AnalyseWindow*>(parent),nullptr,timerRefresh,nullptr);
         initLineChart(3,{"PUT","MOVE","GET"},tr("时间(ms)"),tr("阻塞数量"));
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type3);
+        connect(timerRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type3);
+        timerRefresh->start(interval);
         break;
     }
     }
@@ -49,33 +58,80 @@ void ChartForm::initialize(QWidget* parent)
     draft1 = new ChartDataChangedTrend();
     draft2 = new ChartDataDistribution();
     draft3 = new ChartThreadStateTrend();
-    timeRefresh = new QTimer(this);
-    timeRefresh->start(100);
-    connect(dynamic_cast<AnalyseWindow*>(parent)->comboxStyle,
+    timerRefresh = new QTimer(this);
+    connect(static_cast<AnalyseWindow*>(parent)->comboxStyle,
             static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,[this](int i){
         ui->chartView->chart()->setTheme(QChart::ChartTheme(i));
     });
+    connect(static_cast<AnalyseWindow*>(parent),&AnalyseWindow::sigStart,timerRefresh,[this](){timerRefresh->start(interval);},Qt::DirectConnection);
+    connect(static_cast<AnalyseWindow*>(parent),&AnalyseWindow::sigStop,timerRefresh,&QTimer::stop,Qt::DirectConnection);
 }
 
 void ChartForm::drawFromJson(QString& str)
 {
-    QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
-    QJsonObject obj = doc.object();
-    QString type = obj["param"].toObject()["type"].toString();
-    if(type == "type1") {
+//    QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
+//    QJsonObject obj = doc.object();
+//    QString type = obj["param"].toObject()["type"].toString();
+    if(param.type == DATA_CHANGE_TREND) {
         draft1->readJson(str);
         initLineChart(3,{"Buffer1","Buffer2","Buffer3"},tr("时间(ms)"),tr("数据数量"));
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type1);
-    }else if(type == "type2"){
+        auto& data = draft1->_data_source;
+        for(; count < data->getData_num(); count++){
+            //当曲线上最早的点超出X轴的范围时
+            for(auto& line : lineSeries){
+                if(count > max_x) {
+                    // 剔除最早的点
+                    line->removePoints(0,line->count() - max_x);
+                    // 更新X轴的范围
+                    chart->axes(Qt::Horizontal).back()->setRange(count - max_x,count);
+                }
+            }
+            //增加新的点到曲线末端
+            lineSeries[0]->append(data->time_staps[count], data->buffer1_data[count]);
+            lineSeries[1]->append(data->time_staps[count], data->buffer2_data[count]);
+            lineSeries[2]->append(data->time_staps[count], data->buffer3_data[count]);
+        }
+    }else if(param.type == DATA_DISTRIBUTION){
         draft2->readJson(str);
-        initPieChart(3, {"Buffer1","Buffer2","Buffer3"});qDebug()<<"initPieChart";
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type2);
-    }else if(type == "type3"){
+        initPieChart(3, {"Buffer1","Buffer2","Buffer3"});
+        auto& data = draft2->_data_source;
+        for (;count < data->getData_num();count++) {
+            pieSeries->slices().at(0)->setValue(data->buffer1_data[count]);
+            pieSeries->slices().at(1)->setValue(data->buffer1_data[count]);
+            pieSeries->slices().at(2)->setValue(data->buffer2_data[count]);
+        }
+        for(int i = 0;i < pieSeries->slices().size();i++) {
+            auto& slice = pieSeries->slices().at(i);
+            slice->setLabel(QString::asprintf("Buffer%d: 数据量: %.0f,占比: %.1f%%",i+1,slice->value(),slice->percentage() * 100));
+        }
+    }else if(param.type == THREAD_STATE_TREND){
         draft3->readJson(str);
         initLineChart(3,{"PUT","MOVE","GET"},tr("时间(ms)"),tr("阻塞数量"));
-        connect(timeRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type3);
+        auto& data = draft3->_data_source;
+        for(; count < data->getData_num(); count++){
+            //当曲线上最早的点超出X轴的范围时
+            for(auto& line : lineSeries){
+                if(count > max_x) {
+                    // 剔除最早的点
+                    line->removePoints(0,line->count() - max_x);
+                    // 更新X轴的范围
+                    chart->axes(Qt::Horizontal).back()->setRange(count - max_x,count);
+                }
+            }
+            //增加新的点到曲线末端
+            lineSeries[0]->append(data->time_staps[count], data->put_blocked_num[count]);
+            lineSeries[1]->append(data->time_staps[count], data->move_blocked_num[count]);
+            lineSeries[2]->append(data->time_staps[count], data->get_blocked_num[count]);
+        }
     }
+}
+
+void ChartForm::setGrid(const int x, const int y)
+{
+    max_x = x;
+    max_y = y + 1;
+    interval = draft1->_data_source->interval;
 }
 
 void ChartForm::initLineChart(int n, const QStringList& names, const QString& x_name, const QString& y_name)
@@ -90,10 +146,8 @@ void ChartForm::initLineChart(int n, const QStringList& names, const QString& x_
     QValueAxis *axisX = new QValueAxis();
     QValueAxis *axisY = new QValueAxis();
     //设置坐标轴显示的范围
-    axisX->setMin(0);
-    axisX->setMax(MAX_X);
-    axisY->setMin(0);
-    axisY->setMax(MAX_Y);
+    axisX->setRange(0,max_x);
+    axisY->setRange(-1,max_y);
     //设置坐标轴上的格点
     axisX->setTickCount(10);
     axisY->setTickCount(10);
@@ -107,11 +161,8 @@ void ChartForm::initLineChart(int n, const QStringList& names, const QString& x_
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
     for(int i = 0;i < n;i++){
-//        lineSeries.append(new QSplineSeries());
         lineSeries[i]->attachAxis(axisX);
         lineSeries[i]->attachAxis(axisY);
-//        lineSeries[i]->setName(names[i]);
-//        chart->addSeries(lineSeries[i]);
     }
     //把chart显示到窗口上
     ui->chartView->setChart(chart);
@@ -121,8 +172,7 @@ void ChartForm::initLineChart(int n, const QStringList& names, const QString& x_
 void ChartForm::initPieChart(int n, const QStringList& names) {
     chart = new QChart();
     pieSeries = new QPieSeries();
-    for (int i = 0; i < n; i++)  // 添加初始分块数据
-    {
+    for (int i = 0; i < n; i++) { // 添加初始分块数据
 //        QPieSlice* pieSlice = new QPieSlice();
 //        pieSlice->setLabel(names[i]);
         pieSeries->append(names[i],0);  // 添加一个饼图分块数据,标签
@@ -146,59 +196,58 @@ void ChartForm::initPieChart(int n, const QStringList& names) {
 void ChartForm::drawChart_type1()
 {
     auto& data = draft1->_data_source;
-    for(int count = 0; count < data->getData_num(); count++){
-        //当曲线上最早的点超出X轴的范围时
-        for(auto& line : lineSeries){
-            if(count > MAX_X) {
-                // 剔除最早的点
-                line->removePoints(0,line->count() - MAX_X);
-                // 更新X轴的范围
-                chart->axes(Qt::Horizontal).back()->setMin(count - MAX_X);
-                chart->axes(Qt::Horizontal).back()->setMax(count);
-            }
+    //当曲线上最早的点超出X轴的范围时
+    for(auto& line : lineSeries){
+        if(count > max_x) {
+            // 剔除最早的点，保留最近的max_x个点
+            line->removePoints(0,line->count() - max_x);
+            // 更新X轴的范围
+            chart->axes(Qt::Horizontal).back()->setRange(count - max_x,count);
         }
-        //增加新的点到曲线末端
-        lineSeries[0]->append(data->time_staps[count], data->buffer1_data[count]);
-        lineSeries[1]->append(data->time_staps[count], data->buffer2_data[count]);
-        lineSeries[2]->append(data->time_staps[count], data->buffer3_data[count]);
     }
+    //增加新的点到曲线末端
+    for(int i = 0;i < 3;i++){
+        lineSeries[i]->append(count,data->buffers[i]->cur_num);
+    }
+    count++;
 }
 
 void ChartForm::drawChart_type2() {
     auto& data = draft2->_data_source;
 //    chart->removeAllSeries();     // 删除所有序列
-    qreal sum = 0;
-    for(int& num : data->cur_num) sum += num;qDebug()<<sum;
-    auto calculator = [&sum,&data](int i) -> qreal {
-        if(sum == 0) return 0;
-        else return static_cast<qreal>(data->cur_num[i]) / sum;
-    };
+//    qreal sum = 0;
+//    for(auto& buf : data->buffers) sum += buf->cur_num;
+//    auto calculator = [&sum,&data](int i) -> qreal {
+//        if(sum == 0) return 0;
+//        else return static_cast<qreal>(data->buffers.at(i)->cur_num) / sum;
+//    };
     for(int i = 0;i < pieSeries->slices().size();i++) {
-        auto& slice = pieSeries->slices()[i];
-        slice->setValue(calculator(i));qDebug()<<slice->value();
-        slice->setLabel(slice->label() + QString::asprintf(": %.0f, %.1f%%",slice->value(),slice->percentage() * 100));qDebug()<<"22222";
+        auto& slice = pieSeries->slices().at(i);
+        slice->setValue(data->buffers.at(i)->cur_num);
+        slice->setLabel(QString::asprintf("Buffer%d: 数据量: %.0f,占比: %.1f%%",i+1,slice->value(),slice->percentage() * 100));
     }
+    data->buf1_cur_num.append(data->buffers.at(0)->cur_num);
+    data->buf2_cur_num.append(data->buffers.at(1)->cur_num);
+    data->buf3_cur_num.append(data->buffers.at(2)->cur_num);
 }
 
 void ChartForm::drawChart_type3()
 {
     auto& data = draft3->_data_source;
-    for(int count = 0; count < data->getData_num(); count++){
-        //当曲线上最早的点超出X轴的范围时
-        for(auto& line : lineSeries){
-            if(count > MAX_X) {
-                // 剔除最早的点
-                line->removePoints(0,line->count() - MAX_X);
-                // 更新X轴的范围
-                chart->axes(Qt::Horizontal).back()->setMin(count - MAX_X);
-                chart->axes(Qt::Horizontal).back()->setMax(count);
-            }
+    //当曲线上最早的点超出X轴的范围时
+    for(auto& line : lineSeries){
+        if(count > max_x) {
+            // 剔除最早的点，保留最近的max_x个点
+            line->removePoints(0,line->count() - max_x);
+            // 更新X轴的范围
+            chart->axes(Qt::Horizontal).back()->setRange(count - max_x,count);
         }
-        //增加新的点到曲线末端
-        lineSeries[0]->append(data->time_staps[count], data->put_blocked_num[count]);
-        lineSeries[1]->append(data->time_staps[count], data->move_blocked_num[count]);
-        lineSeries[2]->append(data->time_staps[count], data->get_blocked_num[count]);
     }
+    //增加新的点到曲线末端
+    lineSeries[0]->append(count, data->getPut_blocked_num());qDebug()<<"coordinate:"<<count<<" "<<data->getPut_blocked_num();
+    lineSeries[1]->append(count, data->getMove_blocked_num());qDebug()<<"coordinate:"<<count<<" "<<data->getMove_blocked_num();
+    lineSeries[2]->append(count, data->getPut_blocked_num());qDebug()<<"coordinate:"<<count<<" "<<data->getPut_blocked_num();
+    count++;
 }
 
 ChartParam ChartForm::getParam() const
@@ -208,5 +257,8 @@ ChartParam ChartForm::getParam() const
 
 void ChartForm::setParam(const ChartParam &value)
 {
-    param = value;
+    param = {
+        .buf = value.buf,
+        .type = value.type
+    };
 }

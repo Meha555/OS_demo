@@ -10,22 +10,28 @@
 #include <QtCharts>
 #include <QList>
 #include <QStringList>
+#include <algorithm>
 #include "analysewindow.h"
 #include "betterchartview.h"
+//#include "utils.hpp"
 #include "statgatherer.h"
+//#include "chartstat.h"
 #include "chartdatachangedtrend.h"
 #include "chartdatadistribution.h"
 #include "chartthreadstatetrend.h"
-#include "chartstat.h"
-
-#define MAX_X 1000
-#define MAX_Y 1000
 
 QT_CHARTS_USE_NAMESPACE
 
 namespace Ui {
 class ChartForm;
 }
+
+class ChartDataChangedTrend;
+class ChartDataDistribution;
+class ChartThreadStateTrend;
+
+class AnalyseWindow;
+class MainWindow;
 
 class ChartForm : public QWidget
 {
@@ -40,6 +46,7 @@ public:
     ChartParam getParam() const;
     void setParam(const ChartParam &value);
     void drawFromJson(QString& str);
+    void setGrid(const int x, const int y);
 
 public slots:
     void initLineChart(int n, const QStringList& names, const QString& x_name, const QString& y_name);
@@ -52,11 +59,15 @@ private:
     Ui::ChartForm *ui;
 
     ChartParam param;
-    QTimer *timeRefresh;
+    QTimer *timerRefresh;
     QString chartName;
     QChart* chart;
     QList<QLineSeries*> lineSeries;
     QPieSeries* pieSeries;
+    qint64 count = 0;
+    int max_x;
+    int max_y;
+    int interval = 100;
 
 public:
     ChartDataChangedTrend* draft1;

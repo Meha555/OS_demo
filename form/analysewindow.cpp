@@ -81,12 +81,21 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     connect(btnHelp,&QPushButton::clicked,this,[this](){
         QMessageBox::information(this, "帮助信息", help);
     });
-    connect(dynamic_cast<MainWindow*>(parent),
-            &MainWindow::sigPause,this,[this](){statLED->setStatus(BLOCK);},Qt::DirectConnection);
-    connect(dynamic_cast<MainWindow*>(parent),
-            &MainWindow::sigStop,this,[this](){statLED->setStatus(TERMINATED);},Qt::DirectConnection);
-    connect(dynamic_cast<MainWindow*>(parent),
-            &MainWindow::sigRun,this,[this](){statLED->setStatus(RUNNING);},Qt::DirectConnection);
+    MainWindow* ptr = static_cast<MainWindow*>(parent);
+    connect(ptr,&MainWindow::sigPause,this,[this](){statLED->setStatus(BLOCK);emit sigStop();},Qt::DirectConnection);
+    connect(ptr,&MainWindow::sigStop,this,[this](){statLED->setStatus(TERMINATED);emit sigStop();},Qt::DirectConnection);
+    connect(ptr,&MainWindow::sigRun,this,[this](){statLED->setStatus(RUNNING);emit sigStart();},Qt::DirectConnection);
+    qDebug()<<"======PUT====== "<<ptr->gatherer->getPut_blocked_num();
+    qDebug()<<"======MOVE===== "<<ptr->gatherer->getMove_blocked_num();
+    qDebug()<<"======GET====== "<<ptr->gatherer->getGet_blocked_num();
+//    connect(ptr->timerWalker,&QTimer::timeout,this,[this,&ptr](){
+//        labPut->setText(QString("PUT线程阻塞数量: %1").arg(ptr->gatherer->getPut_blocked_num()));
+//        labMove->setText(QString("MOVE线程阻塞数量: %1").arg(ptr->gatherer->getMove_blocked_num()));
+//        labGet->setText(QString("GET线程阻塞数量: %1").arg(ptr->gatherer->getGet_blocked_num()));
+//        qDebug()<<"======PUT====== "<<ptr->gatherer->getPut_blocked_num();
+//        qDebug()<<"======MOVE===== "<<ptr->gatherer->getMove_blocked_num();
+//        qDebug()<<"======GET====== "<<ptr->gatherer->getGet_blocked_num();
+//    },Qt::DirectConnection);
 
     // 创建栅格布局，以坐标形式限定各组件的位置
     QGridLayout* btnLayout = new QGridLayout;
@@ -99,14 +108,6 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     btnLayout->addWidget(comboxProfile, 1, 1);
     btnLayout->addWidget(btnOK, 1, 2);
     btnLayout->addWidget(btnClose, 1, 3);
-//    ui->toolBar->addWidget(lab1);
-//    ui->toolBar->addWidget(comboxBuffer);
-//    ui->toolBar->addWidget(lab2);
-//    ui->toolBar->addWidget(comboxProfile);
-//    ui->toolBar->addWidget(lab3);
-//    ui->toolBar->addWidget(comboxStype);
-//    ui->toolBar->addWidget(btnOK);
-//    ui->toolBar->addWidget(btnCancel);
     QWidget* widget = new QWidget(this);
     widget->setLayout(btnLayout);
     ui->toolBar->addWidget(widget);
@@ -145,14 +146,23 @@ void AnalyseWindow::on_tabWidget_tabCloseRequested(int index)
 
 void AnalyseWindow::on_actSelectData_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,"选择数据源",QDir::currentPath(),"Json文件(.json)");
+    QString fileName = QFileDialog::getOpenFileName(this,"选择数据源",QDir::currentPath(),"Json文件(*.json)");
     if(fileName.isEmpty()){
         QMessageBox::warning(this,"文件选择错误","文件路径为空！");
         return;
     }
-    QFile aFile(fileName);QTextStream aStream(&aFile);QString str = aStream.readAll();
+    QFile aFile(fileName);
+    if(!aFile.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QMessageBox::warning(this,"文件错误","打开文件失败");
+        return;
+    }
+    QTextStream aStream(&aFile);
+    aStream.setCodec("UTF-8");
+    QString str = aStream.readAll();
+    aFile.close();
     ChartForm *chartForm = new ChartForm(this); //不指定父窗口，单独用show()方法显示
     chartForm->setAttribute(Qt::WA_DeleteOnClose); //关闭时自动删除
+    chartForm->setParam(ChartStat::recognize(QJsonDocument::fromJson(str.toUtf8()).object()));
     int cur = ui->tabWidget->addTab(chartForm
             ,chartForm->getParam().buf + "-" + profiles[chartForm->getParam().type]+QString::number(ui->tabWidget->count()));
     ui->tabWidget->setCurrentIndex(cur);
@@ -162,8 +172,37 @@ void AnalyseWindow::on_actSelectData_triggered()
 
 void AnalyseWindow::on_actSnapShot_triggered()
 {
-//    savePath = QFileDialog::getSaveFileName(this, "选择保存路径",
-//                                                    "data.json",
-//                                                    "json files");
+    QString defaultFileName = QString("data_%1.json").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss"));
+
+    savePath = QFileDialog::getSaveFileName(this, "选择保存路径", defaultFileName, "json files");
+
+    QFile aFile(savePath);
+    if(!aFile.open(QIODevice::WriteOnly | QIODevice::Text)){
+        QMessageBox::warning(this,"文件错误","创建文件失败");
+        return;
+    }
+
+    ProfileType idx = static_cast<ProfileType>(comboxProfile->currentIndex());
+
+    switch(idx){
+    case DATA_CHANGE_TREND:{
+        ChartDataChangedTrend* chart = new ChartDataChangedTrend();
+        aFile.write(chart->writeJson());
+        break;
+    }
+    case DATA_DISTRIBUTION:{
+        ChartDataDistribution* chart = new ChartDataDistribution();
+        aFile.write(chart->writeJson());
+        break;
+    }
+    case THREAD_STATE_TREND:{
+        ChartThreadStateTrend* chart = new ChartThreadStateTrend();
+        aFile.write(chart->writeJson());
+        break;
+    }
+    }
+
+    aFile.close();
 }
+
 

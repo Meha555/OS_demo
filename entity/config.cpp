@@ -7,10 +7,6 @@ Config::Config()
 Config::Config(int buf1_size, int buf2_size, int buf3_size, int put_n, int put_speed, int move_n, int move_speed, int get_n, int get_speed)
     :buffer1_size(buf1_size),buffer2_size(buf2_size),buffer3_size(buf3_size),put_num(put_n),put_speed(put_speed),move_num(move_n),move_speed(move_speed),get_num(get_n),get_speed(get_speed)
 {
-//    if(!flag){
-//        c_id++;
-//        flag = true;
-//    }
 }
 
 int Config::getBuffer1_size() const

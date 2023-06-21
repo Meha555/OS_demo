@@ -62,8 +62,7 @@ public:
         <<get_speed;
     }
 #endif
-private:
-    bool flag = false;
+
 public:
     int c_id=0;
     int buffer1_size=0;// buffer1大小

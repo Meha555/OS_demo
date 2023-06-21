@@ -20,6 +20,7 @@
 #endif
 
 class MainWindow;
+class StatGatherer;
 
 class Operation : public QThread
 {
@@ -59,7 +60,7 @@ public:
 private:
     Op_Type op_type;//操作类型
     int op_speed;//操作速度【待修改，应该是线程每次拿走、放入的数据个数】
-    QString data;//线程当前持有的data，可能由于没有空位放不到buffer里
+    QString data;//线程当前持有的data，可能由于没有空位放不到buffer里，因此在这里暂存
     static MainWindow* ptr;//主窗口指针，这里非线程安全
     static QMutex mutex;//互斥锁，用于实现线程暂停
     static QWaitCondition condition;//等待条件，用于实现线程暂停

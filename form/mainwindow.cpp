@@ -32,13 +32,10 @@ void MainWindow::resetStatistics() {
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    qRegisterMetaType<QTextCursor>("QTextCursor");
 
     cfgDao = new ConfigDaoImpl(dbName, this);
     msgDao = new MessageDaoImpl(dbName, this);
     resDao = new ResultDaoImpl(dbName, this);
-    gatherer = StatGatherer::instance(this);
-    // gatherer = new StatGatherer();
 
     // 界面相关设置
     label1 = new QLabel("操作速度控制：", this);
@@ -49,10 +46,10 @@ MainWindow::MainWindow(QWidget* parent)
     labelSpeed->setFixedSize(140, 20);
     labelSpeed->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);  // 设置大小策略为固定大小
     label3 = new QLabel(" 快", this);
-    slider->setMinimum(MIN_SPEED);  // 设置滑动条的最小值
-    slider->setMaximum(MAX_SPEED);  // 设置滑动条的最大值
+    slider->setRange(MIN_SPEED,MAX_SPEED);
     slider->setValue(CUR_SPEED);    // 设置滑动条初始值
     slider->setSingleStep(100);
+    ui->ckboxLog->setToolTip("是否显示操作日志");
     ui->toolBar->addWidget(label1);
     ui->toolBar->addWidget(label2);
     ui->toolBar->addWidget(slider);
@@ -64,42 +61,21 @@ MainWindow::MainWindow(QWidget* parent)
     ui->actRestart->setEnabled(false);
     ui->actTerminate->setEnabled(false);
     ui->actExportResult->setEnabled(false);
-    ui->actAnalyse->setEnabled(false);
-
-    //    ui->btnClear1->setRole(Material::Primary);
-    //    ui->btnClear2->setRole(Material::Primary);
-    //    ui->btnClear3->setRole(Material::Primary);
+//    ui->actAnalyse->setEnabled(false);
+    ui->actAnalyse->setEnabled(true);
 
     timeCounter = new QElapsedTimer();
 
     // 绘制进度球
     timerWalker = new QTimer(this);
-    // 这几个槽函数现在参数和timeout不匹配
-    //    connect(timerWalker, &QTimer::timeout, ui->bufBall1, &ProgressBall::updateProgress);
-    //    connect(timerWalker, &QTimer::timeout, ui->bufBall2, &ProgressBall::updateProgress);
-    //    connect(timerWalker, &QTimer::timeout, ui->bufBall3, &ProgressBall::updateProgress);
 
     // 信号相关
     connect(slider, &QSlider::valueChanged, this, &MainWindow::changeSpeed);
     connect(timerWalker, &QTimer::timeout, this, [this]() {
-        result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, gatherer->putin_num.back(), gatherer->getout_num.back());
+        int putin_num = buffer1->putin_num+buffer2->putin_num+buffer3->putin_num;
+        int getout_num = buffer1->getout_num+buffer2->getout_num+buffer3->getout_num;
+        result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, putin_num, getout_num);
     });
-    // For gatherer
-    connect(timerWalker, &QTimer::timeout, this, [this]() {
-        this->gatherer->setTime_staps(timeCounter->elapsed());
-    });
-//    connect(timerWalker, &QTimer::timeout, this, [this]() {
-//        this->gatherer->setBuffer1_data(buffer1->cur_num);
-//        this->gatherer->setBuffer2_data(buffer2->cur_num);
-//        this->gatherer->setBuffer3_data(buffer3->cur_num);
-
-//        this->gatherer->cur_num[0] = buffer1->cur_num;
-//        this->gatherer->cur_num[1] = buffer2->cur_num;
-//        this->gatherer->cur_num[2] = buffer3->cur_num;
-//        this->gatherer->free_space_num[0] = buffer1->free_space_num;
-//        this->gatherer->free_space_num[1] = buffer2->free_space_num;
-//        this->gatherer->free_space_num[2] = buffer3->free_space_num;
-//    });
 
     // 最后的准备工作
     initalizeData();
@@ -155,12 +131,39 @@ void MainWindow::setConfig() {
     buffer3->setFree_space_num(buffer3->capacity);
     buffer3->setCur_num(0);
 
-    gatherer->capacity[0] = buffer1->capacity;
-    gatherer->capacity[1] = buffer2->capacity;
-    gatherer->capacity[2] = buffer3->capacity;
-    gatherer->free_space_num[0] = buffer1->free_space_num;
-    gatherer->free_space_num[1] = buffer2->free_space_num;
-    gatherer->free_space_num[2] = buffer3->free_space_num;
+    // 初始化Gatherer
+    gatherer = StatGatherer::instance();
+    gatherer->buffers.append(buffer1);
+    gatherer->buffers.append(buffer2);
+    gatherer->buffers.append(buffer3);
+    gatherer->setConfig(&config);
+
+    // For gatherer
+    connect(timerWalker, &QTimer::timeout, this, [this]() {
+        this->gatherer->setTime_staps(timeCounter->elapsed());
+        this->gatherer->setBuffer1_data(buffer1->cur_num);
+        this->gatherer->setBuffer2_data(buffer2->cur_num);
+        this->gatherer->setBuffer3_data(buffer3->cur_num);
+    });
+//    connect(timerWalker, &QTimer::timeout, this, [this]() {
+//        this->gatherer->setBuffer1_data(buffer1->cur_num);
+//        this->gatherer->setBuffer2_data(buffer2->cur_num);
+//        this->gatherer->setBuffer3_data(buffer3->cur_num);
+
+//        this->gatherer->cur_num[0] = buffer1->cur_num;
+//        this->gatherer->cur_num[1] = buffer2->cur_num;
+//        this->gatherer->cur_num[2] = buffer3->cur_num;
+//        this->gatherer->free_space_num[0] = buffer1->free_space_num;
+//        this->gatherer->free_space_num[1] = buffer2->free_space_num;
+//        this->gatherer->free_space_num[2] = buffer3->free_space_num;
+//    });
+
+//    gatherer->capacity[0] = buffer1->capacity;
+//    gatherer->capacity[1] = buffer2->capacity;
+//    gatherer->capacity[2] = buffer3->capacity;
+//    gatherer->free_space_num[0] = buffer1->free_space_num;
+//    gatherer->free_space_num[1] = buffer2->free_space_num;
+//    gatherer->free_space_num[2] = buffer3->free_space_num;
 
     ui->bufBall1->setCapacity(config.buffer1_size);
     ui->bufBall2->setCapacity(config.buffer2_size);
@@ -192,15 +195,15 @@ void MainWindow::setConfig() {
     connect(empty1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);    // PUT放不进去
     connect(empty2, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
     connect(empty3, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);   // MOVE放不进去
-    connect(full1, &Semaphore::blocked, gatherer, &StatGatherer::increPut_blocked_num);     // MOVE拿不出来
+    connect(full1, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);    // MOVE拿不出来
     connect(full2, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
     connect(full3, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
-    connect(empty1, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE拿成功
-    connect(empty2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);   // GET拿成功
-    connect(empty3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);   // GET拿成功
-    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);    // PUT放成功
-    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE放成功
-    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE放成功
+    connect(empty1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);   // PUT放成功
+    connect(empty2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE放成功
+    connect(empty3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE放成功
+    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);    // MOVE拿成功
+    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // GET拿成功
+    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // GET拿成功
 #endif
 
     ui->actStart->setEnabled(true);
@@ -228,8 +231,8 @@ void MainWindow::on_actSetConfig_triggered() {
     if (configFrom->exec() == QDialog::Accepted) {
         // 设置参数
         setConfig();
+        isConfiged = true;
     }
-    config.configInfo();
 }
 
 void MainWindow::on_actStart_triggered() {
@@ -292,20 +295,23 @@ void MainWindow::on_actStart_triggered() {
         }
         first_start = false;
         emit sigRun();
-        ui->actPasue->setEnabled(true);
-        ui->actRestart->setEnabled(true);
-        ui->actTerminate->setEnabled(true);
     } else {
         Operation::resumeThread();
         emit sigRun();
     }
-    ui->actAnalyse->setEnabled(false);
+    ui->actStart->setEnabled(false);
+    ui->actPasue->setEnabled(true);
+    ui->actRestart->setEnabled(true);
+    ui->actTerminate->setEnabled(true);
+//    ui->actAnalyse->setEnabled(false);
 }
 
 void MainWindow::on_actPasue_triggered() {
     Operation::pauseThread();
     emit sigPause();
-    ui->actAnalyse->setEnabled(true);
+    ui->actStart->setEnabled(true);
+    ui->actPasue->setEnabled(false);
+//    ui->actAnalyse->setEnabled(true);
 }
 
 void MainWindow::on_actTerminate_triggered() {
@@ -338,8 +344,8 @@ void MainWindow::on_actImportConfig_triggered() {
         // 设置参数
         setConfig();
         QMessageBox::information(this, "导入参数", "导入参数完成");
+        isConfiged = true;
     }
-    config.configInfo();
 }
 
 void MainWindow::on_actExportResult_triggered() {
@@ -359,38 +365,56 @@ void MainWindow::on_actExportResult_triggered() {
 }
 
 void MainWindow::on_actAnalyse_triggered() {
+    if(!isConfiged){
+        QMessageBox::warning(this,"缺少数据","请先设置参数！");
+        return;
+    }
     if (analyseWindow == nullptr)
         analyseWindow = new AnalyseWindow(this);
     analyseWindow->setWindowFlags(analyseWindow->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
-
     analyseWindow->show();
 }
 
 void MainWindow::displayLogTextSys(QString text, bool bold, QColor frontColor) {
-    if (ui->sysText_log->blockCount() > 50)
+    if (ui->sysText_log->blockCount() > 20)
         ui->sysText_log->clear();
     ui->sysText_log->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);  // 设置光标到文本末尾
+
+    // 只滚动QPlainTextEdit的可滚动区域，以便提升性能
+    // 获取视口高度和可滚动区域高度
+    int viewportHeight = ui->sysText_log->viewport()->height();
+    int scrollingHeight = ui->sysText_log->document()->size().height() - viewportHeight;
 
     insertRichText(ui->sysText_log, text + "\n", bold, frontColor);
     //    ui->sysText_log->insertPlainText(text+"\n");
     // 移动滚动条到底部
     QScrollBar* scrollbar = ui->sysText_log->verticalScrollBar();
     if (scrollbar) {
-        scrollbar->setSliderPosition(scrollbar->maximum());
+        scrollbar->setSliderPosition(scrollingHeight);
     }
+    QCoreApplication::processEvents(); // 显式声明在这里处理事件，避免程序卡顿
 }
 
 void MainWindow::displayLogText(QPlainTextEdit* edit, const QString& text) {
-    if (edit->blockCount() > 50)
+    if(!ui->ckboxLog->isChecked()) return;
+    if (edit->blockCount() > 25) {
         edit->clear();
-    edit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);  // 设置光标到文本末尾
+    }
+    edit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
+
+    // 只滚动QPlainTextEdit的可滚动区域，以便提升性能
+    // 获取视口高度和可滚动区域高度
+    int viewportHeight = edit->viewport()->height();
+    int scrollingHeight = edit->document()->size().height() - viewportHeight;
 
     edit->insertPlainText(text + "\n");
+
     // 移动滚动条到底部
     QScrollBar* scrollbar = edit->verticalScrollBar();
     if (scrollbar) {
-        scrollbar->setSliderPosition(scrollbar->maximum());
+        scrollbar->setSliderPosition(scrollingHeight);
     }
+    QCoreApplication::processEvents(); // 显式声明在这里处理事件，避免程序卡顿
 }
 
 void MainWindow::on_btnClear1_clicked() {
@@ -416,3 +440,4 @@ void MainWindow::insertRichText(QPlainTextEdit* edit, QString text, bool bold, Q
     edit->mergeCurrentCharFormat(fmt);                      // 文本框使用以上设定
     edit->insertPlainText(text);                            // 文本框添加文本
 }
+

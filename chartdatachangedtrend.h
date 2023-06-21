@@ -2,7 +2,7 @@
 #define CHARTDATACHANGEDTREND_H
 
 #include "chartstat.h"
-#include "utils.hpp"
+//#include "utils.hpp"
 
 class ChartDataChangedTrend : public ChartStat
 {

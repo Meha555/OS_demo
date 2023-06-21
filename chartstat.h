@@ -7,14 +7,17 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QVariant>
+//#include "utils.hpp"
 #include "statgatherer.h"
 
-using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,THREAD_STATE_TREND};
+//using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,THREAD_STATE_TREND};
 
-typedef struct{
-    QString buf;
-    ProfileType type;
-} ChartParam;
+//typedef struct{
+//    QString buf;
+//    ProfileType type;
+//} ChartParam;
+
+class StatGatherer;
 
 // 绘图所需数据 - 父类
 class ChartStat

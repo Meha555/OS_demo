@@ -73,15 +73,12 @@ void Operation::run() {
 #endif
             Operation::ptr->mutex1->lock();
             Operation::ptr->mutex2->lock();
-            PRINT("before Move")
             for (int i = 1; i <= op_speed; ++i) {
-                PRINT("within Move")
                 // 从Buffer1中取出1个数据
                 getoutData(1);
                 // 向Buffer2中放入1个数据
                 putinData(2);
             }
-            PRINT("after Move")
             Operation::ptr->mutex1->unlock();
             Operation::ptr->mutex2->unlock();
 #ifndef _MY

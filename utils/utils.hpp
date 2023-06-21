@@ -9,6 +9,15 @@
 
 #define PRINT(str) do{qDebug()<<str;}while(0);
 
+typedef enum{RUNNING,BLOCK,TERMINATED} ThreadState;
+
+using ProfileType = enum {DATA_CHANGE_TREND,DATA_DISTRIBUTION,THREAD_STATE_TREND};
+
+typedef struct{
+    QString buf;
+    ProfileType type;
+} ChartParam;
+
 template<typename T>
 QJsonArray toJsonArray(const QVector<T>& vec)
 {

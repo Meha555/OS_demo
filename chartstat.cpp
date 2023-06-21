@@ -1,6 +1,6 @@
 #include "chartstat.h"
 
-ChartStat::ChartStat()
+ChartStat::ChartStat(const ChartParam& param)
     : _data_source(StatGatherer::instance()), param(param) {
 }
 

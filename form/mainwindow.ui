@@ -381,6 +381,9 @@
           <property name="text">
            <string>c_id</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -394,6 +397,9 @@
          <widget class="QLabel" name="label_buffer1_size">
           <property name="text">
            <string>buffer1_size</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -409,6 +415,9 @@
           <property name="text">
            <string>buffer2_size</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -422,6 +431,9 @@
          <widget class="QLabel" name="label_buffer3_size">
           <property name="text">
            <string>buffer3_size</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -437,6 +449,9 @@
           <property name="text">
            <string>put_num</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="5" column="0">
@@ -450,6 +465,9 @@
          <widget class="QLabel" name="label_move_num">
           <property name="text">
            <string>move_num</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -465,6 +483,9 @@
           <property name="text">
            <string>get_num</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="7" column="0">
@@ -478,6 +499,9 @@
          <widget class="QLabel" name="label_put_speed">
           <property name="text">
            <string>put_speed</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -493,6 +517,9 @@
           <property name="text">
            <string>move_speed</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="9" column="0">
@@ -506,6 +533,23 @@
          <widget class="QLabel" name="label_get_speed">
           <property name="text">
            <string>get_speed</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
+         <widget class="QtMaterialToggle" name="ckboxLog">
+          <property name="text">
+           <string>是否显示操作日志</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>是否显示操作日志</string>
           </property>
          </widget>
         </item>
@@ -541,7 +585,7 @@
              <x>0</x>
              <y>0</y>
              <width>274</width>
-             <height>289</height>
+             <height>260</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -670,6 +714,11 @@
    <extends>QWidget</extends>
    <header>progressball.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtMaterialToggle</class>
+   <extends>QCheckBox</extends>
+   <header location="global">qtmaterialtoggle.h</header>
   </customwidget>
  </customwidgets>
  <resources>

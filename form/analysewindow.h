@@ -12,14 +12,18 @@
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QHash>
-#include "chartform.h"
+#include <QTimer>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
 #include "ledlabel.h"
+#include "chartform.h"
 #include "op_thread.h"
 
 // 美化SDK
 #include "qtmaterialraisedbutton.h"
 
-class MainWindow;
+class LedLabel;
 
 namespace Ui {
 class AnalyseWindow;
@@ -41,8 +45,13 @@ private slots:
 
     void on_actSnapShot_triggered();
 
+signals:
+    void sigStart();
+    void sigStop();
+
 private:
     Ui::AnalyseWindow *ui;
+
 public:
     QLabel* labPut;
     QLabel* labMove;
@@ -59,7 +68,7 @@ public:
     QtMaterialRaisedButton* btnClose;
     QtMaterialRaisedButton* btnHelp;
 
-    QString savePath;
+    QString savePath;//JSON保存路径
 };
 
 #endif // ANALYSEWINDOW_H

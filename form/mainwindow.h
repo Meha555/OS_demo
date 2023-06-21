@@ -105,7 +105,6 @@ public:
     Buffer* buffer3;
 
     /* 以下采用集中式锁 */
-
     // 同步信号量
 #ifdef _MY
     Semaphore* empty1;
@@ -144,6 +143,8 @@ public:
 
     // 运行结果
     Result result;
+
+    bool isConfiged = false;//设置了参数
 
 public:
     Ui::MainWindow *ui;
