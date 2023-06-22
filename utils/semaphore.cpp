@@ -22,8 +22,13 @@ void P(Semaphore* s, int n) {
     s->_mutex.lock();
 #ifndef _WANGDAO
     while (n > s->_count) {
-        emit s->blocked();
+        if(!s->_is_blocked) emit s->blocked();
+        s->_is_blocked = true;
         s->_condition.wait(&s->_mutex);
+    }
+    if(s->_is_blocked) {
+        s->_is_blocked = false;
+        emit s->awake();
     }
     s->_count -= n;
 #endif
@@ -44,7 +49,7 @@ void V(Semaphore* s, int n) {
     s->_count += n;
 #ifndef _WANGDAO
     s->_condition.wakeAll();
-    emit s->wakeuped();
+//    emit s->wakeuped();
 #endif
 #ifdef _WANGDAO
     if(s->_count <= 0){//如果有人在等待

@@ -33,6 +33,7 @@ SOURCES += \
     chartdatadistribution.cpp \
     chartstat.cpp \
     chartthreadstatetrend.cpp \
+    form/daoresultform.cpp \
     entity/buffer.cpp \
     entity/config.cpp \
     entity/message.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     chartdatadistribution.h \
     chartstat.h \
     chartthreadstatetrend.h \
+    form/daoresultform.h \
     entity/buffer.h \
     entity/config.h \
     entity/message.h \
@@ -85,6 +87,7 @@ HEADERS += \
 
 
 FORMS += \
+    form/daoresultform.ui \
     form/analysewindow.ui \
     form/chartform.ui \
     form/configform.ui \

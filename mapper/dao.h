@@ -18,6 +18,8 @@
 //    class Dao;
 //}
 
+typedef enum{CONNECTION_ERR = -1,TRANSACTION_ERR = -2,EXECUTEION_ERR = -3,COMMITMENT_ERR = -4} Errno;
+
 class Dao : public QObject
 {
     Q_OBJECT
@@ -32,6 +34,7 @@ public:
     void closeConnection();
     void setTableName(const QString &value);
     void resetTableName();
+    void closeDB();
 signals:
 
 public:

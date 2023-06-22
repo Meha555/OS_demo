@@ -6,13 +6,6 @@
 #include "mainwindow.h"
 #include "loginform.h"
 
-#include <QQueue>
-#include <QVector>
-#include "message.h"
-#include "messagedaoimpl.h"
-#include "resultdaoimpl.h"
-#include <algorithm>
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -26,16 +19,16 @@ int main(int argc, char *argv[])
     // QString css = QLatin1String(file.readAll());
     // qApp->setStyleSheet(css);
 
-    LoginForm *l = new LoginForm;
-    if(l->exec() == QDialog::Accepted){
-        MainWindow w;
-        w.dbName = l->getDbName();
-        w.show();
-        delete l;
-        return a.exec();
-    }
-//    MainWindow w;
-//    w.show();
+//    LoginForm *l = new LoginForm;
+//    if(l->exec() == QDialog::Accepted){
+//        MainWindow w;
+//        w.dbName = l->getDbName();
+//        w.show();
+//        delete l;
+//        return a.exec();
+//    }
+    MainWindow w;
+    w.show();
     return a.exec();
 
     return 0;

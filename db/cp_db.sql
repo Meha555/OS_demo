@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS "message" (
   "m_id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "t_id" integer,
   "b_id" integer,
-  "data_id" integer,
   "op_type" text,
   "data" text
 );
@@ -25,5 +24,11 @@ CREATE TABLE IF NOT EXISTS "result" (
   "cur_num" integer,
   "putin_num" integer,
   "getout_num" integer,
+  "putin_buf1" integer,
+  "putin_buf2" integer,
+  "putin_buf3" integer,
+  "getout_buf1" integer,
+  "getout_buf2" integer,
+  "getout_buf3" integer,
   "avg_num" integer
 );

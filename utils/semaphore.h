@@ -21,12 +21,13 @@ public:
 
 signals:
     void blocked();
-    void wakeuped();
+    void awake();
 
 private:
     int _count = 0; //当前可用资源数（通过初值-当前值来得出当前阻塞的线程数）
     QMutex _mutex; // 保证原子性
     QWaitCondition _condition;
+    bool _is_blocked = false; // 用于触发正确的blocked信号以用于统计阻塞线程
 };
 
 #endif // SEMAPHORE_H

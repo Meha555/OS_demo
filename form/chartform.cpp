@@ -243,7 +243,7 @@ void ChartForm::drawChart_type3()
     //增加新的点到曲线末端
     lineSeries[0]->append(count, data->getPut_blocked_num());
     lineSeries[1]->append(count, data->getMove_blocked_num());
-    lineSeries[2]->append(count, data->getPut_blocked_num());
+    lineSeries[2]->append(count, data->getGet_blocked_num());
     count++;
 }
 

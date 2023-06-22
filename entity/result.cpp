@@ -2,12 +2,10 @@
 
 Result::Result()
 {
-//    r_id++;
 }
 
 Result::Result(int cur):curr_data_num(cur)
 {
-//    r_id++;
 }
 
 #ifdef _DEBUG
@@ -26,26 +24,33 @@ Result::Result(QString run, int cur, int put, int get, qreal avg)
     :run_time(run),curr_data_num(cur),putin_data_num(put),
       getout_data_num(get),avg_num(avg)
 {
-    //    r_id++;
 }
 
 Result::Result(int id, QString run, int cur, int put, int get, qreal avg)
     :r_id(id),run_time(run),curr_data_num(cur),putin_data_num(put),
       getout_data_num(get),avg_num(avg)
 {
-
 }
-// 将整个统计结果生成为JSON字符串，以便提供给Python解析后绘制Echart图表
-QString Result::toJsonString()
+
+Result::Result(int id, QString run, int cur, int put, int get, qreal avg, int put_bf1, int put_bf2, int put_bf3, int get_bf1, int get_bf2, int get_bf3)
+    :r_id(id),run_time(run),curr_data_num(cur),putin_data_num(put),getout_data_num(get),avg_num(avg),
+      putin_buf1(put_bf1),putin_buf2(put_bf2),putin_buf3(put_bf3),
+      getout_buf1(get_bf1),getout_buf2(get_bf2),getout_buf3(get_bf3)
 {
-
 }
+
 // 运行时的即时结果：主线程中进度球的update执行时调用
-void Result::collectResult(int cur, int putin, int getout)
+void Result::collectResult(int cur,int putin,int getout,int put_bf1,int put_bf2,int put_bf3,int get_bf1,int get_bf2,int get_bf3)
 {
     curr_data_num = cur;
     putin_data_num = putin;
     getout_data_num = getout;
+    putin_buf1 = put_bf1;
+    putin_buf2 = put_bf2;
+    putin_buf3 = put_bf3;
+    getout_buf1 = get_bf1;
+    getout_buf2 = get_bf2;
+    getout_buf3 = get_bf3;
 }
 // 结束时的汇总结果：主线程中点击结束按钮触发
 void Result::summaryResult(qreal avg,qint64 time)

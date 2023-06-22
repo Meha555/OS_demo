@@ -14,11 +14,6 @@ bool ChartDataChangedTrend::readJson(const QString &str)
     _data_source->buffer3_data = fromJsonArray<int>(obj["buffer3_data"].toArray());
     _data_source->time_staps = fromJsonArray<qint64>(obj["time_staps"].toArray());
     _data_source->interval = obj["interval"].toInt();
-//    qDebug()<<"JSON: "<<_data_source->buffer1_data;
-//    qDebug()<<"JSON: "<<_data_source->buffer2_data;
-//    qDebug()<<"JSON: "<<_data_source->buffer3_data;
-//    qDebug()<<"JSON: "<<_data_source->time_staps;
-//    qDebug()<<"JSON: "<<_data_source->interval;
     return true;
 }
 

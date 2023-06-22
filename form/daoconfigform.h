@@ -19,16 +19,18 @@ class DaoConfigForm : public QDialog
 public:
     explicit DaoConfigForm(const QString& dbName, QWidget *parent = nullptr);
     ~DaoConfigForm();
+
+protected:
     void showEvent(QShowEvent *event) override;
 
 signals:
     void sendConfig(Config& cfg);
 
-private slots:
-    void on_btnChose_clicked();
+private:
     void selectData();
 
-//    void on_tableView_clicked(const QModelIndex &index);
+private slots:
+    void on_btnChose_clicked();
 
 private:
     Ui::DaoConfigForm *ui;
@@ -36,9 +38,7 @@ private:
     QItemSelectionModel* theSelection;
 
     bool launchFlag = false;
-//    Dao dao;
     ConfigDaoImpl *cfgDao;
-//    QVariantList res_set;
 };
 
 #endif // DAOCONFIGFORM_H

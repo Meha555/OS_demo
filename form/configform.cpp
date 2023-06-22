@@ -9,7 +9,6 @@ ConfigForm::ConfigForm(const QString& dbName, QWidget *parent) :
     ui->btnOK->setRole(Material::Secondary);
     ui->btnCancel->setRole(Material::Primary);
     cfgDao = new ConfigDaoImpl(dbName,this);
-//    dao.setTableName("Config");
 }
 
 ConfigForm::~ConfigForm()

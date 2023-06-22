@@ -36,6 +36,8 @@ class AnalyseWindow : public QMainWindow
 public:
     explicit AnalyseWindow(QWidget *parent = nullptr);
     ~AnalyseWindow();
+protected:
+    void closeEvent(QCloseEvent* event) override;
 private slots:
     void createTab();
 
@@ -48,6 +50,7 @@ private slots:
 signals:
     void sigStart();
     void sigStop();
+    void close();
 
 private:
     Ui::AnalyseWindow *ui;

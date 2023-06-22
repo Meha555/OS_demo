@@ -11,7 +11,7 @@ LoginForm::LoginForm(QDialog *parent) :
     connect(ui->btnOpenDB,&QPushButton::clicked,this,[this](){
         dbName = QFileDialog::getOpenFileName(this, tr("选择Sqlite数据库文件")
                                                                , ""
-                                                               , tr("SQLite db (*.db *.sqlite)"));
+                                                               , tr("SQLite db (*.db *.db3)"));
         if(dbName.isEmpty()){
             QMessageBox::warning(this,"错误","打开数据库文件失败!");
             this->reject();

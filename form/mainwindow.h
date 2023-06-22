@@ -21,6 +21,7 @@
 #include "op_thread.h"
 #include "configform.h"
 #include "daoconfigform.h"
+#include "daoresultform.h"
 #include "analysewindow.h"
 #include "statgatherer.h"
 
@@ -145,6 +146,7 @@ public:
     Result result;
 
     bool isConfiged = false;//设置了参数
+    bool activateAnalyze = false;//设置了参数
 
 public:
     Ui::MainWindow *ui;
@@ -160,6 +162,7 @@ public:
     StatGatherer* gatherer; // 数据收集器单例
     ConfigForm* configFrom = nullptr;//设置信息对话框
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
+    DaoResultForm* dao_resultForm = nullptr;//查询结果对话框
     AnalyseWindow* analyseWindow = nullptr;//数据分析窗口
 
 };

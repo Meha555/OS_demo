@@ -71,9 +71,9 @@ private:
 
 public:
     int speed_coefficient = 1000; // 速度系数(ms)
-    int thread_put_num; //put操作个数
-    int thread_move_num; //move操作个数
-    int thread_get_num; //get操作个数
+    int thread_put_num = 0; //put操作个数
+    int thread_move_num = 0; //move操作个数
+    int thread_get_num = 0; //get操作个数
 
 //    QVector<int> capacity;//buffer容量
 //    QVector<int> free_space_num;//当前空闲空间个数

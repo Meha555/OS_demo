@@ -60,8 +60,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->actStart->setEnabled(false);
     ui->actRestart->setEnabled(false);
     ui->actTerminate->setEnabled(false);
-    ui->actExportResult->setEnabled(false);
-//    ui->actAnalyse->setEnabled(false);
+    ui->actExportResult->setEnabled(true);
     ui->actAnalyse->setEnabled(true);
 
     timeCounter = new QElapsedTimer();
@@ -74,7 +73,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(timerWalker, &QTimer::timeout, this, [this]() {
         int putin_num = buffer1->putin_num+buffer2->putin_num+buffer3->putin_num;
         int getout_num = buffer1->getout_num+buffer2->getout_num+buffer3->getout_num;
-        result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, putin_num, getout_num);
+        result.collectResult(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num, putin_num, getout_num,
+                             buffer1->putin_num,buffer2->putin_num,buffer3->putin_num,
+                             buffer1->getout_num,buffer2->getout_num,buffer3->getout_num);
     });
 
     // 最后的准备工作
@@ -108,7 +109,8 @@ void MainWindow::updateRes2DB() {
     int bf1 = msgDao->batchInsert(buffer1->buffer);
     int bf2 = msgDao->batchInsert(buffer2->buffer);
     int bf3 = msgDao->batchInsert(buffer3->buffer);
-    qDebug() << "向Buffer表中插入" << bf1 + bf2 + bf3 << "条记录";
+    qDebug()<<bf1<<" "<<bf2<<" "<<bf3;
+    qDebug() << "向Buffer中插入" << bf1 + bf2 + bf3 << "条记录";
     // 写入运行结果
     resDao->insert(result);
 }
@@ -182,12 +184,12 @@ void MainWindow::setConfig() {
     connect(full1, &Semaphore::blocked, gatherer, &StatGatherer::increMove_blocked_num);    // MOVE拿不出来
     connect(full2, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
     connect(full3, &Semaphore::blocked, gatherer, &StatGatherer::increGet_blocked_num);     // GET拿不出来
-    connect(empty1, &Semaphore::wakeuped, gatherer, &StatGatherer::decrePut_blocked_num);   // PUT放成功
-    connect(empty2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE放成功
-    connect(empty3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);  // MOVE放成功
-    connect(full1, &Semaphore::wakeuped, gatherer, &StatGatherer::decreMove_blocked_num);   // MOVE拿成功
-    connect(full2, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);    // GET拿成功
-    connect(full3, &Semaphore::wakeuped, gatherer, &StatGatherer::decreGet_blocked_num);    // GET拿成功
+    connect(empty1, &Semaphore::awake, gatherer, &StatGatherer::decrePut_blocked_num);      // PUT放成功
+    connect(empty2, &Semaphore::awake, gatherer, &StatGatherer::decreMove_blocked_num);     // MOVE放成功
+    connect(empty3, &Semaphore::awake, gatherer, &StatGatherer::decreMove_blocked_num);     // MOVE放成功
+    connect(full1, &Semaphore::awake, gatherer, &StatGatherer::decreMove_blocked_num);      // MOVE拿成功
+    connect(full2, &Semaphore::awake, gatherer, &StatGatherer::decreGet_blocked_num);       // GET拿成功
+    connect(full3, &Semaphore::awake, gatherer, &StatGatherer::decreGet_blocked_num);       // GET拿成功
 #endif
 
     ui->actStart->setEnabled(true);
@@ -201,22 +203,6 @@ void MainWindow::setConfig() {
     ui->label_move_speed->setText(QString::number(config.move_speed));
     ui->label_get_num->setText(QString::number(config.get_num));
     ui->label_get_speed->setText(QString::number(config.get_speed));
-}
-
-void MainWindow::on_actSetConfig_triggered() {
-    // 弹出对话框来设置信号量
-    if (configFrom == nullptr)
-        configFrom = new ConfigForm(dbName, this);
-    configFrom->setWindowFlags(configFrom->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
-
-    // 接收设置
-    connect(configFrom, &ConfigForm::sendConfig, this, [this](Config& cfg) { config = cfg; });
-
-    if (configFrom->exec() == QDialog::Accepted) {
-        // 设置参数
-        setConfig();
-        isConfiged = true;
-    }
 }
 
 void MainWindow::on_actStart_triggered() {
@@ -287,7 +273,6 @@ void MainWindow::on_actStart_triggered() {
     ui->actPasue->setEnabled(true);
     ui->actRestart->setEnabled(true);
     ui->actTerminate->setEnabled(true);
-//    ui->actAnalyse->setEnabled(false);
 }
 
 void MainWindow::on_actPasue_triggered() {
@@ -295,19 +280,19 @@ void MainWindow::on_actPasue_triggered() {
     emit sigPause();
     ui->actStart->setEnabled(true);
     ui->actPasue->setEnabled(false);
-//    ui->actAnalyse->setEnabled(true);
 }
 
 void MainWindow::on_actTerminate_triggered() {
+    if(activateAnalyze){
+        QMessageBox::warning(this,"线程安全警告","请先关闭数据分析窗口！");
+        return;
+    }
     first_start = true;
     Operation::terminateThread();
     emit sigStop();
     qreal avg = qreal(buffer1->cur_num + buffer2->cur_num + buffer3->cur_num) / 3;
     result.summaryResult(avg, timeCounter->elapsed());
-    // 将数据写回数据库
     updateRes2DB();
-
-    ui->actExportResult->setEnabled(true);
 }
 
 void MainWindow::on_actRestart_triggered() {
@@ -316,10 +301,22 @@ void MainWindow::on_actRestart_triggered() {
     on_actStart_triggered();
 }
 
+void MainWindow::on_actSetConfig_triggered() {
+    if (configFrom == nullptr) configFrom = new ConfigForm(dbName, this);
+    configFrom->setWindowFlags(configFrom->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
+
+    // 接收设置
+    connect(configFrom, &ConfigForm::sendConfig, this, [this](Config& cfg) { config = cfg; });
+
+    if (configFrom->exec() == QDialog::Accepted) {
+        // 设置参数
+        setConfig();
+        isConfiged = true;
+    }
+}
+
 void MainWindow::on_actImportConfig_triggered() {
-    if (dao_configForm == nullptr)
-        dao_configForm = new DaoConfigForm(dbName, this);
-    //    dao_configForm->setWindowFlags(dao_configForm->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
+    if (dao_configForm == nullptr) dao_configForm = new DaoConfigForm(dbName, this);
 
     // 接收设置
     connect(dao_configForm, &DaoConfigForm::sendConfig, this, [this](Config& cfg) { config = cfg; });
@@ -333,19 +330,8 @@ void MainWindow::on_actImportConfig_triggered() {
 }
 
 void MainWindow::on_actExportResult_triggered() {
-    result.resultInfo();
-    // TODO：没想好做啥
-    QString fileName = QFileDialog::getSaveFileName(this, "选择保存路径",
-                                                    "result.html",
-                                                    "Echart files");
-    if (!fileName.isEmpty()) {
-        // TODO: 生成echart图表
-        //        dao.sqlExecute(QString("insert into result values(%1,%2,%3,%4,%5,%6)")
-        //                       .arg(result.r_id).arg(result.run_time).arg(result.curr_data_num)
-        //                       .arg(result.putin_data_num).arg(result.getout_data_num).arg(result.avg_num));
-
-        QMessageBox::information(this, "提示信息", "数据导出完成，图表保存在" + fileName);
-    }
+    if (dao_resultForm == nullptr) dao_resultForm = new DaoResultForm(dbName, this);
+    dao_resultForm->exec();
 }
 
 void MainWindow::on_actAnalyse_triggered() {
@@ -353,8 +339,9 @@ void MainWindow::on_actAnalyse_triggered() {
         QMessageBox::warning(this,"缺少数据","请先设置参数！");
         return;
     }
-    if (analyseWindow == nullptr)
-        analyseWindow = new AnalyseWindow(this);
+    activateAnalyze = true;
+    if (analyseWindow == nullptr) analyseWindow = new AnalyseWindow(this);
+    connect(analyseWindow,&AnalyseWindow::close,this,[this](){activateAnalyze = false;});
     analyseWindow->setWindowFlags(analyseWindow->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
     analyseWindow->show();
 }

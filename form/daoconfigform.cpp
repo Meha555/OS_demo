@@ -5,8 +5,6 @@ void DaoConfigForm::selectData()
 {
     cfgDao->getConnection();
     sqlTabModel->select();
-//    Config::c_id = sqlTabModel->columnCount();
-    qDebug()<<"查找了数据库";
 }
 
 DaoConfigForm::DaoConfigForm(const QString& dbName, QWidget *parent) :
@@ -18,17 +16,7 @@ DaoConfigForm::DaoConfigForm(const QString& dbName, QWidget *parent) :
     ui->btnCancel->setRole(Material::Primary);
     launchFlag = true;
     cfgDao = new ConfigDaoImpl(dbName,this);
-//    dao.setTableName("Config");//设置表名
-    connect(ui->tableView,&QTableView::clicked,this,[this](){qDebug()<<ui->tableView->currentIndex().row();});
-//    res_set = dao.sqlQuery("select * from config");
-//    for(auto ele:res_set){
-//        Config t = ele.value<Config>();
-//        t.configInfo();
-//    }
-
-//    sqlTabModel = new QSqlTableModel(this,dao.db);
     sqlTabModel = new QSqlTableModel(this,cfgDao->db);
-//    dao.getConnection();
     cfgDao->getConnection();
     ui->tableView->setModel(sqlTabModel);
     sqlTabModel->setTable("config");//设置表名
@@ -36,7 +24,7 @@ DaoConfigForm::DaoConfigForm(const QString& dbName, QWidget *parent) :
     ui->tableView->resizeRowsToContents();//自动调整行距
     ui->tableView->setAlternatingRowColors(true);//设置行间交叉颜色
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);//设置选中模式为选中行
-    ui->tableView->setSelectionMode ( QAbstractItemView::SingleSelection);//禁止选择多行
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);//禁止选择多行
     sqlTabModel->setHeaderData(0,Qt::Horizontal,"设置ID");
     sqlTabModel->setHeaderData(1,Qt::Horizontal,"Buffer1容量");
     sqlTabModel->setHeaderData(2,Qt::Horizontal,"Buffer2容量");
@@ -69,7 +57,7 @@ void DaoConfigForm::on_btnChose_clicked()
 //    for(int i = 0;i < sqlTabModel->columnCount();i++) {
 //        sqlTabModel->data(sqlTabModel->index(ui->tableView->currentIndex().row(),i)).toString();
 //    }
-    cfg = cfgDao->findAll().at(ui->tableView->currentIndex().row());
+    cfg = cfgDao->findByID(ui->tableView->currentIndex().row()+1);
     emit sendConfig(cfg);
     this->accept();
 }

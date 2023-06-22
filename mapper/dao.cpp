@@ -4,7 +4,11 @@
 Dao::Dao(const QString& dbName, QObject* parent)
     : QObject(parent), dbName(dbName) {
     db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setConnectOptions("QSQLITE_BUSY_TIMEOUT=5000"); // 5s 超时
+    // 开启WAL模式，提高性能
+    db.setConnectOptions("QSQLITE_ENABLE_WRITE_AHEAD_LOGGING=1");
     sqlHandler = QSqlQuery(db);
+    sqlHandler.exec("PRAGMA journal_mode=WAL;");
     qDebug()<<"数据库文件:"+dbName;
     qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
     qDebug()<<"当前数据库连接:"<<db.connectionName();
@@ -14,7 +18,11 @@ Dao::Dao(const QString& dbName, QObject* parent)
 Dao::Dao(const QString& dbName, const QString &tabName, QObject* parent)
     : QObject(parent),dbName(dbName), tableName(tabName) {
     db = QSqlDatabase::addDatabase("QSQLITE",tabName);
+    db.setConnectOptions("QSQLITE_BUSY_TIMEOUT=5000"); // 5s 超时
+    // 开启WAL模式，提高性能
+    db.setConnectOptions("QSQLITE_ENABLE_WRITE_AHEAD_LOGGING=1");
     sqlHandler = QSqlQuery(db);
+    sqlHandler.exec("PRAGMA journal_mode=WAL;");
     qDebug()<<"数据库文件:"+dbName;
     qDebug()<<"数据库驱动"+db.driverName()+"安装成功";
     qDebug()<<"当前数据库连接:"<<db.connectionName();
@@ -22,13 +30,13 @@ Dao::Dao(const QString& dbName, const QString &tabName, QObject* parent)
 
 Dao::~Dao()
 {
-//    closeDB();
+    closeDB();
 }
 
 // 连接到数据库
 bool Dao::getConnection() {
     if(db.isOpen()) return true;
-    else db.setDatabaseName(dbName);  // 数据库位置"G://Code//QT//OSproject//db//CP_db.db"
+    else db.setDatabaseName(dbName);  // 数据库位置"G://Code//QT//os_demo//db//CP_db.db"
     if (!db.open()) {
         QMessageBox::critical(0, "无法打开数据库",
                               "无法建立数据库连接");
@@ -55,6 +63,11 @@ void Dao::setTableName(const QString &value)
 void Dao::resetTableName()
 {
     tableName = "Null";
+}
+
+void Dao::closeDB()
+{
+    sqlHandler.exec("PRAGMA journal_mode=DELETE;");//关闭WAL模式。否则，如果直接关闭数据库连接，可能会导致数据文件损坏。
 }
 
 //// 查询
@@ -136,7 +149,7 @@ int Dao::sqlExecute(const QString &sql) {
         }else{
             QMessageBox::critical(0, "数据库增删改失败",
                                   sqlHandler.lastError().text());
-            qCritical()<<sqlHandler.lastError();
+            qCritical()<<sqlHandler.lastError().text();
             return -1;
         }
     }else return -1;

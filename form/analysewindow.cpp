@@ -85,14 +85,13 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     connect(ptr,&MainWindow::sigPause,this,[this](){statLED->setStatus(BLOCK);emit sigStop();},Qt::DirectConnection);
     connect(ptr,&MainWindow::sigStop,this,[this](){statLED->setStatus(TERMINATED);emit sigStop();},Qt::DirectConnection);
     connect(ptr,&MainWindow::sigRun,this,[this](){statLED->setStatus(RUNNING);emit sigStart();},Qt::DirectConnection);
-//    connect(ptr->timerWalker,&QTimer::timeout,this,[this,&ptr](){
-//        labPut->setText(QString("PUT线程阻塞数量: %1").arg(ptr->gatherer->getPut_blocked_num()));
-//        labMove->setText(QString("MOVE线程阻塞数量: %1").arg(ptr->gatherer->getMove_blocked_num()));
-//        labGet->setText(QString("GET线程阻塞数量: %1").arg(ptr->gatherer->getGet_blocked_num()));
-//        qDebug()<<"======PUT====== "<<ptr->gatherer->getPut_blocked_num();
-//        qDebug()<<"======MOVE===== "<<ptr->gatherer->getMove_blocked_num();
-//        qDebug()<<"======GET====== "<<ptr->gatherer->getGet_blocked_num();
-//    },Qt::DirectConnection);
+
+    StatGatherer* gatherer = StatGatherer::instance();// 不能直接使用ptr指针
+    connect(ptr->timerWalker,&QTimer::timeout,this,[this,gatherer](){
+        labPut->setText(QString("PUT线程阻塞数量: %1").arg(gatherer->getPut_blocked_num()));
+        labMove->setText(QString("MOVE线程阻塞数量: %1").arg(gatherer->getMove_blocked_num()));
+        labGet->setText(QString("GET线程阻塞数量: %1").arg(gatherer->getGet_blocked_num()));
+    },Qt::DirectConnection);
 
     // 创建栅格布局，以坐标形式限定各组件的位置
     QGridLayout* btnLayout = new QGridLayout;
@@ -109,14 +108,17 @@ AnalyseWindow::AnalyseWindow(QWidget *parent) :
     widget->setLayout(btnLayout);
     ui->toolBar->addWidget(widget);
     ui->toolBar->addWidget(btnHelp);
-//    ui->tabWidget->setTabsClosable(true);
-//    ui->tabWidget->setUsesScrollButtons(true);
-
 }
 
 AnalyseWindow::~AnalyseWindow()
 {
     delete ui;
+}
+
+void AnalyseWindow::closeEvent(QCloseEvent *event)
+{
+    emit close();
+    QMainWindow::closeEvent(event);
 }
 
 void AnalyseWindow::createTab()

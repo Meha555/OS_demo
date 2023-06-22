@@ -636,10 +636,10 @@
      <normaloff>:/icons/assets/icons/export.png</normaloff>:/icons/assets/icons/export.png</iconset>
    </property>
    <property name="text">
-    <string>导出结果</string>
+    <string>查询结果</string>
    </property>
    <property name="toolTip">
-    <string>导出结果</string>
+    <string>查询结果</string>
    </property>
   </action>
   <action name="actStart">

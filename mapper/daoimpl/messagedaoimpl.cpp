@@ -43,6 +43,7 @@ Message MessageDaoImpl::findByID(int m_id)
     qDebug()<<"Curr DB is: "<<tableName;
     if(getConnection()){
         if(sqlHandler.exec("select * from message where m_id="+QString::number(m_id))){
+            sqlHandler.next();
             Message msg(
     //                            sqlHandler.value("m_id").toInt(),
                             sqlHandler.value("t_id").toInt(),
@@ -71,7 +72,7 @@ int MessageDaoImpl::deleteByID(int m_id)
             QMessageBox::critical(0, "数据库元组删除失败",
                                   sqlHandler.lastError().text());
             qCritical()<<sqlHandler.lastError().text();
-            return 0;
+            return EXECUTEION_ERR;
         }
     }else return 0;
 }
@@ -92,27 +93,25 @@ int MessageDaoImpl::batchInsert(QQueue<Message>& bf)
                 if (!sqlHandler.exec()) {
                     qCritical() << "插入数据失败: " << sqlHandler.lastError().text();
                     db.rollback();
-                    return -1;
+                    return EXECUTEION_ERR;
                 }
             }
             // 提交事务处理
             if (db.commit()) {
-    //            return bf.count();
-                return sqlHandler.numRowsAffected();
+                return bf.count();
+//                return sqlHandler.numRowsAffected();
             } else {
                 qCritical() << "提交事务失败: " << db.lastError().text();
                 db.rollback();
-                return -1;
+                return COMMITMENT_ERR;
             }
         } else {
             QMessageBox::critical(0, "批量事务开启失败",
                                   db.lastError().text());
             qCritical() << db.lastError().text();
-            return -1;
+            return TRANSACTION_ERR;
         }
-    }else{
-        return -1;
-    }
+    }return CONNECTION_ERR;
 }
 
 // 批量删除数据
@@ -128,7 +127,7 @@ int MessageDaoImpl::batchDelete(QQueue<Message> &bf)
                 if (!sqlHandler.exec()) {
                     qCritical() << "删除数据失败";
                     db.rollback();
-                    return -1;
+                    return EXECUTEION_ERR;
                 }
             }
             // 提交事务处理
@@ -138,16 +137,16 @@ int MessageDaoImpl::batchDelete(QQueue<Message> &bf)
             } else {
                 qCritical() << "提交事务失败: " << db.lastError().text();
                 db.rollback();
-                return -1;
+                return COMMITMENT_ERR;
             }
         }
         else{
             QMessageBox::critical(0, "批量事务开启失败",
                                   sqlHandler.lastError().text());
             qCritical()<<sqlHandler.lastError().text();
-            return -1;
+            return TRANSACTION_ERR;
         }
-    }return -1;
+    }return CONNECTION_ERR;
 }
 
 int MessageDaoImpl::deleteAll()
@@ -162,5 +161,5 @@ int MessageDaoImpl::deleteAll()
             qCritical()<<sqlHandler.lastError().text();
             return -1;
         }
-    }return -1;
+    }return CONNECTION_ERR;
 }
