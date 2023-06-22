@@ -34,6 +34,7 @@ QVector<Message> MessageDaoImpl::findAll()
         for(auto& ele: ret){
             ele.messageInfo();
         }
+        sqlHandler.finish();
     }
     return ret;
 }
@@ -58,6 +59,7 @@ Message MessageDaoImpl::findByID(int m_id)
             qCritical()<<sqlHandler.lastError().text();
             return Message();
         }
+        sqlHandler.finish();
     }else return Message();
 }
 
@@ -74,6 +76,7 @@ int MessageDaoImpl::deleteByID(int m_id)
             qCritical()<<sqlHandler.lastError().text();
             return EXECUTEION_ERR;
         }
+        sqlHandler.finish();
     }else return 0;
 }
 
@@ -111,6 +114,7 @@ int MessageDaoImpl::batchInsert(QQueue<Message>& bf)
             qCritical() << db.lastError().text();
             return TRANSACTION_ERR;
         }
+        sqlHandler.finish();
     }return CONNECTION_ERR;
 }
 
@@ -146,6 +150,7 @@ int MessageDaoImpl::batchDelete(QQueue<Message> &bf)
             qCritical()<<sqlHandler.lastError().text();
             return TRANSACTION_ERR;
         }
+        sqlHandler.finish();
     }return CONNECTION_ERR;
 }
 
@@ -161,5 +166,6 @@ int MessageDaoImpl::deleteAll()
             qCritical()<<sqlHandler.lastError().text();
             return -1;
         }
+        sqlHandler.finish();
     }return CONNECTION_ERR;
 }

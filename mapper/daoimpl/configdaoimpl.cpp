@@ -34,6 +34,7 @@ QVector<Config> ConfigDaoImpl::findAll()
                               sqlHandler.lastError().text());
         qCritical()<<sqlHandler.lastError();
     }
+    sqlHandler.finish();
     return ret;
 }
 
@@ -54,6 +55,7 @@ Config ConfigDaoImpl::findByID(int c_id)
                    sqlHandler.value("move_speed").toInt(),
                    sqlHandler.value("get_num").toInt(),
                    sqlHandler.value("get_speed").toInt());//创建一个Config对象返回
+        sqlHandler.finish();
         return cfg;
     }
     else{
@@ -77,6 +79,7 @@ int ConfigDaoImpl::deleteByID(int c_id)
             qCritical()<<sqlHandler.lastError().text();
             return EXECUTEION_ERR;
         }
+        sqlHandler.finish();
     }return CONNECTION_ERR;
 }
 
@@ -98,5 +101,6 @@ int ConfigDaoImpl::insert(Config &cfg)
             qCritical()<<sqlHandler.lastError().text();
             return EXECUTEION_ERR;
         }
+        sqlHandler.finish();
     }return CONNECTION_ERR;
 }

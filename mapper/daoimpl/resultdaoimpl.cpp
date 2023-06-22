@@ -41,6 +41,7 @@ QVector<Result> ResultDaoImpl::findAll()
         for(auto& ele: ret){
             ele.resultInfo();
         }
+        sqlHandler.finish();
     }
     return ret;
 }
@@ -72,6 +73,7 @@ Result ResultDaoImpl::findByID(int r_id)
             qCritical()<<sqlHandler.lastError().text();
             return Result();
         }
+        sqlHandler.finish();
     }return Result();
 }
 
@@ -88,6 +90,7 @@ int ResultDaoImpl::deleteByID(int r_id)
             qCritical()<<sqlHandler.lastError().text();
             return EXECUTEION_ERR;
         }
+        sqlHandler.finish();
     }else return CONNECTION_ERR;
 }
 
@@ -107,5 +110,6 @@ int ResultDaoImpl::insert(Result &res)
             qCritical()<<sqlHandler.lastError().text();
             return EXECUTEION_ERR;
         }
+        sqlHandler.finish();
     }else return CONNECTION_ERR;
 }
