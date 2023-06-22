@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QMovie>
 
 namespace Ui {
 class LoginForm;

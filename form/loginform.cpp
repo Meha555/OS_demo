@@ -21,6 +21,10 @@ LoginForm::LoginForm(QDialog *parent) :
             this->accept();
         }
     });
+    QMovie* movie = new QMovie(":/icons/assets/icons/loading.gif");
+    ui->label->setMovie(movie);
+    movie->start();
+    ui->label->show();
 }
 
 LoginForm::~LoginForm()

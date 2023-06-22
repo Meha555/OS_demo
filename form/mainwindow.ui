@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>生产者消费者Demo</string>
+   <string>生产者消费者Demo @ copyright HZY</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res.qrc">
