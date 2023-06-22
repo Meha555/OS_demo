@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget* parent)
     //    slider = new QSlider(Qt::Horizontal, this);
     slider = new QtMaterialSlider(this);
     label2 = new QLabel("慢 ", this);
+    gatherer = StatGatherer::instance();
     labelSpeed = new QLabel(QString(" 当前速度：%1x").arg(static_cast<qreal>(gatherer->speed_coefficient / 1000), 0, 'g', 2));
     labelSpeed->setFixedSize(140, 20);
     labelSpeed->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);  // 设置大小策略为固定大小
@@ -134,7 +135,6 @@ void MainWindow::setConfig() {
     buffer3->setCur_num(0);
 
     // 初始化Gatherer
-    gatherer = StatGatherer::instance();
     gatherer->buffers.append(buffer1);
     gatherer->buffers.append(buffer2);
     gatherer->buffers.append(buffer3);

@@ -14,22 +14,16 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(code);
     QFont font(QString::fromLocal8Bit("华文中宋"),10);
     a.setFont(font);
-    // QFile file(QString("%1").arg(":/stylesheet/assets/stylesheet/lightblue.css"));
-    // file.open(QFile::ReadOnly);
-    // QString css = QLatin1String(file.readAll());
-    // qApp->setStyleSheet(css);
-
-//    LoginForm *l = new LoginForm;
-//    if(l->exec() == QDialog::Accepted){
-//        MainWindow w;
-//        w.dbName = l->getDbName();
-//        w.show();
-//        delete l;
-//        return a.exec();
-//    }
-    MainWindow w;
-    w.show();
-    return a.exec();
-
+    LoginForm *l = new LoginForm;
+    if(l->exec() == QDialog::Accepted){
+        MainWindow w;
+        w.dbName = l->getDbName();
+        w.show();
+        delete l;
+        return a.exec();
+    }
+//    MainWindow w;
+//    w.show();
+//    return a.exec();
     return 0;
 }
