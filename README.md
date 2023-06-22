@@ -50,22 +50,22 @@ OS三级项目
 
 ## 展示
 
-![loading](G:\Code\QT\os_demo\pic\loading.png)
+![loading](/pic/loading.png)
 
-![mainwindow](G:\Code\QT\os_demo\pic\mainwindow.png)
+![mainwindow](/pic/mainwindow.png)
 
-![config](G:\Code\QT\os_demo\pic\config.png)
+![config](/pic/config.png)
 
-![result](G:\Code\QT\os_demo\pic\result.png)
+![result](/pic/result.png)
 
-![running](G:\Code\QT\os_demo\pic\running.png)
+![running](/pic/running.png)
 
-![data_distribution](G:\Code\QT\os_demo\pic\data_distribution.png)
+![data_distribution](/pic/data_distribution.png)
 
-![thread_trend](G:\Code\QT\os_demo\pic\thread_trend.png)
+![thread_trend](/pic/thread_trend.png)
 
-![control](G:\Code\QT\os_demo\pic\control.png)
+![control](/pic/control.png)
 
-![save_json](G:\Code\QT\os_demo\pic\save_json.png)
+![save_json](/pic/save_json.png)
 
-![data_json](G:\Code\QT\os_demo\pic\data_json.png)
+![data_json](/pic/data_json.png)
