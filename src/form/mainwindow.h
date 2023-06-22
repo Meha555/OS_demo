@@ -158,7 +158,7 @@ public:
     QLabel*  labelSpeed;
 //    QSlider* slider;
     QtMaterialSlider* slider;
-    QString dbName = "G://Code//QT//os_demo//db//CP_db.db";
+    QString dbName = "G://Code//QT//os_demo//src//db//CP_db.db";
     StatGatherer* gatherer; // 数据收集器单例
     ConfigForm* configFrom = nullptr;//设置信息对话框
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
