@@ -32,6 +32,10 @@ private:
 private slots:
     void on_btnChose_clicked();
 
+    void on_btnSubmit_clicked();
+
+    void on_btnDelete_clicked();
+
 private:
     Ui::DaoConfigForm *ui;
     QSqlTableModel* sqlTabModel;

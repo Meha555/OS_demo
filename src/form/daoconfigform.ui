@@ -45,7 +45,33 @@
          </font>
         </property>
         <property name="text">
-         <string>选择</string>
+         <string>导入选中</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QtMaterialRaisedButton" name="btnDelete">
+        <property name="font">
+         <font>
+          <family>华文中宋</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>删除选中</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QtMaterialRaisedButton" name="btnSubmit">
+        <property name="font">
+         <font>
+          <family>华文中宋</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>提交变更</string>
         </property>
        </widget>
       </item>

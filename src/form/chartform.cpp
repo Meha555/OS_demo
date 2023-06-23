@@ -23,7 +23,7 @@ ChartForm::ChartForm(const ChartParam &param, QWidget* parent)
         setGrid(50,std::max({draft1->_data_source->buffers[0]->capacity,
                              draft1->_data_source->buffers[1]->capacity,
                              draft1->_data_source->buffers[2]->capacity}));
-        initLineChart(3,{"Buffer1","Buffer2","Buffer3"},tr("时间(s)"),tr("数据数量"));
+        initLineChart(3,{"Buffer1","Buffer2","Buffer3"},tr("时间(ms)"),tr("数据数量"));
         connect(timerRefresh,&QTimer::timeout,this,&ChartForm::drawChart_type1);
         break;
     }
