@@ -8,15 +8,19 @@ LoginForm::LoginForm(QDialog *parent) :
     ui->setupUi(this);
     this->setWindowFlags(Qt::SplashScreen); //设置为SplashScreen, 窗口无边框,不在任务栏显示
     ui->btnOpenDB->setRole(Material::Primary);
+    readSettings();
     connect(ui->btnOpenDB,&QPushButton::clicked,this,[this](){
-        dbName = QFileDialog::getOpenFileName(this, tr("选择Sqlite数据库文件")
+        if(dbName == "null"){
+            dbName = QFileDialog::getOpenFileName(this, tr("选择Sqlite数据库文件")
                                                                , ""
                                                                , tr("SQLite db (*.db *.db3)"));
+        }
         if(dbName.isEmpty()){
             QMessageBox::warning(this,"错误","打开数据库文件失败!");
             this->reject();
         }
         else{
+            writeSettings();
             dbName.replace("/", "//");
             this->accept();
         }
@@ -70,5 +74,19 @@ void LoginForm::mouseMoveEvent(QMouseEvent *event)
 void LoginForm::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
-    m_moving=false; //停止移动
+    m_moving = false; //停止移动
+}
+
+void LoginForm::readSettings()
+{
+    QSettings settings(organization,appName); //注册表键组
+    dbName = settings.value("db_path","null").toString();
+    ui->ckboxRemember->setChecked(settings.value("remembered",true).toBool());
+}
+
+void LoginForm::writeSettings()
+{
+    QSettings settings(organization,appName); //注册表键组
+    settings.setValue("db_path",dbName);
+    settings.setValue("remembered",ui->ckboxRemember->isChecked());
 }

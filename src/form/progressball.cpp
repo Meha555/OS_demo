@@ -105,6 +105,14 @@ void ProgressBall::paintEvent(QPaintEvent *) {
     painter.drawText(ball, Qt::AlignCenter, QString("%1%").arg(QString::number(rippleLevel*100, 'f', 1)));
 }
 
+void ProgressBall::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton){
+        emit clicked();
+    }
+    QWidget::mousePressEvent(event);
+}
+
 void ProgressBall::updateProgress(qreal val) {
     _progress += val;
     update();

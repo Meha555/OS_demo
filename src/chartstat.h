@@ -29,7 +29,6 @@ public:
     virtual bool readJson(const QString& json) = 0;
     virtual QByteArray writeJson() = 0;
 
-//    void recognize(const QJsonObject& obj);//识别是哪种图
     static ChartParam recognize(const QJsonObject& obj){
         return {.buf = obj["param"].toObject()["buf"].toString(),
                 .type = static_cast<ProfileType>(obj["param"].toObject()["type"].toInt())};

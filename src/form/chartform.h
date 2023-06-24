@@ -9,6 +9,7 @@
 #include <QValueAxis>
 #include <QtCharts>
 #include <QList>
+#include <QLabel>
 #include <QStringList>
 #include <algorithm>
 #include "analysewindow.h"
@@ -54,6 +55,7 @@ public slots:
     void drawChart_type1();
     void drawChart_type2();
     void drawChart_type3();
+//    void sltToolTip(bool isHovering);
 
 private:
     Ui::ChartForm *ui;
@@ -61,9 +63,10 @@ private:
     ChartParam param;
     QTimer *timerRefresh;
     QString chartName;
-    QChart* chart;
+    QChart* chart = nullptr;
     QList<QLineSeries*> lineSeries;
-    QPieSeries* pieSeries;
+    QPieSeries* pieSeries = nullptr;
+    QLabel* toolTip = nullptr;
     qint64 count = 0;
     int max_x;
     int max_y;

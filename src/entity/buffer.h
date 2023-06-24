@@ -9,7 +9,7 @@ class Buffer : public QObject
 {
     Q_OBJECT
 public:
-    explicit Buffer(QObject *parent = nullptr);
+    explicit Buffer(int bid,QObject *parent = nullptr);
     void putinBuffer(Message& msg);
     Message getoutBuffer();
     void showBuffer();
@@ -22,9 +22,11 @@ public:
 
     int getCur_num() const;
     void setCur_num(int value);
+signals:
+    void update();
 
 public:
-//    static int data_id; // data的唯一索引
+    int bid;
     int capacity = 0;//buffer容量
     int free_space_num = 0;//当前空闲空间个数
     int cur_num = 0;//当前的数据个数

@@ -26,9 +26,9 @@ void P(Semaphore* s, int n) {
         s->_is_blocked = true;
         s->_condition.wait(&s->_mutex);
     }
-    if(s->_is_blocked) {
+    if(s->_is_blocked) { // 判断当前线程是否经历了阻塞等待的过程
         s->_is_blocked = false;
-        emit s->awake();
+        emit s->awake(); // 只有阻塞等待过，才需要唤醒
     }
     s->_count -= n;
 #endif

@@ -177,6 +177,7 @@ void ChartForm::initPieChart(int n, const QStringList& names) {
         connect(pieSeries->slices()[i], &QPieSlice::hovered, this, [this](bool show){
             static_cast<QPieSlice*>(sender())->setExploded(show);
         });
+//        connect(pieSeries->slices()[i], &QPieSlice::hovered, this, &ChartForm::sltToolTip);
     }
     pieSeries->slices().back()->setExploded(true);  // 最后一个设置为exploded，与切片分离
     pieSeries->setLabelsVisible(true);  // 只影响当前的slices，必须添加完slice之后再设置
@@ -221,7 +222,7 @@ void ChartForm::drawChart_type2() {
     for(int i = 0;i < pieSeries->slices().size();i++) {
         auto& slice = pieSeries->slices().at(i);
         slice->setValue(data->buffers.at(i)->cur_num);
-        slice->setLabel(QString::asprintf("Buffer%d: 数据量: %.0f,占比: %.1f%%",i+1,slice->value(),slice->percentage() * 100));
+        slice->setLabel(QString::asprintf("Buffer%d:已用:%.0f,空闲:%0.d,占比:%.1f%%",i+1,slice->value(),data->buffers.at(i)->free_space_num,slice->percentage() * 100));
     }
     data->buf1_cur_num.append(data->buffers.at(0)->cur_num);
     data->buf2_cur_num.append(data->buffers.at(1)->cur_num);
@@ -246,6 +247,34 @@ void ChartForm::drawChart_type3()
     lineSeries[2]->append(count, data->getGet_blocked_num());
     count++;
 }
+
+//void ChartForm::sltToolTip(bool isHovering)
+//{
+//    if(chart == nullptr) return;
+//    if(toolTip == nullptr){ // 初始化信息标签
+//        toolTip = new QLabel(ui->chartView);
+//        toolTip->setStyleSheet("background: rgba(95,166,250,185);color: rgb(248, 248, 255);"
+//                               "border:0px groove gray;border-radius:10px;padding:2px 4px;"
+//                               "border:2px groove gray;border-radius:10px;padding:2px 4px");
+//        toolTip->setVisible(false);
+//    }
+//    if(isHovering){ // 如果鼠标悬浮在其上
+//        QPointF pos = ui->chartView->mapFromGlobal(QCursor::pos());
+//        QPointF pointLabel = chart->mapToPosition(pos);
+//        QPieSeries* pieSeries = dynamic_cast<QPieSeries*>(chart);
+//        if (pieSeries == nullptr) return;
+//        auto slice = static_cast<QPieSlice*>(sender());
+//        QString tooltipText = slice->label() + ": " + QString::number(slice->value()); // 根据饼状图数据设置提示信息
+//        toolTip->setText(tooltipText);
+
+//        // 设置提示信息的位置
+//        QPoint tooltipPos = QCursor::pos();
+//        toolTip->move(pointLabel.x(), pointLabel.y() - toolTip->height()*1.5);
+//        toolTip->setVisible(true);
+//    } else {
+//        toolTip->setVisible(false);
+//    }
+//}
 
 ChartParam ChartForm::getParam() const
 {

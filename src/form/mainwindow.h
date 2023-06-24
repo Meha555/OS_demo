@@ -23,6 +23,7 @@
 #include "daoconfigform.h"
 #include "daoresultform.h"
 #include "analysewindow.h"
+#include "bufferform.h"
 #include "statgatherer.h"
 
 //#include "dao.h"
@@ -164,6 +165,8 @@ public:
     DaoConfigForm* dao_configForm = nullptr;//导入参数对话框
     DaoResultForm* dao_resultForm = nullptr;//查询结果对话框
     AnalyseWindow* analyseWindow = nullptr;//数据分析窗口
-
+    BufferForm* buf1Form = nullptr;
+    BufferForm* buf2Form = nullptr;
+    BufferForm* buf3Form = nullptr;
 };
 #endif // MAINWINDOW_H

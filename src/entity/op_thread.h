@@ -38,7 +38,7 @@ signals:
     void getOut(qreal val);
 
 private:
-    QString genRandData();// 生成随机数
+    QString genRandData();
 
 public:
     Op_Type getOp_type() const;

@@ -119,9 +119,9 @@ void MainWindow::updateRes2DB() {
 // 设置参数
 void MainWindow::setConfig() {
     // 创建3个缓冲区
-    buffer1 = new Buffer(this);
-    buffer2 = new Buffer(this);
-    buffer3 = new Buffer(this);
+    buffer1 = new Buffer(1,this);
+    buffer2 = new Buffer(2,this);
+    buffer3 = new Buffer(3,this);
 
     // 初始化缓冲区数据
     buffer1->setCapacity(config.getBuffer1_size());
@@ -154,6 +154,22 @@ void MainWindow::setConfig() {
     ui->bufBall1->setCapacity(config.buffer1_size);
     ui->bufBall2->setCapacity(config.buffer2_size);
     ui->bufBall3->setCapacity(config.buffer3_size);
+
+    connect(ui->bufBall1, &ProgressBall::clicked,this,[this](){
+        if(buf1Form == nullptr) buf1Form = new BufferForm(buffer1,this);
+        buf1Form->setWindowTitle("Buffer1数据内容");
+        buf1Form->show();
+    });
+    connect(ui->bufBall2, &ProgressBall::clicked,this,[this](){
+        if(buf2Form == nullptr) buf2Form = new BufferForm(buffer2,this);
+        buf2Form->setWindowTitle("Buffer2数据内容");
+        buf2Form->show();
+    });
+    connect(ui->bufBall3, &ProgressBall::clicked,this,[this](){
+        if(buf3Form == nullptr) buf3Form = new BufferForm(buffer3,this);
+        buf3Form->setWindowTitle("Buffer3数据内容");
+        buf3Form->show();
+    });
 
     // 初始化各信号量
 #ifndef _MY
@@ -208,7 +224,6 @@ void MainWindow::setConfig() {
 void MainWindow::on_actStart_triggered() {
     timeCounter->start();
     timerWalker->start(20);
-
     if (first_start) {
         resetStatistics();
         // 初始化各线程，并启动
@@ -296,7 +311,12 @@ void MainWindow::on_actTerminate_triggered() {
 }
 
 void MainWindow::on_actRestart_triggered() {
+    if(activateAnalyze){
+        QMessageBox::warning(this,"线程安全警告","请先关闭数据分析窗口！");
+        return;
+    }
     Operation::terminateThread();
+    emit sigStop();
     first_start = true;
     on_actStart_triggered();
 }

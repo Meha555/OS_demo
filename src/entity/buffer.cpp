@@ -1,10 +1,7 @@
 #include "buffer.h"
 
-//int Buffer::data_id = 1;
-
-Buffer::Buffer(QObject *parent) : QObject(parent)
+Buffer::Buffer(int bid,QObject *parent) : bid(bid),QObject(parent)
 {
-    //    data_id++;
 }
 
 void Buffer::putinBuffer(Message &msg)
@@ -13,6 +10,7 @@ void Buffer::putinBuffer(Message &msg)
     free_space_num--;
     cur_num++;
     putin_num++;
+    emit update();
 }
 
 Message Buffer::getoutBuffer()
@@ -20,12 +18,14 @@ Message Buffer::getoutBuffer()
     free_space_num++;
     cur_num--;
     getout_num++;
-    return buffer.dequeue();
+    Message&& msg = buffer.dequeue();
+    emit update();
+    return std::move(msg);
 }
 
 void Buffer::showBuffer()
 {
-    for(auto ele:buffer){
+    for(auto& ele:buffer){
         ele.messageInfo();
     }
 }

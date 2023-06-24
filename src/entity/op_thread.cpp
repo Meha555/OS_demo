@@ -169,6 +169,7 @@ void Operation::run() {
     }
 }
 
+// 问题：使用固定的随机数表，导致在几乎同时调用该函数时所生成的随机数相同
 QString Operation::genRandData() {
     QString data;
     int len = qrand() % DATA_LEN + 1;
@@ -219,21 +220,11 @@ void Operation::getStatus() {
     QString s;
     QString name;
     switch (op_type) {
-    case PUT:
-        name = "PUT";
-        break;
-    case MOVE1_2:
-        name = "MOVE1";
-        break;
-    case MOVE1_3:
-        name = "MOVE2";
-        break;
-    case GET2:
-        name = "GET2";
-        break;
-    case GET3:
-        name = "GET3";
-        break;
+    case PUT: name = "PUT"; break;
+    case MOVE1_2: name = "MOVE1"; break;
+    case MOVE1_3: name = "MOVE2"; break;
+    case GET2: name = "GET2"; break;
+    case GET3: name = "GET3"; break;
     }
     s = name + "线程=>" + "速度:" + QString::number(op_speed) + " 运行:" + (isRunning() ? "是" : "否") + " 结束:" + (isFinished() ? "是" : "否");
     qDebug() << s;

@@ -29,6 +29,7 @@ INCLUDEPATH += \
     form/
 
 SOURCES += \
+    form/bufferform.cpp \
     chartdatachangedtrend.cpp \
     chartdatadistribution.cpp \
     chartstat.cpp \
@@ -44,9 +45,9 @@ SOURCES += \
     form/configform.cpp \
     form/daoconfigform.cpp \
     form/ledlabel.cpp \
-    form/loginform.cpp \
     form/mainwindow.cpp \
     form/progressball.cpp \
+    form/loginform.cpp \
     main.cpp \
     mapper/dao.cpp \
     mapper/daoimpl/configdaoimpl.cpp \
@@ -58,6 +59,7 @@ SOURCES += \
 
 
 HEADERS += \
+    form/bufferform.h \
     chartdatachangedtrend.h \
     chartdatadistribution.h \
     chartstat.h \
@@ -73,9 +75,9 @@ HEADERS += \
     form/configform.h \
     form/daoconfigform.h \
     form/ledlabel.h \
-    form/loginform.h \
     form/mainwindow.h \
     form/progressball.h \
+    form/loginform.h \
     mapper/dao.h \
     mapper/daoimpl/configdaoimpl.h \
     mapper/daoimpl/messagedaoimpl.h \
@@ -87,14 +89,15 @@ HEADERS += \
 
 
 FORMS += \
+    form/bufferform.ui \
     form/daoresultform.ui \
     form/analysewindow.ui \
     form/chartform.ui \
     form/configform.ui \
     form/daoconfigform.ui \
     form/ledlabel.ui \
-    form/loginform.ui \
-    form/mainwindow.ui
+    form/mainwindow.ui \
+    form/loginform.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

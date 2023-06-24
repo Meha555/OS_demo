@@ -18,9 +18,9 @@ OS三级项目
 
 1. 随机产生字符数据
 
-2. 可以设定各Buffer的容量、PUT、GET、Move操作的个数；
+2. 可以设定各Buffer的容量、PUT、GET、MOVE操作的个数；
 
-3. 可以设定PUT、GET、Move操作的速度；
+3. 可以设定PUT、GET、MOVE操作的速度；
 
 4. 提供良好图形界面，可以暂停和继续系统的执行，实时显示每个Buffer中数据的个数和数据的内容，当前每个Buffer中空闲的空间的个数；
 
@@ -65,6 +65,8 @@ OS三级项目
 ![thread_trend](/pic/thread_trend.png)
 
 ![control](/pic/control.png)
+
+![data_supervise](/pic/data_supervise.png)
 
 ![save_json](/pic/save_json.png)
 

@@ -58,7 +58,7 @@
               </sizepolicy>
              </property>
              <property name="cursor">
-              <cursorShape>WaitCursor</cursorShape>
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
               <string>Buffer1</string>
@@ -100,7 +100,7 @@
               </sizepolicy>
              </property>
              <property name="cursor">
-              <cursorShape>WaitCursor</cursorShape>
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
               <string>Buffer2</string>
@@ -142,7 +142,7 @@
               </sizepolicy>
              </property>
              <property name="cursor">
-              <cursorShape>WaitCursor</cursorShape>
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
               <string>Buffer3</string>
