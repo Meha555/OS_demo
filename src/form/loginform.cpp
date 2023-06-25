@@ -12,15 +12,15 @@ LoginForm::LoginForm(QDialog *parent) :
     connect(ui->btnOpenDB,&QPushButton::clicked,this,[this](){
         if(dbName == "null"){
             dbName = QFileDialog::getOpenFileName(this, tr("选择Sqlite数据库文件")
-                                                               , ""
-                                                               , tr("SQLite db (*.db *.db3)"));
+                                                    , ""
+                                                    , tr("SQLite db (*.db *.db3)"));
         }
-        if(dbName.isEmpty()){
+        if(dbName.isEmpty() || (dbName.lastIndexOf(".db") == -1)){
             QMessageBox::warning(this,"错误","打开数据库文件失败!");
             this->reject();
         }
         else{
-            writeSettings();
+            if(ui->ckboxRemember->isChecked()) writeSettings();
             dbName.replace("/", "//");
             this->accept();
         }
