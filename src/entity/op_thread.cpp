@@ -251,6 +251,7 @@ void Operation::putinData(const int bid) {
     case PUT: {
         log = "PUT向buffer1放入1个数据" + data;
         Operation::ptr->buffer1->putinBuffer(msg);
+        emit putIn1(1);
         Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log1, log);
         Operation::ptr->ui->bufBall1->updateProgress(1);
         break;
@@ -258,6 +259,7 @@ void Operation::putinData(const int bid) {
     case MOVE1_2: {
         log = "MOVE1_2向Buffer2中放入1个数据" + data;
         Operation::ptr->buffer2->putinBuffer(msg);
+        emit putIn2(1);
         Operation::ptr->displayLogText(Operation::ptr->ui->plainText_log2, log);
         Operation::ptr->ui->bufBall2->updateProgress(1);
         break;

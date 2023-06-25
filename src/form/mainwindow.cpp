@@ -24,14 +24,15 @@ void MainWindow::resetStatistics() {
     ui->bufBall2->resetProgress();
     ui->bufBall3->resetProgress();
 
-    //    ui->plainText_log1->clear();
-    //    ui->plainText_log2->clear();
-    //    ui->plainText_log3->clear();
+        ui->plainText_log1->clear();
+        ui->plainText_log2->clear();
+        ui->plainText_log3->clear();
 }
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    qRegisterMetaType<QTextCursor>("QTextCursor");
 
     cfgDao = new ConfigDaoImpl(dbName, this);
     msgDao = new MessageDaoImpl(dbName, this);
@@ -232,7 +233,7 @@ void MainWindow::on_actStart_triggered() {
             displayLogTextSys("启动1个PUT");
             Operation* put = new Operation(PUT, config.put_speed, this);
             connect(ui->actTerminate, &QAction::triggered, put, [put]() {put->quit();put->wait();put->deleteLater(); });
-            connect(put, &Operation::putIn, ui->bufBall1, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(put, &Operation::putIn1, ui->bufBall1, &ProgressBall::updateProgress, Qt::DirectConnection);
             //            connect(_pTimerUpdate, &QTimer::timeout, put, [put](){put->getStatus();});
             put->start();
             //            put->getTID();
@@ -243,13 +244,13 @@ void MainWindow::on_actStart_triggered() {
             displayLogTextSys("启动2个MOVE");
             Operation* move1 = new Operation(MOVE1_2, config.move_speed, this);
             connect(ui->actTerminate, &QAction::triggered, move1, [move1]() {move1->quit();move1->wait();move1->deleteLater(); });
-            connect(move1, &Operation::getOut, ui->bufBall1, &ProgressBall::updateProgress, Qt::DirectConnection);
-            connect(move1, &Operation::putIn, ui->bufBall2, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(move1, &Operation::getOut1, ui->bufBall1, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(move1, &Operation::putIn2, ui->bufBall2, &ProgressBall::updateProgress, Qt::DirectConnection);
             //            connect(_pTimerUpdate, &QTimer::timeout, move1, [move1](){move1->getStatus();});
             Operation* move2 = new Operation(MOVE1_3, config.move_speed, this);
             connect(ui->actTerminate, &QAction::triggered, move2, [move2]() {move2->quit();move2->wait();move2->deleteLater(); });
-            connect(move2, &Operation::getOut, ui->bufBall1, &ProgressBall::updateProgress, Qt::DirectConnection);
-            connect(move2, &Operation::putIn, ui->bufBall3, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(move2, &Operation::getOut1, ui->bufBall1, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(move2, &Operation::putIn3, ui->bufBall3, &ProgressBall::updateProgress, Qt::DirectConnection);
             //            connect(_pTimerUpdate, &QTimer::timeout, move2, [move2](){move2->getStatus();});
             move1->start();
             move2->start();
@@ -264,8 +265,8 @@ void MainWindow::on_actStart_triggered() {
             Operation* get3 = new Operation(GET3, config.get_speed, this);
             connect(ui->actTerminate, &QAction::triggered, get2, [get2]() {get2->quit();get2->wait();get2->deleteLater(); });
             connect(ui->actTerminate, &QAction::triggered, get3, [get3]() {get3->quit();get3->wait();get3->deleteLater(); });
-            connect(get2, &Operation::getOut, ui->bufBall2, &ProgressBall::updateProgress, Qt::DirectConnection);
-            connect(get3, &Operation::getOut, ui->bufBall3, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(get2, &Operation::getOut2, ui->bufBall2, &ProgressBall::updateProgress, Qt::DirectConnection);
+//            connect(get3, &Operation::getOut3, ui->bufBall3, &ProgressBall::updateProgress, Qt::DirectConnection);
             //            connect(_pTimerUpdate, &QTimer::timeout, get, [get](){get->getStatus();});
             get2->start();
             get3->start();
@@ -276,7 +277,8 @@ void MainWindow::on_actStart_triggered() {
             displayLogTextSys("启动1个GET");
             Operation* get2 = new Operation(GET2, config.get_speed, this);
             connect(ui->actTerminate, &QAction::triggered, get2, [get2]() {get2->quit();get2->wait();get2->deleteLater(); });
-            connect(get2, &Operation::getOut, ui->bufBall2, &ProgressBall::updateProgress, Qt::DirectConnection);
+            get2->start();
+//            connect(get2, &Operation::getOut2, ui->bufBall2, &ProgressBall::updateProgress, Qt::DirectConnection);
         }
         first_start = false;
         emit sigRun();

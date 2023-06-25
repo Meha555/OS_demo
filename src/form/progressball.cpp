@@ -33,7 +33,7 @@ void ProgressBall::paintEvent(QPaintEvent *) {
 //    QRect border(_borderWidth*0.5, _borderWidth*0.5, _radius*2, _radius*2);
     painter.setPen(_borderWidth > 0 ? pen : Qt::NoPen);
     painter.setBrush(_backgroundColor);
-    painter.drawEllipse(border);
+    painter.drawEllipse(border); // 画内切圆
 
     //设置矩形边界（左上角x,y坐标，大小）
     QRect ball = QRect(_borderWidth + parentWidth/2 - _radius, _borderWidth + parentHeight/2 - _radius, border.width() - _borderWidth, border.height() - _borderWidth);
@@ -55,6 +55,7 @@ void ProgressBall::paintEvent(QPaintEvent *) {
             y = Asin(ωx + φ) + k
     A：振幅，最高和最低的距离
     ω：角速度，用于控制周期大小，单位x中的起伏个数
+    φ：相位，用于控制当前点的横向位置
     k：偏距，曲线整体上下偏移量，即水位线位置
     */
     qreal rippleLevel = _progress/_capacity;

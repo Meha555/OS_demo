@@ -34,8 +34,14 @@ protected:
     void run() override;
 
 signals:
-    void putIn(qreal val);
-    void getOut(qreal val);
+//    void putIn(qreal val);
+//    void getOut(qreal val);
+    void putIn1(qreal val);
+    void putIn2(qreal val);
+    void putIn3(qreal val);
+    void getOut1(qreal val);
+    void getOut2(qreal val);
+    void getOut3(qreal val);
 
 private:
     QString genRandData();
